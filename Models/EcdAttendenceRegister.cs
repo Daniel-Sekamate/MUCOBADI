@@ -10,7 +10,6 @@ namespace MUCOBADI.Models
         public EcdAttendenceRegister()
         {
             EcdDirectMemberAttendence = new HashSet<EcdDirectMemberAttendence>();
-            EcdIndirectMemberAttendence = new HashSet<EcdIndirectMemberAttendence>();
         }
 
         public int SinoParentingId { get; set; }
@@ -19,7 +18,7 @@ namespace MUCOBADI.Models
         public int? SubcountyId { get; set; }
         public int? ParishId { get; set; }
         public string Venue { get; set; }
-        public int? GroupCompositionCode { get; set; }
+        public int GroupCompositionCode { get; set; }
         public string MotherSpace { get; set; }
         public string FacilitatorOne { get; set; }
         public string FacilitatorOneCode { get; set; }
@@ -40,6 +39,5 @@ namespace MUCOBADI.Models
         public virtual AParish Parish { get; set; }
         public virtual ASubcounty Subcounty { get; set; }
         public virtual ICollection<EcdDirectMemberAttendence> EcdDirectMemberAttendence { get; set; }
-        public virtual ICollection<EcdIndirectMemberAttendence> EcdIndirectMemberAttendence { get; set; }
     }
 }

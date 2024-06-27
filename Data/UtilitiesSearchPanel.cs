@@ -16,7 +16,5 @@ namespace MUCOBADI.Data
         public int?[] QuarterId { get; set; }
         public int?[] IndicatorId { get; set; }
         public int?[] ServiceProviderId { get; set; }
-        public DateTime? startDate { get; set; }
-        public DateTime? endDate { get; set; }
     }
 }
