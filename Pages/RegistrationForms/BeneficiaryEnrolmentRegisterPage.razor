@@ -88,7 +88,7 @@
             <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <GridEvents OnActionComplete="BeneficiaryRegisterActionComplete" TValue="spBeneficiaryIdentificationRegisterGetAllResult"></GridEvents>
-            <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <Template Context="RegisterContext">
                     @{
                         BeneficiaryRegisterData = (RegisterContext as spBeneficiaryIdentificationRegisterGetAllResult);
@@ -124,7 +124,7 @@
                                         <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
                                         <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                                         <GridEvents OnActionBegin="OnEnrolmentRegisterHeaderActionBegin" OnActionComplete="EnrolmentRegisterHeaderActionComplete" TValue="BeneficiaryEnrolmentRegisterHeader"></GridEvents>
-                                        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                                        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                                             <Template Context="ReviewHeaderContext">
                                                 @{
                                                     EnrolmentRegisterHeaderData = (ReviewHeaderContext as BeneficiaryEnrolmentRegisterHeader);
@@ -235,7 +235,7 @@
                                                                     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
                                                                     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                                                                     <GridEvents OnActionBegin="OnEnrolledMemberActionBegin" OnActionComplete="EnrolledMemberActionComplete" TValue="spBeneficiaryEnrolmentRegisterDetailsGetAllResult"></GridEvents>
-                                                                    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                                                                    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                                                                         <Template Context="MemberContext">
                                                                             @{
                                                                                 EnrolledMembersReviewData = (MemberContext as spBeneficiaryEnrolmentRegisterDetailsGetAllResult);
@@ -472,7 +472,7 @@
 
     private SearchPanel InputModel = new();
 
-
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
 
     List<AVillage> _VillageData { get; set; }
     List<AParish> _ParishData { get; set; }

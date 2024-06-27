@@ -1,0 +1,917 @@
+﻿@page "/IsvatheaderReportPage"
+@inject Microsoft.JSInterop.IJSRuntime JS
+@using MUCOBADI.DTOs
+@using MUCOBADI.Data
+@using MUCOBADI.Interfaces
+@using Microsoft.EntityFrameworkCore
+@using Syncfusion.XlsIO
+@using System.IO
+@inject IToastService toastService;
+@inject IBimService Repo;
+@inject MUCOBADIContext db;
+@inject UserManagement userManagement;
+
+<MudOverlay Visible="@IsLoading" DarkBackground="true" Absolute="true" Style="z-index:200000; height:100vh;">
+    <MudProgressCircular Color="MudBlazor.Color.Secondary" Indeterminate="true" />
+    <MudText Style="color:ghostwhite;">Loading data please wait..</MudText>
+</MudOverlay>
+
+<div class="row">
+    <div class="col-md-12">
+        <BreadCrumbPage CategoryName="BIM" PageName="HOUSEHOLD INCOME SOURCE VIABILITY ASSESSMENT REPORT" />
+    </div>
+    @if (IsLoading == false)
+    {
+        <div class="col-md-12">
+            <div class="row" n style="margin:5px;">
+                <SearchPanelPartialPage @ref=@SearchPanel DistrictData="@DistrictData" HouseHoldData="@HouseHoldData" SubcountyData="@SubcountyData" Credentials=@Credentials />
+                <div class="col-md-4">
+                    <button type="button" style="margin-top:32px;"
+                            class="btn btn-primary"
+                            @onclick="@(async()=>{
+                        InputModel = SearchPanel.SearchReportRecords();
+                        await DownloadReport();
+                    })">
+                        Download Report
+                    </button>
+
+                    <button type="button" style="margin-top:32px;"
+                            class="btn btn-secondary"
+                            @onclick="@(() => {
+                        InputModel =SearchPanel.ClearReportSearch();
+                    })">
+                        Clear Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@code {
+    SearchPanelPartialPage? SearchPanel;
+    bool IsLoading { get; set; }
+
+    private ViewUserManagement? Credentials { get; set; }
+
+    private EnrolmentSearchModel InputModel = new();
+
+    List<AGender>? GenderData { get; set; }
+    List<AMaritalStatus>? MaritalStatusData { get; set; }
+    List<HouseHoldMembers>? HouseHoldMembersData { get; set; }
+    List<BeneficiaryIdentificationRegister>? HouseHoldData { get; set; }
+    List<ASubcounty>? SubcountyData { get; set; }
+    List<ADistrict>? DistrictData { get; set; }
+    List<AParish>? ParishData { get; set; }
+    List<AVillage>? VillageData { get; set; }
+    List<ANatureofResidence>? NatureofResidenceData { get; set; }
+    List<ACategoryofResidence>? CategoryofResidenceData { get; set; }
+    List<AYesNo>? YesNoData { get; set; }
+    List<AAssetIncome>? AssetIncomeData { get; set; }
+    List<ARiskLevelRating>? RiskLevelRatingData { get; set; }
+    List<ABusinessVentureCapitalInvestment>? BusinessVentureCapitalInvestmentData { get; set; }
+    List<ACurrenBusinessOpportunity>? BusinessOpportunityData { get; set; }
+    List<ACurrenBusinessRisk>? BusinessRiskData { get; set; }
+    List<AStartBusinessQuestion>? StartBusinessQuestionData { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        await base.OnInitializedAsync();
+        try
+        {
+            var primarydata = await Repo.GetPrimaryData();
+            if (primarydata != null)
+            {
+                GenderData = primarydata.GenderData;
+                CategoryofResidenceData = primarydata.CategoryofResidenceData;
+                NatureofResidenceData = primarydata.NatureofResidenceData;
+                MaritalStatusData = primarydata.MaritalStatusData;
+                ParishData = primarydata.ParishData;
+                VillageData = primarydata.VillageData;
+                DistrictData = primarydata.DistrictData;
+                SubcountyData = primarydata.SubcountyData;
+
+                YesNoData = primarydata.YesNoData;
+                AssetIncomeData = primarydata.AssetIncomeData;
+                RiskLevelRatingData = primarydata.RiskLevelRatingData;
+                BusinessVentureCapitalInvestmentData = primarydata.BusinessVentureCapitalInvestmentData;
+                BusinessOpportunityData = primarydata.BusinessOpportunityData;
+                BusinessRiskData = primarydata.BusinessRiskData;
+                StartBusinessQuestionData = primarydata.StartBusinessQuestionData;
+            }
+
+            HouseHoldData = await db.BeneficiaryIdentificationRegister.ToListAsync();
+            HouseHoldMembersData = await db.HouseHoldMembers.ToListAsync();
+
+            var username = userManagement.GetUserName();
+            Credentials = await db.ViewUserManagement.FirstOrDefaultAsync(o => o.UserName == username);
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    async Task DownloadReport()
+    {
+        try
+        {
+            IsLoading = true;
+            string? DistrictId = null; string? SubcountyId = null; string? HouseholdId = null; string? NatureofResidenceId = null;
+            string? CategoryofResidenceId = null; string? StartDate = null; string? EndDate = null;
+            if (InputModel.DistrictId != null)
+            {
+                DistrictId = string.Join(",", InputModel.DistrictId);
+            }
+            if (InputModel.SubcountyId != null)
+            {
+                SubcountyId = string.Join(",", InputModel.SubcountyId);
+            }
+            if (InputModel.HouseholdId != null)
+            {
+                HouseholdId = string.Join(",", InputModel.HouseholdId);
+            }
+            if (InputModel.StartDate.HasValue)
+            {
+                StartDate = InputModel.StartDate.Value.ToString("dd/MM/yyyy");
+            }
+            if (InputModel.EndDate.HasValue)
+            {
+                EndDate = InputModel.EndDate.Value.ToString("dd/MM/yyyy");
+            }
+
+            //var data = await Repo.GetBusinessPlan(DistrictId, SubcountyId, HouseholdId, NatureofResidenceId, CategoryofResidenceId, StartDate, EndDate);
+            var data = await Repo.GetIsvat(DistrictId, SubcountyId, HouseholdId, NatureofResidenceId, CategoryofResidenceId);
+            if (data != null && data.Any())
+            {
+                using (ExcelEngine excelEngine = new ExcelEngine())
+                {
+                    IApplication application = excelEngine.Excel;
+                    application.DefaultVersion = ExcelVersion.Excel2013;
+                    IWorkbook workbook = application.Workbooks.Create(1);
+                    IWorksheet worksheet = workbook.Worksheets[0];
+                    worksheet.Name = "HIVA Report";
+
+                    List<ColumnClass> QuestionColumns = new List<ColumnClass>();
+
+                    #region Styles
+                    var headerStyle = workbook.Styles.Add("headerStyle");
+
+                    headerStyle.BeginUpdate();
+                    headerStyle.Color = Syncfusion.Drawing.Color.Black; //Syncfusion.Drawing.Color.FromArgb(255, 0, 0);
+                    headerStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    headerStyle.Font.Bold = true;
+                    headerStyle.Font.FontName = "Arial";
+                    headerStyle.Font.Size = 8f;
+                    headerStyle.Font.Color = ExcelKnownColors.White;
+
+                    headerStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    headerStyle.Borders.Color = ExcelKnownColors.White;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    //headerStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thick;
+
+                    headerStyle.WrapText = true;
+
+                    headerStyle.EndUpdate();
+
+                    var Style = workbook.Styles.Add("bodyStyle");
+
+                    Style.BeginUpdate();
+                    Style.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                    Style.VerticalAlignment = ExcelVAlign.VAlignTop;
+                    Style.Font.Bold = false;
+                    Style.Font.FontName = "Arial";
+                    Style.Font.Size = 8f;
+                    Style.Font.Color = ExcelKnownColors.Black;
+                    Style.WrapText = true;
+                    Style.Borders.Color = ExcelKnownColors.Black;
+                    Style.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    Style.EndUpdate();
+
+
+                    var CategoryStyle = workbook.Styles.Add("CategoryStyle");
+
+                    CategoryStyle.BeginUpdate();
+                    CategoryStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 195, 0);
+                    /*CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88);*/ //AUBERGINE
+                    CategoryStyle.Font.Bold = true;
+                    CategoryStyle.Font.FontName = "Arial";
+                    CategoryStyle.Font.Size = 10f;
+                    CategoryStyle.Font.Color = ExcelKnownColors.White;
+                    CategoryStyle.WrapText = true;
+                    CategoryStyle.Borders.Color = ExcelKnownColors.White;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.EndUpdate();
+
+                    var CategoryTotalStyle = workbook.Styles.Add("CategoryTotalStyle");
+
+                    CategoryTotalStyle.BeginUpdate();
+                    CategoryTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    CategoryTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    CategoryTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    CategoryTotalStyle.Font.Bold = true;
+                    CategoryTotalStyle.Font.FontName = "Arial";
+                    CategoryTotalStyle.Font.Size = 8f;
+                    CategoryTotalStyle.Font.Color = ExcelKnownColors.White;
+                    CategoryTotalStyle.WrapText = true;
+                    CategoryTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.EndUpdate();
+
+                    var DivisionStyle = workbook.Styles.Add("DivisionStyle");
+
+                    DivisionStyle.BeginUpdate();
+                    DivisionStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    DivisionStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 0, 0); //RED
+                    DivisionStyle.Font.Bold = true;
+                    DivisionStyle.Font.FontName = "Arial";
+                    DivisionStyle.Font.Size = 8f;
+                    DivisionStyle.Font.Color = ExcelKnownColors.White;
+                    DivisionStyle.WrapText = true;
+                    DivisionStyle.Borders.Color = ExcelKnownColors.White;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.EndUpdate();
+
+                    var DivisionTotalStyle = workbook.Styles.Add("DivisionTotalStyle");
+
+                    DivisionTotalStyle.BeginUpdate();
+                    DivisionTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    DivisionTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    DivisionTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    DivisionTotalStyle.Font.Bold = true;
+                    DivisionTotalStyle.Font.FontName = "Arial";
+                    DivisionTotalStyle.Font.Size = 8f;
+                    DivisionTotalStyle.Font.Color = ExcelKnownColors.White;
+                    DivisionTotalStyle.WrapText = true;
+                    DivisionTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.EndUpdate();
+
+
+                    var TopicStyle = workbook.Styles.Add("TopicStyle");
+
+                    TopicStyle.BeginUpdate();
+                    TopicStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    TopicStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88); //AUBERGINE
+                    TopicStyle.Font.Bold = true;
+                    TopicStyle.Font.FontName = "Arial";
+                    TopicStyle.Font.Size = 8f;
+                    TopicStyle.Font.Color = ExcelKnownColors.White;
+                    TopicStyle.WrapText = true;
+                    TopicStyle.Borders.Color = ExcelKnownColors.White;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.EndUpdate();
+
+                    var TopicTotalStyle = workbook.Styles.Add("TopicTotalStyle");
+
+                    TopicTotalStyle.BeginUpdate();
+                    TopicTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    TopicTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    TopicTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    TopicTotalStyle.Font.Bold = true;
+                    TopicTotalStyle.Font.FontName = "Arial";
+                    TopicTotalStyle.Font.Size = 8f;
+                    TopicTotalStyle.Font.Color = ExcelKnownColors.White;
+                    TopicTotalStyle.WrapText = true;
+                    TopicTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.EndUpdate();
+                    #endregion
+
+                    int row = 1;
+                    worksheet.Range[row, 1].Text = "HOUSEHOLD INCOME SOURCE VIABILITY ASSESSMENT Report";
+                    worksheet.Range["A" + row + ":M" + row].CellStyle = CategoryStyle;
+                    worksheet.Range["A" + row + ":M" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    worksheet.Range["A" + row + ":M" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    worksheet.Range["A" + row].RowHeight = 30;
+                    worksheet.Range["A" + row + ":M" + row].Merge();
+                    row++;
+                    row++;
+                    row++;
+
+                    worksheet.Range[row, 1].Text = "District";
+                    worksheet.Range[row, 1].ColumnWidth = 20;
+
+                    worksheet.Range[row, 2].Text = "Sub county";
+                    worksheet.Range[row, 2].ColumnWidth = 20;
+
+                    worksheet.Range[row, 3].Text = "Parish";
+                    worksheet.Range[row, 3].ColumnWidth = 20;
+
+                    worksheet.Range[row, 4].Text = "Village";
+                    worksheet.Range[row, 4].ColumnWidth = 20;
+
+                    worksheet.Range[row, 5].Text = "Household Code";
+                    worksheet.Range[row, 5].ColumnWidth = 20;
+
+                    worksheet.Range[row, 6].Text = "Caregiver ID";
+                    worksheet.Range[row, 6].ColumnWidth = 20;
+
+                    worksheet.Range[row, 7].Text = "Caregiver Name";
+                    worksheet.Range[row, 7].ColumnWidth = 20;
+
+                    worksheet.Range[row, 8].Text = "Nature of Residence";
+                    worksheet.Range[row, 8].ColumnWidth = 20;
+
+                    worksheet.Range[row, 9].Text = "Category of Residence";
+                    worksheet.Range[row, 9].ColumnWidth = 20;
+
+                    worksheet.Range[row, 10].Text = "Sex";
+                    worksheet.Range[row, 10].ColumnWidth = 10;
+
+                    worksheet.Range[row, 11].Text = "Date of Birth";
+                    worksheet.Range[row, 11].ColumnWidth = 12;
+
+                    worksheet.Range[row, 12].Text = "Age";
+                    worksheet.Range[row, 12].ColumnWidth = 10;
+
+                    worksheet.Range[row, 13].Text = "Individual ID";
+                    worksheet.Range[row, 13].ColumnWidth = 20;
+
+                    worksheet.Range[row, 14].Text = "Name of Individual";
+                    worksheet.Range[row, 14].ColumnWidth = 20;
+
+                    worksheet.Range[row, 15].Text = "Age";
+                    worksheet.Range[row, 15].ColumnWidth = 10;
+
+                    worksheet.Range[row, 16].Text = "Sex";
+                    worksheet.Range[row, 16].ColumnWidth = 12;
+
+                    worksheet.Range[row, 17].Text = "Income Earner";
+                    worksheet.Range[row, 17].ColumnWidth = 12;
+
+                    int startColumn = 17;
+                    int EndColumn = 17;
+                    int ClassificationStartColumn = 17;
+
+                    if (AssetIncomeData != null && AssetIncomeData.Count > 0)
+                    {
+                        //Household Asset & Income Ownership
+                        foreach (var item in AssetIncomeData)
+                        {
+                            EndColumn++;
+                            worksheet.Range[row, EndColumn].Text = item.AssetIncomeDesc;
+                            worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                            QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item.AssetIncomeId, SectionId = "Household Asset & Income Ownership" });
+                        }
+
+                        ClassificationStartColumn++;
+                        worksheet.Range[(row - 1), ClassificationStartColumn].Text = "Household Asset & Income Ownership";
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                        ClassificationStartColumn = EndColumn;
+
+
+                        //WORKING CAPITAL
+                        foreach (var item in AssetIncomeData)
+                        {
+                            EndColumn++;
+                            worksheet.Range[row, EndColumn].Text = item.AssetIncomeDesc;
+                            worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                            QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item.AssetIncomeId, SectionId = "WORKING CAPITAL" });
+                        }
+
+                        ClassificationStartColumn++;
+                        worksheet.Range[(row - 1), ClassificationStartColumn].Text = "WORKING CAPITAL";
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                        ClassificationStartColumn = EndColumn;
+
+                        //PROFIT GENERATED
+
+                        foreach (var item in AssetIncomeData)
+                        {
+                            EndColumn++;
+                            worksheet.Range[row, EndColumn].Text = item.AssetIncomeDesc;
+                            worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                            QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item.AssetIncomeId, SectionId = "PROFIT GENERATED" });
+                        }
+
+                        ClassificationStartColumn++;
+                        worksheet.Range[(row - 1), ClassificationStartColumn].Text = "PROFIT GENERATED";
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                        ClassificationStartColumn = EndColumn;
+
+                        //LOSS (DEBTOR)
+
+                        foreach (var item in AssetIncomeData)
+                        {
+                            EndColumn++;
+                            worksheet.Range[row, EndColumn].Text = item.AssetIncomeDesc;
+                            worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                            QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item.AssetIncomeId, SectionId = "LOSS (DEBTOR)" });
+                        }
+
+                        ClassificationStartColumn++;
+                        worksheet.Range[(row - 1), ClassificationStartColumn].Text = "LOSS (DEBTOR)";
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                        ClassificationStartColumn = EndColumn;
+                    }
+
+                    //RISKS /GAPS ASSOCIATED WITH CURRENT BUSINESS
+                    if (BusinessRiskData != null && BusinessRiskData.Count > 0)
+                    {
+                        foreach (var item in BusinessRiskData)
+                        {
+                            EndColumn++;
+                            worksheet.Range[row, EndColumn].Text = item.CurrenBusinessRiskDesc;
+                            worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                            QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item.CurrenBusinessRiskId, SectionId = "RISKS /GAPS ASSOCIATED WITH CURRENT BUSINESS" });
+                        }
+
+                        ClassificationStartColumn++;
+                        worksheet.Range[(row - 1), ClassificationStartColumn].Text = "RISKS /GAPS ASSOCIATED WITH CURRENT BUSINESS";
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                        ClassificationStartColumn = EndColumn;
+                    }
+
+                    //ARE THERE OPPORTUNITIES ASSOCIATED WITH CURRENT BUSINESS ?
+                    if (BusinessOpportunityData != null && BusinessOpportunityData.Count > 0)
+                    {
+                        foreach (var item in BusinessOpportunityData)
+                        {
+                            EndColumn++;
+                            worksheet.Range[row, EndColumn].Text = item.CurrenBusinessOpportunityDesc;
+                            worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                            QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item.CurrenBusinessOpportunityId, SectionId = "ARE THERE OPPORTUNITIES ASSOCIATED WITH CURRENT BUSINESS ?" });
+                        }
+
+                        ClassificationStartColumn++;
+                        worksheet.Range[(row - 1), ClassificationStartColumn].Text = "ARE THERE OPPORTUNITIES ASSOCIATED WITH CURRENT BUSINESS ?";
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                        ClassificationStartColumn = EndColumn;
+                    }
+
+                    //FOR BENEFIARIES WISHING TO START BUSINESS
+                    if (StartBusinessQuestionData != null && StartBusinessQuestionData.Count > 0)
+                    {
+                        foreach (var item in StartBusinessQuestionData)
+                        {
+                            EndColumn++;
+                            worksheet.Range[row, EndColumn].Text = item.StartBusinessQuestionDesc;
+                            worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                            QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item.StartBusinessQuestionId, SectionId = "FOR BENEFIARIES WISHING TO START BUSINESS" });
+                        }
+
+                        ClassificationStartColumn++;
+                        worksheet.Range[(row - 1), ClassificationStartColumn].Text = "FOR BENEFIARIES WISHING TO START BUSINESS";
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                        worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                        ClassificationStartColumn = EndColumn;
+                    }
+
+
+                    int ColumnAfterQuestion = EndColumn;
+                    worksheet.Range[row, (ColumnAfterQuestion + 1)].Text = "Name of Data Collector";
+                    worksheet.Range[row, (ColumnAfterQuestion + 1)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 2)].Text = "Title";
+                    worksheet.Range[row, (ColumnAfterQuestion + 2)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 3)].Text = "Date";
+                    worksheet.Range[row, (ColumnAfterQuestion + 3)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 4)].Text = "Name of Data Reviewer";
+                    worksheet.Range[row, (ColumnAfterQuestion + 4)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 5)].Text = "Title";
+                    worksheet.Range[row, (ColumnAfterQuestion + 5)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 6)].Text = "Date";
+                    worksheet.Range[row, (ColumnAfterQuestion + 6)].ColumnWidth = 20;
+
+                    worksheet.Range[row, 1, row, (ColumnAfterQuestion + 6)].CellStyle = headerStyle;
+
+                    row++;
+                    foreach (var item in data)
+                    {
+                        if (item.IsvatincomeEarner != null && item.IsvatincomeEarner.Any())
+                        {
+                            foreach (var item1 in item.IsvatincomeEarner)
+                            {
+                                worksheet.Range[row, 1].Text = DistrictData?.FirstOrDefault(x => x.DistrictId == item.DistrictId)?.DistrictDescription;
+
+                                worksheet.Range[row, 2].Text = SubcountyData?.FirstOrDefault(x => x.SubcountyId == item.SubcountyId)?.SubcountyDescription;
+
+                                worksheet.Range[row, 3].Text = ParishData?.FirstOrDefault(x => x.ParishId == item.ParishId)?.ParishDescription;
+
+                                worksheet.Range[row, 4].Text = VillageData?.FirstOrDefault(x => x.VillageId == item.VillageId)?.VillageDescription;
+
+                                worksheet.Range[row, 5].Text = HouseHoldData?.FirstOrDefault(x => x.HouseHoldId == item.HouseholdId)?.HouseHoldCode;
+
+                                worksheet.Range[row, 6].Text = HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.HouseHoldMemberCode;
+
+                                worksheet.Range[row, 7].Text = HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.Surname + " " + HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.Givenname;
+
+                                worksheet.Range[row, 8].Text = NatureofResidenceData?.FirstOrDefault(x => x.NatureofResidenceId == item.NatureofResidenceId)?.NatureofResidenceDesc;
+
+                                worksheet.Range[row, 9].Text = CategoryofResidenceData?.FirstOrDefault(x => x.CategoryofResidenceId == item.CategoryofResidenceId)?.CategoryofResidenceDesc;
+
+                                worksheet.Range[row, 10].Text = GenderData?.FirstOrDefault(x => x.GenderId == item.GenderId)?.GenderDescription;
+
+                                worksheet.Range[row, 11].Text = item.Dob?.ToString("dd MMM yyyy");
+
+                                worksheet.Range[row, 12].Text = item.Age?.ToString();
+                                var HouseholdMember = HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item1.HouseHoldMemberId);
+
+                                worksheet.Range[row, 13].Text = HouseholdMember?.HouseHoldMemberCode;
+
+                                worksheet.Range[row, 14].Text = HouseholdMember?.Surname + " " + HouseholdMember?.Givenname;
+
+                                worksheet.Range[row, 15].Text = HouseholdMember?.Age?.ToString("#,#");
+
+                                worksheet.Range[row, 16].Text = GenderData?.FirstOrDefault(x => x.GenderId == HouseholdMember?.GenderId)?.GenderDescription;
+
+                                worksheet.Range[row, 17].Text = YesNoData?.FirstOrDefault(x => x.YesNoId == item1.IncomeEarnerYesNoId)?.YesNoDescription;
+
+                                if (item1.IsvatincomeOwnership != null && item1.IsvatincomeOwnership.Any())
+                                {
+                                    var _Columns = QuestionColumns?.Where(o => o.SectionId == "Household Asset & Income Ownership").ToList();
+                                    if (_Columns.Any())
+                                    {
+                                        foreach (var item2 in _Columns)
+                                        {
+                                            var record = item1.IsvatincomeOwnership.FirstOrDefault(x => x.AssetIncomeId == item2.QuestionId);
+
+                                            if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherAssetIncome))
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherAssetIncome} ({YesNoData?.FirstOrDefault(x => x.YesNoId == record?.AssetIncomeYesNoId)?.YesNoDescription})";
+                                            }
+                                            else
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = YesNoData?.FirstOrDefault(x => x.YesNoId == record?.AssetIncomeYesNoId)?.YesNoDescription;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (item.IsvatworkingCapital != null && item.IsvatworkingCapital.Any())
+                                {
+                                    var _Columns = QuestionColumns?.Where(o => o.SectionId == "WORKING CAPITAL").ToList();
+                                    if (_Columns.Any())
+                                    {
+                                        foreach (var item2 in _Columns)
+                                        {
+                                            var record = item.IsvatworkingCapital.FirstOrDefault(x => x.AssetIncomeId == item2.QuestionId);
+
+                                            if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherAssetIncome))
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherAssetIncome} ({BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc})";
+                                            }
+                                            else
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (item.IsvatgeneratedProfit != null && item.IsvatgeneratedProfit.Any())
+                                {
+                                    var _Columns = QuestionColumns?.Where(o => o.SectionId == "PROFIT GENERATED").ToList();
+                                    if (_Columns.Any())
+                                    {
+                                        foreach (var item2 in _Columns)
+                                        {
+                                            var record = item.IsvatgeneratedProfit.FirstOrDefault(x => x.AssetIncomeId == item2.QuestionId);
+
+                                            if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherAssetIncome))
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherAssetIncome} ({BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc})";
+                                            }
+                                            else
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (item.Isvatloss != null && item.Isvatloss.Any())
+                                {
+                                    var _Columns = QuestionColumns?.Where(o => o.SectionId == "LOSS (DEBTOR)").ToList();
+                                    if (_Columns.Any())
+                                    {
+                                        foreach (var item2 in _Columns)
+                                        {
+                                            var record = item.Isvatloss.FirstOrDefault(x => x.AssetIncomeId == item2.QuestionId);
+
+                                            if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherAssetIncome))
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherAssetIncome} ({BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc})";
+                                            }
+                                            else
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (item.IsvatcurrentBusinessRisk != null && item.IsvatcurrentBusinessRisk.Any())
+                                {
+                                    var _Columns = QuestionColumns?.Where(o => o.SectionId == "RISKS /GAPS ASSOCIATED WITH CURRENT BUSINESS").ToList();
+                                    if (_Columns.Any())
+                                    {
+                                        foreach (var item2 in _Columns)
+                                        {
+                                            var record = item.IsvatcurrentBusinessRisk.FirstOrDefault(x => x.CurrenBusinessRiskId == item2.QuestionId);
+                                            if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherCurrenBusinessRisk))
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherCurrenBusinessRisk} ({worksheet.Range[row, item2.ColumnNo].Text = RiskLevelRatingData?.FirstOrDefault(x => x.RiskLevelRatingId == record?.RiskLevelRatingId)?.RiskLevelRatingDesc})";
+                                            }
+                                            else
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = RiskLevelRatingData?.FirstOrDefault(x => x.RiskLevelRatingId == record?.RiskLevelRatingId)?.RiskLevelRatingDesc;
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                if (item.IsvatcurrentBusinessOpportunity != null && item.IsvatcurrentBusinessOpportunity.Any())
+                                {
+                                    var _Columns = QuestionColumns?.Where(o => o.SectionId == "ARE THERE OPPORTUNITIES ASSOCIATED WITH CURRENT BUSINESS ?").ToList();
+                                    if (_Columns.Any())
+                                    {
+                                        foreach (var item2 in _Columns)
+                                        {
+                                            var record = item.IsvatcurrentBusinessOpportunity.FirstOrDefault(x => x.CurrenBusinessOpportunityId == item2.QuestionId);
+
+                                            if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherCurrenBusinessOpportunity))
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherCurrenBusinessOpportunity} ({YesNoData?.FirstOrDefault(x => x.YesNoId == record?.YesNoId)?.YesNoDescription})";
+                                            }
+                                            else
+                                            {
+                                                worksheet.Range[row, item2.ColumnNo].Text = YesNoData?.FirstOrDefault(x => x.YesNoId == record?.YesNoId)?.YesNoDescription;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (item.IsvatstartBusinessAnswer != null && item.IsvatstartBusinessAnswer.Any())
+                                {
+                                    var _Columns = QuestionColumns?.Where(o => o.SectionId == "FOR BENEFIARIES WISHING TO START BUSINESS").ToList();
+                                    if (_Columns.Any())
+                                    {
+                                        foreach (var item2 in _Columns)
+                                        {
+                                            var record = item.IsvatstartBusinessAnswer.FirstOrDefault(x => x.StartBusinessQuestionId == item2.QuestionId);
+
+                                            worksheet.Range[row, item2.ColumnNo].Text = record?.StartBusinessQuestionAnswer;
+                                        }
+                                    }
+                                }
+
+                                worksheet.Range[row, (ColumnAfterQuestion + 1)].Text = item.DataCollectorName;
+
+                                worksheet.Range[row, (ColumnAfterQuestion + 2)].Text = item.DataCollectorTitle;
+
+                                worksheet.Range[row, (ColumnAfterQuestion + 3)].Text = item.DataCollectionDate?.ToString("dd MMM yyyy");
+
+                                worksheet.Range[row, (ColumnAfterQuestion + 4)].Text = item.DataReviewerName;
+
+                                worksheet.Range[row, (ColumnAfterQuestion + 5)].Text = item.DataReviewerTitle;
+
+                                worksheet.Range[row, (ColumnAfterQuestion + 6)].Text = item.DataReviewDate?.ToString("dd MMM yyyy");
+
+                                worksheet.Range[row, 1, row, (ColumnAfterQuestion + 6)].CellStyle = Style;
+                                row++;
+                            }
+                        }
+                        else
+                        {
+                            worksheet.Range[row, 1].Text = DistrictData?.FirstOrDefault(x => x.DistrictId == item.DistrictId)?.DistrictDescription;
+
+                            worksheet.Range[row, 2].Text = SubcountyData?.FirstOrDefault(x => x.SubcountyId == item.SubcountyId)?.SubcountyDescription;
+
+                            worksheet.Range[row, 3].Text = ParishData?.FirstOrDefault(x => x.ParishId == item.ParishId)?.ParishDescription;
+
+                            worksheet.Range[row, 4].Text = VillageData?.FirstOrDefault(x => x.VillageId == item.VillageId)?.VillageDescription;
+
+                            worksheet.Range[row, 5].Text = HouseHoldData?.FirstOrDefault(x => x.HouseHoldId == item.HouseholdId)?.HouseHoldCode;
+
+                            worksheet.Range[row, 6].Text = HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.HouseHoldMemberCode;
+
+                            worksheet.Range[row, 7].Text = HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.Surname + " " + HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.Givenname;
+
+                            worksheet.Range[row, 8].Text = NatureofResidenceData?.FirstOrDefault(x => x.NatureofResidenceId == item.NatureofResidenceId)?.NatureofResidenceDesc;
+
+                            worksheet.Range[row, 9].Text = CategoryofResidenceData?.FirstOrDefault(x => x.CategoryofResidenceId == item.CategoryofResidenceId)?.CategoryofResidenceDesc;
+
+                            worksheet.Range[row, 10].Text = GenderData?.FirstOrDefault(x => x.GenderId == item.GenderId)?.GenderDescription;
+
+                            worksheet.Range[row, 11].Text = item.Dob?.ToString("dd MMM yyyy");
+
+                            worksheet.Range[row, 12].Text = item.Age?.ToString();
+                            
+
+                            if (item.IsvatworkingCapital != null && item.IsvatworkingCapital.Any())
+                            {
+                                var _Columns = QuestionColumns?.Where(o => o.SectionId == "WORKING CAPITAL").ToList();
+                                if (_Columns.Any())
+                                {
+                                    foreach (var item2 in _Columns)
+                                    {
+                                        var record = item.IsvatworkingCapital.FirstOrDefault(x => x.AssetIncomeId == item2.QuestionId);
+
+                                        if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherAssetIncome))
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherAssetIncome} ({BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc})";
+                                        }
+                                        else
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (item.IsvatgeneratedProfit != null && item.IsvatgeneratedProfit.Any())
+                            {
+                                var _Columns = QuestionColumns?.Where(o => o.SectionId == "PROFIT GENERATED").ToList();
+                                if (_Columns.Any())
+                                {
+                                    foreach (var item2 in _Columns)
+                                    {
+                                        var record = item.IsvatgeneratedProfit.FirstOrDefault(x => x.AssetIncomeId == item2.QuestionId);
+
+                                        if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherAssetIncome))
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherAssetIncome} ({BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc})";
+                                        }
+                                        else
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (item.Isvatloss != null && item.Isvatloss.Any())
+                            {
+                                var _Columns = QuestionColumns?.Where(o => o.SectionId == "LOSS (DEBTOR)").ToList();
+                                if (_Columns.Any())
+                                {
+                                    foreach (var item2 in _Columns)
+                                    {
+                                        var record = item.Isvatloss.FirstOrDefault(x => x.AssetIncomeId == item2.QuestionId);
+
+                                        if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherAssetIncome))
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherAssetIncome} ({BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc})";
+                                        }
+                                        else
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = BusinessVentureCapitalInvestmentData?.FirstOrDefault(x => x.BusinessVentureCapitalInvestmentId == record?.BusinessVentureCapitalInvestmentId)?.BusinessVentureCapitalInvestmentDesc;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (item.IsvatcurrentBusinessRisk != null && item.IsvatcurrentBusinessRisk.Any())
+                            {
+                                var _Columns = QuestionColumns?.Where(o => o.SectionId == "RISKS /GAPS ASSOCIATED WITH CURRENT BUSINESS").ToList();
+                                if (_Columns.Any())
+                                {
+                                    foreach (var item2 in _Columns)
+                                    {
+                                        var record = item.IsvatcurrentBusinessRisk.FirstOrDefault(x => x.CurrenBusinessRiskId == item2.QuestionId);
+                                        if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherCurrenBusinessRisk))
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherCurrenBusinessRisk} ({worksheet.Range[row, item2.ColumnNo].Text = RiskLevelRatingData?.FirstOrDefault(x => x.RiskLevelRatingId == record?.RiskLevelRatingId)?.RiskLevelRatingDesc})";
+                                        }
+                                        else
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = RiskLevelRatingData?.FirstOrDefault(x => x.RiskLevelRatingId == record?.RiskLevelRatingId)?.RiskLevelRatingDesc;
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            if (item.IsvatcurrentBusinessOpportunity != null && item.IsvatcurrentBusinessOpportunity.Any())
+                            {
+                                var _Columns = QuestionColumns?.Where(o => o.SectionId == "ARE THERE OPPORTUNITIES ASSOCIATED WITH CURRENT BUSINESS ?").ToList();
+                                if (_Columns.Any())
+                                {
+                                    foreach (var item2 in _Columns)
+                                    {
+                                        var record = item.IsvatcurrentBusinessOpportunity.FirstOrDefault(x => x.CurrenBusinessOpportunityId == item2.QuestionId);
+
+                                        if (item2.QuestionId == 7 && !string.IsNullOrEmpty(record?.OtherCurrenBusinessOpportunity))
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = $"{record?.OtherCurrenBusinessOpportunity} ({YesNoData?.FirstOrDefault(x => x.YesNoId == record?.YesNoId)?.YesNoDescription})";
+                                        }
+                                        else
+                                        {
+                                            worksheet.Range[row, item2.ColumnNo].Text = YesNoData?.FirstOrDefault(x => x.YesNoId == record?.YesNoId)?.YesNoDescription;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (item.IsvatstartBusinessAnswer != null && item.IsvatstartBusinessAnswer.Any())
+                            {
+                                var _Columns = QuestionColumns?.Where(o => o.SectionId == "FOR BENEFIARIES WISHING TO START BUSINESS").ToList();
+                                if (_Columns.Any())
+                                {
+                                    foreach (var item2 in _Columns)
+                                    {
+                                        var record = item.IsvatstartBusinessAnswer.FirstOrDefault(x => x.StartBusinessQuestionId == item2.QuestionId);
+
+                                        worksheet.Range[row, item2.ColumnNo].Text = record?.StartBusinessQuestionAnswer;
+                                    }
+                                }
+                            }
+
+                            worksheet.Range[row, (ColumnAfterQuestion + 1)].Text = item.DataCollectorName;
+
+                            worksheet.Range[row, (ColumnAfterQuestion + 2)].Text = item.DataCollectorTitle;
+
+                            worksheet.Range[row, (ColumnAfterQuestion + 3)].Text = item.DataCollectionDate?.ToString("dd MMM yyyy");
+
+                            worksheet.Range[row, (ColumnAfterQuestion + 4)].Text = item.DataReviewerName;
+
+                            worksheet.Range[row, (ColumnAfterQuestion + 5)].Text = item.DataReviewerTitle;
+
+                            worksheet.Range[row, (ColumnAfterQuestion + 6)].Text = item.DataReviewDate?.ToString("dd MMM yyyy");
+
+                            worksheet.Range[row, 1, row, (ColumnAfterQuestion + 6)].CellStyle = Style;
+                            row++;
+                        }
+                    }
+
+
+
+                    MemoryStream ms = new MemoryStream();
+                    // Save and close the document.
+                    workbook.SaveAs(ms);
+                    //Reset the memory stream position.
+                    ms.Position = 0;
+                    await JS.SaveAs("HIVA Report.xlsx", ms.ToArray());
+                    ms.Dispose();
+                    workbook.Close();
+                    excelEngine.Dispose();
+                    //outComeResult = "Success:- The report was successfully downloaded.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private class ColumnClass
+    {
+        public int ColumnNo { get; set; }
+        public int QuestionId { get; set; }
+        public string SectionId { get; set; }
+    }
+}

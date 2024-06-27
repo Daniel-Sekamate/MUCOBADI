@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MUCOBADI.DTOs;
 using MUCOBADI.Models;
+<<<<<<< HEAD
 using System;
+=======
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,10 +35,13 @@ namespace MUCOBADI.Interfaces.SMUtools
         Task<List<SmuSafetyPlanningFormWarningSigns>> GetSmuSafetyPlanningFormWarningSigns(int SelectedSafetyPlanningFormId);
         Task<List<SmuSafetyPlanningFormInternalCopingStrategies>> GetSmuSafetyPlanningFormInternalCopingStrategies(int SelectedSafetyPlanningFormId);
         Task<PagedResult<SmuGroup>> GetAllSMUGroups(int page = 1, int pageSize = 30, string? searchTerm = "");
+<<<<<<< HEAD
         // Task<byte[]> GenerateClientRegistrationReport(DateTime? startDate, DateTime? endDate,string? smuGroupIds = "", string? regionIds = "", string? districtIds = "", string? subcountyIds = "", string? clientAgeRangeIds = "", string? smuOfficeIds = "", string? smuFacilitatorIds = "");
         Task<byte[]> GenerateClientRegistrationReportAsync(DateTime? startDate, DateTime? endDate, string? smuGroupIds = "", string? regionIds = "", string? districtIds = "", string? subcountyIds = "", string? clientAgeRangeIds = "", string? smuOfficeIds = "", string? smuFacilitatorIds = "");
 
         Task<byte[]> GenerateTherapySessionReportAsync(DateTime? startDate, DateTime? endDate, string? smuGroupIds = "", string? regionIds = "", string? districtIds = "", string? subcountyIds = "", string? clientAgeRangeIds = "", string? smuOfficeIds = "", string? smuFacilitatorIds = "");
+=======
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 
     }
 }

@@ -42,7 +42,7 @@
     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
     <GridEvents OnActionBegin="OnAViralLoadResultsActionBegin" TValue="AViralLoadResults"></GridEvents>
-    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
 
         <HeaderTemplate>
             @{
@@ -99,7 +99,7 @@
     #endregion Toasters
 
     private SfGrid<AViralLoadResults> AViralLoadResultsGrid;
-
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
     public string ButtonText { get; set; }
 
     protected override async Task OnInitializedAsync()

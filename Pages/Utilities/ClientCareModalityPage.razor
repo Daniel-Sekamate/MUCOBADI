@@ -42,7 +42,7 @@
     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
     <GridEvents OnActionBegin="OnAClientCareModalityActionBegin" TValue="AClientCareModality"></GridEvents>
-    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
 
         <HeaderTemplate>
             @{
@@ -96,6 +96,7 @@
     };
     #endregion Toasters
 
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
     private SfGrid<AClientCareModality> CareGiverGrid;
 
     public string ButtonText { get; set; }

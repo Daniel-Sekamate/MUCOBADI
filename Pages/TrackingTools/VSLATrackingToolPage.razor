@@ -102,7 +102,7 @@
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <SfDataManager AdaptorInstance="@typeof(VslaTrackingToolAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
             <GridEvents OnActionBegin="OnVslaTrackingToolActionBegin" OnActionComplete="@OnVslaTrackingToolActionComplete" TValue="VslaTrackingTool"></GridEvents>
-            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <Template Context="VslaTrackingToolContext">
                     @{
                         VslaTrackingToolReviewData = (VslaTrackingToolContext as VslaTrackingTool);
@@ -738,6 +738,8 @@
             new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
         };
     #endregion Toasters
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+
     SfGrid<VslaTrackingTool> VslaTrackingToolGrid;
     private VslaTrackingTool VslaTrackingToolReviewData { get; set; }
 

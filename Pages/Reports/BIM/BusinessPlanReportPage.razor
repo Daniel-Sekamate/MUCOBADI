@@ -1,0 +1,498 @@
+﻿@page "/BusinessPlanReportPage"
+@inject Microsoft.JSInterop.IJSRuntime JS
+@using MUCOBADI.DTOs
+@using MUCOBADI.Data
+@using MUCOBADI.Interfaces
+@using Microsoft.EntityFrameworkCore
+@using Syncfusion.XlsIO
+@using System.IO
+@inject IToastService toastService;
+@inject IBimService Repo;
+@inject MUCOBADIContext db;
+@inject UserManagement userManagement;
+
+<MudOverlay Visible="@IsLoading" DarkBackground="true" Absolute="true" Style="z-index:200000; height:100vh;">
+    <MudProgressCircular Color="MudBlazor.Color.Secondary" Indeterminate="true" />
+    <MudText Style="color:ghostwhite;">Loading data please wait..</MudText>
+</MudOverlay>
+
+<div class="row">
+    <div class="col-md-12">
+        <BreadCrumbPage CategoryName="BIM" PageName="Business Plan Report" />
+    </div>
+    @if (IsLoading == false)
+    {
+        <div class="col-md-12">
+            <div class="row" n style="margin:5px;">
+                <SearchPanelPartialPage @ref=@SearchPanel DistrictData="@DistrictData" HouseHoldData="@HouseHoldData" SubcountyData="@SubcountyData" Credentials=@Credentials />
+                <div class="col-md-4">
+                    <button type="button" style="margin-top:32px;"
+                    class="btn btn-primary" 
+                    @onclick="@(async()=>{
+                        InputModel = SearchPanel.SearchReportRecords();
+                        await DownloadReport();
+                    })">Download Report</button>
+
+                    <button type="button" style="margin-top:32px;"
+                    class="btn btn-secondary"
+                    @onclick="@(() => {
+                        InputModel =SearchPanel.ClearReportSearch();
+                    })">Clear Search</button>
+                </div>
+            </div>
+    </div>
+    }
+    </div>
+@code {
+    SearchPanelPartialPage? SearchPanel;
+    bool IsLoading { get; set; }
+
+    List<AGender>? GenderData { get; set; }
+    List<AMaritalStatus>? MaritalStatusData { get; set; }
+    List<HouseHoldMembers>? HouseHoldMembersData { get; set; }
+    List<BeneficiaryIdentificationRegister>? HouseHoldData { get; set; }
+    List<ASubcounty>? SubcountyData { get; set; }
+    List<ADistrict>? DistrictData { get; set; }
+    List<AParish>? ParishData { get; set; }
+    List<AVillage>? VillageData { get; set; }
+    List<ANatureofResidence>? NatureofResidenceData { get; set; }
+    List<ACategoryofResidence>? CategoryofResidenceData { get; set; }
+    List<ABusinessPlanQuestion>? BusinessPlanQuestionData { get; set; }
+
+    private ViewUserManagement? Credentials { get; set; }
+
+    private EnrolmentSearchModel InputModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        await base.OnInitializedAsync();
+        try
+        {
+            var primarydata = await Repo.GetPrimaryData();
+            if (primarydata != null)
+            {
+                GenderData = primarydata.GenderData;
+                BusinessPlanQuestionData = primarydata.BusinessPlanQuestionData;
+                CategoryofResidenceData = primarydata.CategoryofResidenceData;
+                NatureofResidenceData = primarydata.NatureofResidenceData;
+                MaritalStatusData = primarydata.MaritalStatusData;
+                ParishData = primarydata.ParishData;
+                VillageData = primarydata.VillageData;
+                DistrictData = primarydata.DistrictData;
+                SubcountyData = primarydata.SubcountyData;
+            }
+
+            HouseHoldData = await db.BeneficiaryIdentificationRegister.ToListAsync();
+            HouseHoldMembersData = await db.HouseHoldMembers.ToListAsync();
+
+            var username = userManagement.GetUserName();
+            Credentials = await db.ViewUserManagement.FirstOrDefaultAsync(o => o.UserName == username);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    async Task DownloadReport()
+    {
+        try
+        {
+            IsLoading = true;
+            string? DistrictId = null; string? SubcountyId = null; string? HouseholdId = null; string? NatureofResidenceId = null;
+            string? CategoryofResidenceId = null; string? StartDate = null; string? EndDate = null;
+            if (InputModel.DistrictId != null)
+            {
+                DistrictId= string.Join(",", InputModel.DistrictId);
+            }
+            if (InputModel.SubcountyId != null)
+            {
+                SubcountyId= string.Join(",", InputModel.SubcountyId);
+            }
+            if (InputModel.HouseholdId != null)
+            {
+                HouseholdId= string.Join(",", InputModel.HouseholdId);
+            }
+            if (InputModel.StartDate.HasValue)
+            {
+                StartDate= InputModel.StartDate.Value.ToString("dd/MM/yyyy");
+            }
+            if (InputModel.EndDate.HasValue)
+            {
+                EndDate=InputModel.EndDate.Value.ToString("dd/MM/yyyy");
+            }
+
+            var data = await Repo.GetBusinessPlan(DistrictId, SubcountyId, HouseholdId, NatureofResidenceId, CategoryofResidenceId, StartDate, EndDate);
+            if(data != null)
+            {
+                using (ExcelEngine excelEngine = new ExcelEngine())
+                {
+                    IApplication application = excelEngine.Excel;
+                    application.DefaultVersion = ExcelVersion.Excel2013;
+                    IWorkbook workbook = application.Workbooks.Create(1);
+                    IWorksheet worksheet = workbook.Worksheets[0];
+                    worksheet.Name = "Business Plan Report";
+
+                    List<ColumnClass> QuestionColumns = new List<ColumnClass>();
+
+                    #region Styles
+                    var headerStyle = workbook.Styles.Add("headerStyle");
+
+                    headerStyle.BeginUpdate();
+                    headerStyle.Color = Syncfusion.Drawing.Color.Black; //Syncfusion.Drawing.Color.FromArgb(255, 0, 0);
+                    headerStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    headerStyle.Font.Bold = true;
+                    headerStyle.Font.FontName = "Arial";
+                    headerStyle.Font.Size = 8f;
+                    headerStyle.Font.Color = ExcelKnownColors.White;
+
+                    headerStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    headerStyle.Borders.Color = ExcelKnownColors.White;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    //headerStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thick;
+
+                    headerStyle.WrapText = true;
+
+                    headerStyle.EndUpdate();
+
+                    var Style = workbook.Styles.Add("bodyStyle");
+
+                    Style.BeginUpdate();
+                    Style.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                    Style.VerticalAlignment = ExcelVAlign.VAlignTop;
+                    Style.Font.Bold = false;
+                    Style.Font.FontName = "Arial";
+                    Style.Font.Size = 8f;
+                    Style.Font.Color = ExcelKnownColors.Black;
+                    Style.WrapText = true;
+                    Style.Borders.Color = ExcelKnownColors.Black;
+                    Style.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    Style.EndUpdate();
+
+
+                    var CategoryStyle = workbook.Styles.Add("CategoryStyle");
+
+                    CategoryStyle.BeginUpdate();
+                    CategoryStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 195, 0);
+                    /*CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88);*/ //AUBERGINE
+                    CategoryStyle.Font.Bold = true;
+                    CategoryStyle.Font.FontName = "Arial";
+                    CategoryStyle.Font.Size = 10f;
+                    CategoryStyle.Font.Color = ExcelKnownColors.White;
+                    CategoryStyle.WrapText = true;
+                    CategoryStyle.Borders.Color = ExcelKnownColors.White;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.EndUpdate();
+
+                    var CategoryTotalStyle = workbook.Styles.Add("CategoryTotalStyle");
+
+                    CategoryTotalStyle.BeginUpdate();
+                    CategoryTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    CategoryTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    CategoryTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    CategoryTotalStyle.Font.Bold = true;
+                    CategoryTotalStyle.Font.FontName = "Arial";
+                    CategoryTotalStyle.Font.Size = 8f;
+                    CategoryTotalStyle.Font.Color = ExcelKnownColors.White;
+                    CategoryTotalStyle.WrapText = true;
+                    CategoryTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.EndUpdate();
+
+                    var DivisionStyle = workbook.Styles.Add("DivisionStyle");
+
+                    DivisionStyle.BeginUpdate();
+                    DivisionStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    DivisionStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 0, 0); //RED
+                    DivisionStyle.Font.Bold = true;
+                    DivisionStyle.Font.FontName = "Arial";
+                    DivisionStyle.Font.Size = 8f;
+                    DivisionStyle.Font.Color = ExcelKnownColors.White;
+                    DivisionStyle.WrapText = true;
+                    DivisionStyle.Borders.Color = ExcelKnownColors.White;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.EndUpdate();
+
+                    var DivisionTotalStyle = workbook.Styles.Add("DivisionTotalStyle");
+
+                    DivisionTotalStyle.BeginUpdate();
+                    DivisionTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    DivisionTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    DivisionTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    DivisionTotalStyle.Font.Bold = true;
+                    DivisionTotalStyle.Font.FontName = "Arial";
+                    DivisionTotalStyle.Font.Size = 8f;
+                    DivisionTotalStyle.Font.Color = ExcelKnownColors.White;
+                    DivisionTotalStyle.WrapText = true;
+                    DivisionTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.EndUpdate();
+
+
+                    var TopicStyle = workbook.Styles.Add("TopicStyle");
+
+                    TopicStyle.BeginUpdate();
+                    TopicStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    TopicStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88); //AUBERGINE
+                    TopicStyle.Font.Bold = true;
+                    TopicStyle.Font.FontName = "Arial";
+                    TopicStyle.Font.Size = 8f;
+                    TopicStyle.Font.Color = ExcelKnownColors.White;
+                    TopicStyle.WrapText = true;
+                    TopicStyle.Borders.Color = ExcelKnownColors.White;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.EndUpdate();
+
+                    var TopicTotalStyle = workbook.Styles.Add("TopicTotalStyle");
+
+                    TopicTotalStyle.BeginUpdate();
+                    TopicTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    TopicTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    TopicTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    TopicTotalStyle.Font.Bold = true;
+                    TopicTotalStyle.Font.FontName = "Arial";
+                    TopicTotalStyle.Font.Size = 8f;
+                    TopicTotalStyle.Font.Color = ExcelKnownColors.White;
+                    TopicTotalStyle.WrapText = true;
+                    TopicTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.EndUpdate();
+                    #endregion
+
+                    int row = 1;
+                    worksheet.Range[row,1].Text = "Business Plan Report";
+                    worksheet.Range["A" + row + ":M" + row].CellStyle = CategoryStyle;
+                    worksheet.Range["A" + row + ":M" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    worksheet.Range["A" + row + ":M" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    worksheet.Range["A" + row].RowHeight = 30;
+                    worksheet.Range["A" + row + ":M" + row].Merge();
+                    row++;
+                    row++;
+                    row++;
+
+                    worksheet.Range[row,1].Text = "District";
+                    worksheet.Range[row,1].ColumnWidth = 20;
+
+                    worksheet.Range[row,2].Text = "Sub county";
+                    worksheet.Range[row, 2].ColumnWidth = 20;
+
+                    worksheet.Range[row, 3].Text = "Parish";
+                    worksheet.Range[row, 3].ColumnWidth = 20;
+
+                    worksheet.Range[row, 4].Text = "Village";
+                    worksheet.Range[row, 4].ColumnWidth = 20;
+
+                    worksheet.Range[row, 5].Text = "Household Code";
+                    worksheet.Range[row, 5].ColumnWidth = 20;
+
+                    worksheet.Range[row,6].Text = "Caregiver ID";
+                    worksheet.Range[row, 6].ColumnWidth = 20;
+
+                    worksheet.Range[row, 7].Text = "Caregiver Name";
+                    worksheet.Range[row,7].ColumnWidth = 20;
+
+                    worksheet.Range[row, 8].Text = "Nature of Residence";
+                    worksheet.Range[row, 8].ColumnWidth = 20;
+
+                    worksheet.Range[row, 9].Text = "Category of Residence";
+                    worksheet.Range[row, 9].ColumnWidth = 20;
+
+                    worksheet.Range[row, 10].Text = "Sex";
+                    worksheet.Range[row, 10].ColumnWidth = 20;
+
+                    worksheet.Range[row, 11].Text = "Date of Birth";
+                    worksheet.Range[row,11].ColumnWidth = 20;
+
+                    worksheet.Range[row,12].Text = "Age";
+                    worksheet.Range[row, 12].ColumnWidth = 20;
+
+                    worksheet.Range[row, 13].Text = "Marital Status";
+                    worksheet.Range[row, 13].ColumnWidth = 20;
+
+
+                    int startColumn = 13;
+                    int EndColumn = 13;
+                    int ClassificationStartColumn = 13;
+
+                    if(BusinessPlanQuestionData != null && BusinessPlanQuestionData.Count > 0)
+                    {
+                        var Category = BusinessPlanQuestionData.Select(o => o.QuestionCategory).ToList().Distinct().ToList();
+                        if (Category.Any())
+                        {
+                            foreach(var item in Category)
+                            {
+                                var _data = BusinessPlanQuestionData.Where(o => o.QuestionCategory == item).ToList();
+                                if (_data.Any())
+                                {
+                                    var _Classification = _data.Select(o => o.QuestionClassification).ToList().Distinct().ToList();
+                                    if (_Classification.Any())
+                                    {
+                                        foreach (var _item in _Classification)
+                                        {
+                                            var questions = _data.Where(o => o.QuestionClassification == _item).ToList();
+                                            if (questions.Any())
+                                            {
+                                                foreach (var item1 in questions)
+                                                {
+                                                    EndColumn++;
+                                                    worksheet.Range[row, EndColumn].Text = item1.Question;
+                                                    worksheet.Range[row, EndColumn].ColumnWidth = 20;
+                                                    QuestionColumns.Add(new ColumnClass() { ColumnNo = EndColumn, QuestionId = item1.BusinessPlanQuestionId });
+                                                }
+                                            }
+
+                                            ClassificationStartColumn++;
+                                            worksheet.Range[(row - 1), ClassificationStartColumn].Text = _item;
+                                            worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].Merge();
+                                            worksheet.Range[(row - 1), ClassificationStartColumn, (row - 1), EndColumn].CellStyle = DivisionStyle;
+
+                                            ClassificationStartColumn = EndColumn;
+                                        }
+                                    }
+                                }
+
+                                startColumn++;
+                                worksheet.Range[(row - 2), startColumn].Text = item;
+                                worksheet.Range[(row - 2), startColumn, (row - 2), EndColumn].Merge();
+                                worksheet.Range[(row - 2), startColumn, (row - 2), EndColumn].CellStyle = TopicStyle;
+
+                                startColumn = EndColumn;
+                            }
+                        }
+                    }
+
+                    int ColumnAfterQuestion = EndColumn;
+                    worksheet.Range[row, (ColumnAfterQuestion + 1)].Text = "Name of Data Collector";
+                    worksheet.Range[row, (ColumnAfterQuestion + 1)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 2)].Text = "Title";
+                    worksheet.Range[row, (ColumnAfterQuestion + 2)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 3)].Text = "Date";
+                    worksheet.Range[row, (ColumnAfterQuestion + 3)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 4)].Text = "Name of Data Reviewer";
+                    worksheet.Range[row, (ColumnAfterQuestion + 4)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 5)].Text = "Title";
+                    worksheet.Range[row, (ColumnAfterQuestion + 5)].ColumnWidth = 20;
+
+                    worksheet.Range[row, (ColumnAfterQuestion + 6)].Text = "Date";
+                    worksheet.Range[row, (ColumnAfterQuestion + 6)].ColumnWidth = 20;
+
+                    worksheet.Range[row, 1, row, (ColumnAfterQuestion + 6)].CellStyle = headerStyle;
+
+                    row++;
+                    foreach (var item in data)
+                    {
+                        worksheet.Range[row, 1].Text = DistrictData?.FirstOrDefault(x=> x.DistrictId==item.DistrictId)?.DistrictDescription;
+
+                        worksheet.Range[row, 2].Text = SubcountyData?.FirstOrDefault(x => x.SubcountyId == item.SubcountyId)?.SubcountyDescription;
+
+                        worksheet.Range[row, 3].Text = ParishData?.FirstOrDefault(x => x.ParishId == item.ParishId)?.ParishDescription;
+
+                        worksheet.Range[row, 4].Text = VillageData?.FirstOrDefault(x => x.VillageId == item.VillageId)?.VillageDescription;
+
+                        worksheet.Range[row, 5].Text = HouseHoldData?.FirstOrDefault(x => x.HouseHoldId == item.HouseholdId)?.HouseHoldCode;
+
+                        worksheet.Range[row, 6].Text = HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.HouseHoldMemberCode;
+
+                        worksheet.Range[row, 7].Text = HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.Surname + " " + HouseHoldMembersData?.FirstOrDefault(x => x.HouseHoldMemberId == item.HouseholdMemberId)?.Givenname;
+
+                        worksheet.Range[row, 8].Text = NatureofResidenceData?.FirstOrDefault(x => x.NatureofResidenceId == item.NatureofResidenceId)?.NatureofResidenceDesc;
+
+                        worksheet.Range[row, 9].Text = CategoryofResidenceData?.FirstOrDefault(x => x.CategoryofResidenceId == item.CategoryofResidenceId)?.CategoryofResidenceDesc;
+
+                        worksheet.Range[row, 10].Text = GenderData?.FirstOrDefault(x => x.GenderId == item.GenderId)?.GenderDescription;
+
+                        worksheet.Range[row, 11].Text = item.Dob?.ToString("dd MMM yyyy");
+
+                        worksheet.Range[row, 12].Text = item.Age?.ToString();
+
+                        worksheet.Range[row, 13].Text = MaritalStatusData?.FirstOrDefault(x => x.MaritalStatusId == item.MaritalStatusId)?.MaritalStatusDescription;
+
+                        if (item.BusinessPlanDetail != null && item.BusinessPlanDetail.Any() && QuestionColumns.Any())
+                        {
+                            foreach (var _item in QuestionColumns)
+                            {
+                                worksheet.Range[row, _item.ColumnNo].Text = item.BusinessPlanDetail?.FirstOrDefault(x => x.BusinessPlanQuestionId == _item.QuestionId)?.BusinessPlanAnswer;
+                            }
+                        }
+
+                        worksheet.Range[row, (ColumnAfterQuestion + 1)].Text = item.DataCollectorName;
+
+                        worksheet.Range[row, (ColumnAfterQuestion + 2)].Text = item.DataCollectorTitle;
+
+                        worksheet.Range[row, (ColumnAfterQuestion + 3)].Text = item.DataCollectionDate?.ToString("dd MMM yyyy");
+
+                        worksheet.Range[row, (ColumnAfterQuestion + 4)].Text = item.DataReviewerName;
+
+                        worksheet.Range[row, (ColumnAfterQuestion + 5)].Text = item.DataReviewerTitle;
+
+                        worksheet.Range[row, (ColumnAfterQuestion + 6)].Text = item.DataReviewDate?.ToString("dd MMM yyyy");
+
+                        worksheet.Range[row, 1, row, (ColumnAfterQuestion + 6)].CellStyle = Style;
+                        row++;
+                    }
+
+
+
+                    MemoryStream ms = new MemoryStream();
+                    // Save and close the document.
+                    workbook.SaveAs(ms);
+                    //Reset the memory stream position.
+                    ms.Position = 0;
+                    await JS.SaveAs("Business Plan Report.xlsx", ms.ToArray());
+                    ms.Dispose();
+                    workbook.Close();
+                    excelEngine.Dispose();
+                    //outComeResult = "Success:- The report was successfully downloaded.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private class ColumnClass
+    {
+        public int ColumnNo { get; set; }
+        public int QuestionId { get; set; }
+    }
+}

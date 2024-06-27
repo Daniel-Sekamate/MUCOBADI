@@ -190,6 +190,70 @@
         return MainQuery;
     }
 
+<<<<<<< HEAD
+=======
+    public EnrolmentSearchModel SearchReportRecords()
+    {
+        return InputModel;
+    }
+    public EnrolmentSearchModel ClearReportSearch()
+    {
+        if (Credentials != null)
+        {
+            InputModel = new();
+            List<int> DistrictId = new List<int>();
+            List<int> SubCountyId = new List<int>();
+            if (!string.IsNullOrEmpty(Credentials.DistrictId))
+            {
+                var a = Credentials.DistrictId.Split(',');
+
+                List<WhereFilter> filterList = new List<WhereFilter>();
+                foreach (var item in a)
+                {
+                    int b = 0;
+                    if (int.TryParse(item, System.Globalization.NumberStyles.None, null, out b))
+                    {
+                        DistrictId.Add(b);
+                        filterList.Add(new WhereFilter() { Field = "DistrictId", Operator = "equal", value = b, IgnoreCase = true });
+                    }
+                }
+
+                var orWhere = WhereFilter.Or(filterList);
+                SubCountyQuery = new Query().Where(orWhere);
+                EnableDistrict = false;
+            }
+            if (!string.IsNullOrEmpty(Credentials.SubCountyId))
+            {
+                var a = Credentials.SubCountyId.Split(',');
+
+                List<WhereFilter> filterList = new List<WhereFilter>();
+                foreach (var item in a)
+                {
+                    int b = 0;
+                    if (int.TryParse(item, System.Globalization.NumberStyles.None, null, out b))
+                    {
+                        SubCountyId.Add(b);
+                        filterList.Add(new WhereFilter() { Field = "SubcountyId", Operator = "equal", value = b, IgnoreCase = true });
+                    }
+                }
+                var orWhere = WhereFilter.Or(filterList);
+                HouseholdQuery = new Query().Where(orWhere);
+                EnableSubcounty = false;
+            }
+
+            if (DistrictId.Count > 0)
+            {
+                InputModel.DistrictId = DistrictId.ToArray();
+            }
+            if (SubCountyId.Count > 0)
+            {
+                InputModel.SubcountyId = SubCountyId.ToArray();
+            }
+        }
+        return InputModel;
+    }
+
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();

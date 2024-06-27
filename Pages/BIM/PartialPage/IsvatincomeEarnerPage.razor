@@ -13,7 +13,11 @@
         <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
         <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
         <GridEvents OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="IsvatincomeEarner"></GridEvents>
+<<<<<<< HEAD
         <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+=======
+        <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             <Template Context="ReviewHeaderContext">
                 @{
                     RowViewData = (ReviewHeaderContext as IsvatincomeEarner);
@@ -109,7 +113,11 @@
     [Parameter]
     public int IsvatheaderId { get; set; }
 
+<<<<<<< HEAD
 
+=======
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
     List<IsvatincomeEarner>? DataSource { get; set; }
     IsvatincomeEarner? RowViewData { get; set; }
     SfGrid<IsvatincomeEarner>? ChildGrid;

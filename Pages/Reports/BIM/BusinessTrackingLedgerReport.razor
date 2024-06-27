@@ -1,0 +1,396 @@
+﻿@page "/BusinessTrackingLedgerReport"
+@inject Microsoft.JSInterop.IJSRuntime JS
+@using MUCOBADI.DTOs
+@using MUCOBADI.Data
+@using MUCOBADI.Interfaces
+@using Microsoft.EntityFrameworkCore
+@using Syncfusion.XlsIO
+@using System.IO
+@inject IToastService toastService;
+@inject IBimService Repo;
+@inject MUCOBADIContext db;
+@inject UserManagement userManagement;
+
+<MudOverlay Visible="@IsLoading" DarkBackground="true" Absolute="true" Style="z-index:200000; height:100vh;">
+    <MudProgressCircular Color="MudBlazor.Color.Secondary" Indeterminate="true" />
+    <MudText Style="color:ghostwhite;">Loading data please wait..</MudText>
+</MudOverlay>
+
+<div class="row">
+    <div class="col-md-12">
+        <BreadCrumbPage CategoryName="BIM" PageName="Project Financing Plan Report" />
+    </div>
+    @if (IsLoading == false)
+    {
+        <div class="col-md-12">
+            <div class="row" n style="margin:5px;">
+                <div class="col-md-4">
+                    <button type="button" style="margin-top:32px;"
+                            class="btn btn-primary"
+                            @onclick="@DownloadReport">
+                        Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    SearchPanelPartialPage? SearchPanel;
+    bool IsLoading { get; set; }
+
+    private ViewUserManagement? Credentials { get; set; }
+
+    private EnrolmentSearchModel InputModel = new();
+
+    async Task DownloadReport()
+    {
+        try
+        {
+            IsLoading = true;
+            var data = await Repo.GetBusinessTrackingLedger(null); 
+            if (data != null && data.Count > 0)
+            {
+                using (ExcelEngine excelEngine = new ExcelEngine())
+                {
+                    IApplication application = excelEngine.Excel;
+                    application.DefaultVersion = ExcelVersion.Excel2013;
+                    IWorkbook workbook = application.Workbooks.Create(1);
+                    IWorksheet worksheet = workbook.Worksheets[0];
+                    worksheet.Name = "Project Financing Plan Report";
+
+                    #region Styles
+                    var headerStyle = workbook.Styles.Add("headerStyle");
+
+                    headerStyle.BeginUpdate();
+                    headerStyle.Color = Syncfusion.Drawing.Color.Black; //Syncfusion.Drawing.Color.FromArgb(255, 0, 0);
+                    headerStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    headerStyle.Font.Bold = true;
+                    headerStyle.Font.FontName = "Arial";
+                    headerStyle.Font.Size = 8f;
+                    headerStyle.Font.Color = ExcelKnownColors.White;
+
+                    headerStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    headerStyle.Borders.Color = ExcelKnownColors.White;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    //headerStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thick;
+
+                    headerStyle.WrapText = true;
+
+                    headerStyle.EndUpdate();
+
+                    var Style = workbook.Styles.Add("bodyStyle");
+
+                    Style.BeginUpdate();
+                    Style.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                    Style.VerticalAlignment = ExcelVAlign.VAlignTop;
+                    Style.Font.Bold = false;
+                    Style.Font.FontName = "Arial";
+                    Style.Font.Size = 8f;
+                    Style.Font.Color = ExcelKnownColors.Black;
+                    Style.WrapText = true;
+                    Style.Borders.Color = ExcelKnownColors.Black;
+                    Style.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    Style.EndUpdate();
+
+
+                    var CategoryStyle = workbook.Styles.Add("CategoryStyle");
+
+                    CategoryStyle.BeginUpdate();
+                    CategoryStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 195, 0);
+                    /*CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88);*/ //AUBERGINE
+                    CategoryStyle.Font.Bold = true;
+                    CategoryStyle.Font.FontName = "Arial";
+                    CategoryStyle.Font.Size = 10f;
+                    CategoryStyle.Font.Color = ExcelKnownColors.White;
+                    CategoryStyle.WrapText = true;
+                    CategoryStyle.Borders.Color = ExcelKnownColors.White;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.EndUpdate();
+
+                    var CategoryTotalStyle = workbook.Styles.Add("CategoryTotalStyle");
+
+                    CategoryTotalStyle.BeginUpdate();
+                    CategoryTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    CategoryTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    CategoryTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    CategoryTotalStyle.Font.Bold = true;
+                    CategoryTotalStyle.Font.FontName = "Arial";
+                    CategoryTotalStyle.Font.Size = 8f;
+                    CategoryTotalStyle.Font.Color = ExcelKnownColors.White;
+                    CategoryTotalStyle.WrapText = true;
+                    CategoryTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    CategoryTotalStyle.EndUpdate();
+
+                    var DivisionStyle = workbook.Styles.Add("DivisionStyle");
+
+                    DivisionStyle.BeginUpdate();
+                    DivisionStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    DivisionStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 0, 0); //RED
+                    DivisionStyle.Font.Bold = true;
+                    DivisionStyle.Font.FontName = "Arial";
+                    DivisionStyle.Font.Size = 8f;
+                    DivisionStyle.Font.Color = ExcelKnownColors.White;
+                    DivisionStyle.WrapText = true;
+                    DivisionStyle.Borders.Color = ExcelKnownColors.White;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    DivisionStyle.EndUpdate();
+
+                    var DivisionTotalStyle = workbook.Styles.Add("DivisionTotalStyle");
+
+                    DivisionTotalStyle.BeginUpdate();
+                    DivisionTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    DivisionTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    DivisionTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    DivisionTotalStyle.Font.Bold = true;
+                    DivisionTotalStyle.Font.FontName = "Arial";
+                    DivisionTotalStyle.Font.Size = 8f;
+                    DivisionTotalStyle.Font.Color = ExcelKnownColors.White;
+                    DivisionTotalStyle.WrapText = true;
+                    DivisionTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    DivisionTotalStyle.EndUpdate();
+
+
+                    var TopicStyle = workbook.Styles.Add("TopicStyle");
+
+                    TopicStyle.BeginUpdate();
+                    TopicStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    TopicStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88); //AUBERGINE
+                    TopicStyle.Font.Bold = true;
+                    TopicStyle.Font.FontName = "Arial";
+                    TopicStyle.Font.Size = 8f;
+                    TopicStyle.Font.Color = ExcelKnownColors.White;
+                    TopicStyle.WrapText = true;
+                    TopicStyle.Borders.Color = ExcelKnownColors.White;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    TopicStyle.EndUpdate();
+
+                    var TopicTotalStyle = workbook.Styles.Add("TopicTotalStyle");
+
+                    TopicTotalStyle.BeginUpdate();
+                    TopicTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    TopicTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    TopicTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                    TopicTotalStyle.Font.Bold = true;
+                    TopicTotalStyle.Font.FontName = "Arial";
+                    TopicTotalStyle.Font.Size = 8f;
+                    TopicTotalStyle.Font.Color = ExcelKnownColors.White;
+                    TopicTotalStyle.WrapText = true;
+                    TopicTotalStyle.Borders.Color = ExcelKnownColors.White;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    TopicTotalStyle.EndUpdate();
+                    #endregion
+
+                    int row = 1;
+                    worksheet.Range[row, 1].Text = "Project Financing Plan Report";
+                    worksheet.Range["A" + row + ":M" + row].CellStyle = CategoryStyle;
+                    worksheet.Range["A" + row + ":M" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    worksheet.Range["A" + row + ":M" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    worksheet.Range["A" + row].RowHeight = 30;
+                    worksheet.Range["A" + row + ":M" + row].Merge();
+                    row++;
+                    row++;
+                    row++;
+
+                    worksheet.Range[row, 1].Text = "Name of the proposed Business";
+                    worksheet.Range[row, 1].ColumnWidth = 20;
+
+                    worksheet.Range[row, 2].Text = "Section";
+                    worksheet.Range[row, 2].ColumnWidth = 20;
+
+                    worksheet.Range[row, 3].Text = "Item";
+                    worksheet.Range[row, 3].ColumnWidth = 20;
+
+                    worksheet.Range[row, 4].Text = "Unit Measure";
+                    worksheet.Range[row, 4].ColumnWidth = 20;
+
+                    worksheet.Range[row, 5].Text = "Qty";
+                    worksheet.Range[row, 5].ColumnWidth = 20;
+
+                    worksheet.Range[row, 6].Text = "Unit Cost";
+                    worksheet.Range[row, 6].ColumnWidth = 20;
+
+                    worksheet.Range[row, 7].Text = "Available Resources";
+                    worksheet.Range[row, 7].ColumnWidth = 20;
+
+                    worksheet.Range[row, 8].Text = "Source of Resources";
+                    worksheet.Range[row, 8].ColumnWidth = 20;
+
+                    worksheet.Range[row, 9].Text = "Amount";
+                    worksheet.Range[row, 9].ColumnWidth = 20;
+
+                    worksheet.Range[row, 10].Text = "Total Amount";
+                    worksheet.Range[row, 10].ColumnWidth = 20;
+
+                    worksheet.Range[row, 11].Text = "Estimated Output per day/Incomes";
+                    worksheet.Range[row, 11].ColumnWidth = 20;
+
+                    worksheet.Range[row, 12].Text = "Net Profits";
+                    worksheet.Range[row, 12].ColumnWidth = 20;
+
+                    worksheet.Range[row, 13].Text = "Name of Data Collector";
+                    worksheet.Range[row, 13].ColumnWidth = 20;
+
+                    worksheet.Range[row, 14].Text = "Title";
+                    worksheet.Range[row, 14].ColumnWidth = 20;
+
+                    worksheet.Range[row, 15].Text = "Date";
+                    worksheet.Range[row, 15].ColumnWidth = 20;
+
+                    worksheet.Range[row, 16].Text = "Name of Data Reviewer";
+                    worksheet.Range[row, 16].ColumnWidth = 20;
+
+                    worksheet.Range[row, 17].Text = "Title";
+                    worksheet.Range[row, 17].ColumnWidth = 20;
+
+                    worksheet.Range[row, 18].Text = "Date";
+                    worksheet.Range[row, 18].ColumnWidth = 20;
+
+                    worksheet.Range[row, 1, row, 18].CellStyle = headerStyle;
+
+                    row++;
+                    foreach (var item in data)
+                    {
+                        if (item.BusinessTrackingLedgerSue != null && item.BusinessTrackingLedgerSue.Any())
+                        {
+                            foreach (var _item in item.BusinessTrackingLedgerSue)
+                            {
+                                worksheet.Range[row, 1].Text = item.ProposedBusinessName;
+
+                                worksheet.Range[row, 2].Text = "Start Up Expenses";
+
+                                worksheet.Range[row, 3].Text = _item.Item;
+
+                                worksheet.Range[row, 4].Text = _item.UnitOfMeasure;
+
+                                worksheet.Range[row, 5].Text = _item.Qty?.ToString("#,#");
+
+                                worksheet.Range[row, 6].Text = _item.UnitCost?.ToString("#,#");
+
+                                worksheet.Range[row, 7].Text = _item.AvailableResources;
+
+                                worksheet.Range[row, 8].Text = _item.SourceofResources;
+
+                                worksheet.Range[row, 9].Text = _item.Amount?.ToString("#,#");
+
+                                worksheet.Range[row, 10].Text = item.StartupExpenseTotalAmount?.ToString("#,#");
+
+                                worksheet.Range[row, 11].Text = item.EstimatedOutputPerDay?.ToString("#,#");
+
+                                worksheet.Range[row, 12].Text = item.NetProfits?.ToString("#,#");
+
+                                worksheet.Range[row, 13].Text = item.DataCollectorName;
+
+                                worksheet.Range[row, 14].Text = item.DataCollectorTitle;
+
+                                worksheet.Range[row, 15].Text = item.DataCollectionDate?.ToString("dd MMM yyyy");
+
+                                worksheet.Range[row, 16].Text = item.DataReviewerName;
+
+                                worksheet.Range[row, 17].Text = item.DataReviewerTitle;
+
+                                worksheet.Range[row, 18].Text = item.DataReviewDate?.ToString("dd MMM yyyy");
+
+                                worksheet.Range[row, 1, row, 18].CellStyle = Style;
+                                row++;
+                            }
+                        }
+                        if (item.BusinessTrackingLedgerMoc != null && item.BusinessTrackingLedgerMoc.Any())
+                        {
+                            foreach (var _item in item.BusinessTrackingLedgerMoc)
+                            {
+                                worksheet.Range[row, 1].Text = item.ProposedBusinessName;
+
+                                worksheet.Range[row, 2].Text = "Operational Costs per Month";
+
+                                worksheet.Range[row, 3].Text = _item.Item;
+
+                                worksheet.Range[row, 4].Text = _item.UnitOfMeasure;
+
+                                worksheet.Range[row, 5].Text = _item.Qty?.ToString("#,#");
+
+                                worksheet.Range[row, 6].Text = _item.UnitCost?.ToString("#,#");
+
+                                // worksheet.Range[row, 7].Text = _item.AvailableResources;
+
+                                // worksheet.Range[row, 8].Text = _item.SourceofResources;
+
+                                worksheet.Range[row, 9].Text = _item.Amount?.ToString("#,#");
+
+                                worksheet.Range[row, 10].Text = item.BusinessViabilityAnalysisTotalAmount?.ToString("#,#");
+
+                                worksheet.Range[row, 11].Text = item.EstimatedOutputPerDay?.ToString("#,#");
+
+                                worksheet.Range[row, 12].Text = item.NetProfits?.ToString("#,#");
+
+                                worksheet.Range[row, 13].Text = item.DataCollectorName;
+
+                                worksheet.Range[row, 14].Text = item.DataCollectorTitle;
+
+                                worksheet.Range[row, 15].Text = item.DataCollectionDate?.ToString("dd MMM yyyy");
+
+                                worksheet.Range[row, 16].Text = item.DataReviewerName;
+
+                                worksheet.Range[row, 17].Text = item.DataReviewerTitle;
+
+                                worksheet.Range[row, 18].Text = item.DataReviewDate?.ToString("dd MMM yyyy");
+
+                                worksheet.Range[row, 1, row, 18].CellStyle = Style;
+                                row++;
+                            }
+                        }
+                    }
+
+
+
+                    MemoryStream ms = new MemoryStream();
+                    // Save and close the document.
+                    workbook.SaveAs(ms);
+                    //Reset the memory stream position.
+                    ms.Position = 0;
+                    await JS.SaveAs("Project Financing Plan Report.xlsx", ms.ToArray());
+                    ms.Dispose();
+                    workbook.Close();
+                    excelEngine.Dispose();
+                    //outComeResult = "Success:- The report was successfully downloaded.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

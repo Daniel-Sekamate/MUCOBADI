@@ -175,10 +175,17 @@ namespace MUCOBADI.Context
 
                 entity.Property(e => e.OtherCurrenBusinessRisk).HasMaxLength(3000);
 
+<<<<<<< HEAD
                 //entity.HasOne(d => d.Isvatheader)
                 //    .WithMany(p => p.IsvatcurrentBusinessRisk)
                 //    .HasForeignKey(d => d.IsvatheaderId)
                 //    .HasConstraintName("FK_ISVATCurrentBusinessRisk_ISVATHeader");
+=======
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.IsvatcurrentBusinessRisk)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_ISVATCurrentBusinessRisk_ISVATHeader");
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             });
 
             modelBuilder.Entity<IsvatgeneratedProfit>(entity =>

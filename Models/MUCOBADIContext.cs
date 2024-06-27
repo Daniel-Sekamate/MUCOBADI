@@ -1,7 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+<<<<<<< HEAD
 
+=======
+using Microsoft.Extensions.Configuration;
+using System.IO;
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 #nullable disable
 
 namespace MUCOBADI.Models
@@ -287,9 +292,12 @@ namespace MUCOBADI.Models
         public virtual DbSet<SmuSucideAssementScore> SmuSucideAssementScore { get; set; }
         public virtual DbSet<SmuTerminantionGuide> SmuTerminantionGuide { get; set; }
         public virtual DbSet<SmuTerminantionGuidePh9Questions> SmuTerminantionGuidePh9Questions { get; set; }
+<<<<<<< HEAD
         public virtual DbSet<SmuViewAttendenceFormDetail> SmuViewAttendenceFormDetail { get; set; }
         public virtual DbSet<SmuViewAttendenceHeader> SmuViewAttendenceHeader { get; set; }
         public virtual DbSet<SmuViewClientRegistrationForm> SmuViewClientRegistrationForm { get; set; }
+=======
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
         public virtual DbSet<StakeHolderDataCapture> StakeHolderDataCapture { get; set; }
         public virtual DbSet<SubcountyCodes> SubcountyCodes { get; set; }
         public virtual DbSet<TableVillage> TableVillage { get; set; }
@@ -8038,6 +8046,7 @@ namespace MUCOBADI.Models
                     .HasConstraintName("FK_SMU_Terminantion_Guide_PH9_Questions_SMU_Terminantion_Guide");
             });
 
+<<<<<<< HEAD
             modelBuilder.Entity<SmuViewAttendenceFormDetail>(entity =>
             {
                 entity.HasNoKey();
@@ -8321,6 +8330,8 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.SubcountyDescription).HasMaxLength(2000);
             });
 
+=======
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             modelBuilder.Entity<StakeHolderDataCapture>(entity =>
             {
                 entity.HasKey(e => e.StakeHolderValueId);

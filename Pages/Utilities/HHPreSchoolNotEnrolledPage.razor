@@ -39,7 +39,7 @@
     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
     <GridEvents OnActionBegin="APreSchoolNotEnrolledActionBegin" TValue="AHhpreSchoolNotEnrolled"></GridEvents>
-    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
         <HeaderTemplate>
             @{
                 var text = GetPreSchoolHeader((context as AHhpreSchoolNotEnrolled));
@@ -90,7 +90,7 @@
         new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
     };
     #endregion Toasters
-
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
     private SfGrid<AHhpreSchoolNotEnrolled> PreSchoolNotEnrolledGrid;
     public string ButtonText { get; set; }
 

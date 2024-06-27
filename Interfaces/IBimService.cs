@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MUCOBADI.Interfaces
 {
+<<<<<<< HEAD
     //public interface IBimService
     //{
     //    Task<List<BusinessPlanHeader>?> GetBusinessPlan(string? DistrictId, string? SubcountyId, string? HouseholdId, string? NatureofResidenceId, string? CategoryofResidenceId);
@@ -18,4 +19,18 @@ namespace MUCOBADI.Interfaces
     //    Task<Response?> SaveBusinessTrackingLedger(BusinessTrackingLedger record);
     //    Task<BimPrimaryData?> GetPrimaryData();
     //}
+=======
+    public interface IBimService
+    {
+        Task<List<BusinessPlanHeader>?> GetBusinessPlan(string? DistrictId, string? SubcountyId, string? HouseholdId, string? NatureofResidenceId, string? CategoryofResidenceId, string? StartDate, string? EndDate);
+        Task<Response?> SaveBusinessPlan(BusinessPlanHeader record);
+
+        Task<List<Isvatheader>?> GetIsvat(string? DistrictId, string? SubcountyId, string? HouseholdId, string? NatureofResidenceId, string? CategoryofResidenceId);
+        Task<Response?> SaveIsvat(Isvatheader record);
+
+        Task<List<BusinessTrackingLedger>?> GetBusinessTrackingLedger(string? ProposedBusinessName);
+        Task<Response?> SaveBusinessTrackingLedger(BusinessTrackingLedger record);
+        Task<BimPrimaryData?> GetPrimaryData();
+    }
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 }

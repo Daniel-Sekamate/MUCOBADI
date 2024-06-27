@@ -82,7 +82,7 @@
             <GridEvents OnActionBegin="OnCommunityTbSensitizationActionBegin" OnActionComplete="@OnCommunityTbSensitizationActionComplete" TValue="CommunityTbSensitization"></GridEvents>
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
             <GridPageSettings PageSize="20"></GridPageSettings>
-            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <Template Context="SensitizationContext">
                     @{
                         CommunityTbSensitizationReviewData = (SensitizationContext as CommunityTbSensitization);
@@ -303,6 +303,8 @@
 
     SfGrid<CommunityTbSensitization> CommunityTbSensitizationGrid;
     CommunityTbSensitization CommunityTbSensitizationReviewData { get; set; }
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
 
     Query MainQuery = new Query();
     Query SearchSubcountyQuery = new Query();

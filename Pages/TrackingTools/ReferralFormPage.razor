@@ -97,7 +97,7 @@
                 <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
                 <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                 <GridEvents OnActionComplete="BeneficiaryRegisterActionComplete" TValue="spBeneficiaryIdentificationRegisterGetAllResult"></GridEvents>
-                <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                     <Template Context="RegisterContext">
                         @{
                             BeneficiaryRegisterData = (RegisterContext as spBeneficiaryIdentificationRegisterGetAllResult);
@@ -131,7 +131,7 @@
                                             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                                             <SfDataManager AdaptorInstance="@typeof(ReferralFormAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
                                             <GridEvents OnActionBegin="OnReferralFormActionBegin" OnActionComplete="@OnReferralFormActionComplete" TValue="ReferralForm"></GridEvents>
-                                            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                                            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                                                 <Template Context="ReferralFormContext">
                                                     @{
                                                         ReferralFormReviewData = (ReferralFormContext as ReferralForm);
@@ -574,6 +574,7 @@
             new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
         };
         #endregion Toasters
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
         SfGrid<spBeneficiaryIdentificationRegisterGetAllResult> BeneficiaryRegisterGrid;
         private spBeneficiaryIdentificationRegisterGetAllResult BeneficiaryRegisterData { get; set; }
 

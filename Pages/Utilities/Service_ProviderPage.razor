@@ -47,7 +47,7 @@
         OnActionBegin="OnAServiceProviderActionBegin"
         TValue="AServiceProvider">
     </GridEvents>
-    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
 
         <HeaderTemplate>
             @{
@@ -171,7 +171,7 @@
     #endregion Toasters
 
     private SfGrid<AServiceProvider> AServiceProviderGrid;
-
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
     public string ButtonText { get; set; }
     private SfMultiSelect<int[], ADistrict> DisDatasourceObj;
     private static AServiceProvider AServiceProviderData { get; set; }

@@ -3095,7 +3095,11 @@ h6 {
 			using (var _dbcontext = new SPToCoreContext())
 			{
 				var currentMonth = DateTime.Now.Month;
+<<<<<<< HEAD
 				var currentYear = DateTime.Now.Year - 1;
+=======
+				var currentYear = DateTime.Now.Year;
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 				string startDate = null;
 				string endDate = null;
 				//var _financialYear = _dbcontext.AFinancialYear.FirstOrDefault(o => o.FinancialYearDesc.Trim() == currentYear.ToString());

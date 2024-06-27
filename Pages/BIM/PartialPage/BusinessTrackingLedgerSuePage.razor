@@ -12,7 +12,11 @@
         <GridPageSettings PageSize="20"></GridPageSettings>
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <GridEvents OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="BusinessTrackingLedgerSue"></GridEvents>
+<<<<<<< HEAD
             <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+=======
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
         </GridEditSettings>
         <GridColumns>
             <GridColumn HeaderText="Manage Records" Width="80">
@@ -49,6 +53,11 @@ else
 
     int StartUpExpensesId { get; set; } = -1;
 
+<<<<<<< HEAD
+=======
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
     public void OnActionBegin(ActionEventArgs<BusinessTrackingLedgerSue> args)
     {
         try

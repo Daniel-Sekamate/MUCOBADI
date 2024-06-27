@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Remove="Models\NewModels\**" />
+<<<<<<< HEAD
     <Compile Remove="Pages\NMN\**" />
     <Content Remove="Models\NewModels\**" />
     <Content Remove="Pages\NMN\**" />
@@ -23,6 +24,14 @@
     <Content Remove="Pages\BIM\BusinessPlanHeaderPage.razor" />
     <Content Remove="Pages\BIM\BusinessTrackingLedgerPage.razor" />
     <Content Remove="Pages\BIM\IsvatheaderPage.razor" />
+=======
+    <Content Remove="Models\NewModels\**" />
+    <EmbeddedResource Remove="Models\NewModels\**" />
+    <None Remove="Models\NewModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
     <Content Remove="Pages\Dashboards\Charts\BeneficiariesICare.razor" />
     <Content Remove="Pages\Dashboards\Charts\DashboardPageBackUp.razor" />
     <Content Remove="Pages\Dashboards\DashboardRazorPage.razor" />

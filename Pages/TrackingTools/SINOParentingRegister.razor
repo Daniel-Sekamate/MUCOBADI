@@ -103,7 +103,7 @@
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <SfDataManager AdaptorInstance="@typeof(SinoParentingAttendenceRegisterAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
             <GridEvents OnActionBegin="OnSinoParentingAttendenceRegisterActionBegin" OnActionComplete="@OnSinoParentingAttendenceRegisterActionComplete" TValue="SinoParentingAttendenceRegister"></GridEvents>
-            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <Template Context="SinoParentingAttendenceRegisterContext">
                     @{
                         SinoParentingAttendenceRegisterReviewData = (SinoParentingAttendenceRegisterContext as SinoParentingAttendenceRegister);
@@ -598,6 +598,9 @@
             new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
         };
     #endregion Toasters
+
+     private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+
 
     SfGrid<SinoParentingAttendenceRegister> SinoParentingAttendenceRegisterGrid;
     private SinoParentingAttendenceRegister SinoParentingAttendenceRegisterReviewData { get; set; }

@@ -39,7 +39,7 @@
     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
     <GridEvents OnActionBegin="OnGenderBasedActionBegin" TValue="AGenderBasedViolence"></GridEvents>
-    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
         <HeaderTemplate>
             @{
                 var text = GetGenderBasedViolenceHeader((context as AGenderBasedViolence));
@@ -89,7 +89,7 @@
 
     private SfGrid<AGenderBasedViolence> GenderBasedViolenceGrid;
     public string ButtonText { get; set; }
-
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
     protected override async Task OnInitializedAsync()
     {
         try

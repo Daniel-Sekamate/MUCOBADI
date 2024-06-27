@@ -170,11 +170,19 @@ using Quartz;
 using MUCOBADI.Interfaces.SMUtools;
 using MUCOBADI.Repository.SMUtools;
 using MUCOBADI.Context;
+<<<<<<< HEAD
 //using static MUCOBADI.Pages.BIM.IsvatheaderPage;
 //using static MUCOBADI.Pages.BIM.BusinessTrackingLedgerPage;
 //using static MUCOBADI.Pages.BIM.BusinessPlanHeaderPage;
 //using static MUCOBADI.Pages.NMN.NmnquestionairePage;
 //using static MUCOBADI.Pages.NMN.InterventionAttendanceFormPage;
+=======
+using static MUCOBADI.Pages.BIM.IsvatheaderPage;
+using static MUCOBADI.Pages.BIM.BusinessTrackingLedgerPage;
+using static MUCOBADI.Pages.BIM.BusinessPlanHeaderPage;
+using static MUCOBADI.Pages.NMN.NmnquestionairePage;
+using static MUCOBADI.Pages.NMN.InterventionAttendanceFormPage;
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 using MudBlazor.Services;
 
 namespace MUCOBADI
@@ -487,14 +495,29 @@ namespace MUCOBADI
             services.AddScoped<IOvcHhICare, OvcHhICareRepository>();
             services.AddScoped<IOvcPss, OvcPssRepository>();
             services.AddScoped<ISMUtools, SMUtools>();
+<<<<<<< HEAD
             //services.AddScoped<IBimService, BimService>();
           //  services.AddScoped<INmnService, NmnService>();
+=======
+            services.AddScoped<IBimService, BimService>();
+            services.AddScoped<INmnService, NmnService>();
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             services.AddScoped<BeneficiaryLinkageTrackingToolNewAdapter>();
             services.AddScoped<GraduationBenchMarkAdapter>();
 			services.AddScoped<TargetsAdapter>(); 
             services.AddScoped<StakeHolderDataCaptureAdaptor>(); 
             services.AddScoped<DataCaptureHeaderAdapter>();
             services.AddScoped<TbSensitizationAdapter>();
+<<<<<<< HEAD
+=======
+            services.AddScoped<IsvatheaderAdapter>();
+            services.AddScoped<BusinessTrackingLedgerAdapter>();
+            services.AddScoped<BusinessPlanAdapter>();
+            services.AddScoped<NmnquestionaireAdapter>();
+            services.AddScoped<InterventionAttendanceFormAdapter>();
+
+         //   SchedulerTask.StartAsync().GetAwaiter().GetResult();
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 			services.AddSingleton<IJobFactory, SingletonJobFactory>();
 			services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 			services.AddHostedService<QuartzHostedService>();
@@ -565,6 +588,10 @@ namespace MUCOBADI
         }
     }
 }
+<<<<<<< HEAD
+=======
+//Scaffold-DbContext "Server=HENRY;Database=MUCOBADI;User Id=sa;password=**Root@85;Trusted_Connection=False;MultipleActiveResultSets=true;" Microsoft.EntityFrameworkCore.SqlServer -o Models -f -context "MUCOBADIContext" -NoPluralize
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 
 //Scaffold-DbContext "Server=DESKTOP-KOVCOUM\DSOFT;Database=Ver1_MUCOBADI;User Id=sa;password=**Root@85;Trusted_Connection=False;MultipleActiveResultSets=true;" Microsoft.EntityFrameworkCore.SqlServer -o Models -f -context "MUCOBADIContext" -NoPluralize
 //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

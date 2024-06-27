@@ -97,7 +97,7 @@
             <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <GridEvents OnActionComplete="BeneficiaryRegisterActionComplete" TValue="spBeneficiaryIdentificationRegisterGetAllResult"></GridEvents>
-            <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <Template Context="RegisterContext">
                     @{
                         BeneficiaryRegisterData = (RegisterContext as spBeneficiaryIdentificationRegisterGetAllResult);
@@ -131,7 +131,7 @@
                                         <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                                         <SfDataManager AdaptorInstance="@typeof(CaseCareHeaderAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
                                         <GridEvents OnActionBegin="OnCaseCareActionBegin" OnActionComplete="@OnCaseCareActionComplete" TValue="CaseCare"></GridEvents>
-                                        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                                        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                                             <Template Context="CaseCareContext">
                                                 @{
                                                     CaseCareReviewData = (CaseCareContext as CaseCare);
@@ -243,7 +243,7 @@
                                                                         <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
                                                                         <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                                                                         <GridEvents OnActionBegin="OnCaseCareDetailActionBegin" OnActionComplete="@OnCaseCareDetailActionComplete" TValue="CaseCareDetail"></GridEvents>
-                                                                        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                                                                        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                                                                             <Template Context="CaseCareDetailContext">
                                                                                 @{
                                                                                     CaseCareDetailReviewData = (CaseCareDetailContext as CaseCareDetail);
@@ -313,7 +313,7 @@
                                                                                                     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
                                                                                                     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                                                                                                     <GridEvents OnActionBegin="OnCaseCareDetailPlanActionBegin" OnActionComplete="@OnCaseCareDetailPlanActionComplete" TValue="CaseCareDetailPlan"></GridEvents>
-                                                                                                    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                                                                                                    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                                                                                                         <Template Context="CaseCareDetailPlanContext">
                                                                                                             @{
                                                                                                                 CaseCareDetailPlanReviewData = (CaseCareDetailPlanContext as CaseCareDetailPlan);
@@ -523,7 +523,7 @@
                                                                     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
                                                                     <SfDataManager AdaptorInstance="@typeof(CaseCareSummaryAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
                                                                     <GridEvents OnActionBegin="OnCaseCareSummaryActionBegin" OnActionComplete="@OnCaseCareSummaryActionComplete" TValue="spCaseCareSummaryGetAllResult"></GridEvents>
-                                                                    <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+                                                                    <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                                                                         <Template Context="CaseCareSummaryContext">
                                                                             @{
                                                                                 CaseCareSummaryReviewData = (CaseCareSummaryContext as spCaseCareSummaryGetAllResult);
@@ -722,6 +722,8 @@
             new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
         };
     #endregion Toasters
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
     Random random = new Random();
     SfGrid<spBeneficiaryIdentificationRegisterGetAllResult> BeneficiaryRegisterGrid;
     private spBeneficiaryIdentificationRegisterGetAllResult BeneficiaryRegisterData { get; set; }

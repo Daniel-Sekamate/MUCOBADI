@@ -450,6 +450,10 @@
             try
             {
                 string? DistrictId = null; string? SubcountyId = null; string? HouseholdId = null; string? NatureofResidenceId = null; string? CategoryofResidenceId = null;
+<<<<<<< HEAD
+=======
+                string? StartDate = null; string? Enddate = null;
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 
                 if (dataManagerRequest.Params != null && dataManagerRequest.Params.Count > 0)
                 {
@@ -474,10 +478,25 @@
                     {
                         CategoryofResidenceId = val.FirstOrDefault(o => o.Key == "CategoryofResidenceId").Value.ToString();
                     }
+<<<<<<< HEAD
                 }
                 if (!string.IsNullOrEmpty(DistrictId) || !string.IsNullOrEmpty(SubcountyId) || !string.IsNullOrEmpty(HouseholdId))
                 {
                     data = await Repo.GetBusinessPlan(DistrictId, SubcountyId, HouseholdId, NatureofResidenceId, CategoryofResidenceId);
+=======
+                    if (val.FirstOrDefault(o => o.Key == "StartDate").Value != null)
+                    {
+                        StartDate = val.FirstOrDefault(o => o.Key == "StartDate").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "EndDate").Value != null)
+                    {
+                        Enddate = val.FirstOrDefault(o => o.Key == "EndDate").Value.ToString();
+                    }
+                }
+                if (!string.IsNullOrEmpty(DistrictId) || !string.IsNullOrEmpty(SubcountyId) || !string.IsNullOrEmpty(HouseholdId))
+                {
+                    data = await Repo.GetBusinessPlan(DistrictId, SubcountyId, HouseholdId, NatureofResidenceId, CategoryofResidenceId, StartDate, Enddate);
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
                 }
 
             }

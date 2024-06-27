@@ -105,7 +105,7 @@
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
             <GridPageSettings PageSize="20"></GridPageSettings>
             <GridEvents OnActionComplete="OnGraduationBenchMarkActionComplete" OnActionBegin="OnGraduationBenchMarkActionBegin" TValue="GraduationBenchMark"></GridEvents>
-            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                    <Template Context="GraduationChecklistHeaderContext">
                        @{
                         GraduationBenchMarkReviewData = (GraduationChecklistHeaderContext as GraduationBenchMark);
@@ -292,6 +292,8 @@
             new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
         };
     #endregion Toasters
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
 
     SfGrid<GraduationBenchMark>? GraduationBenchMarkGrid;
     private GraduationBenchMark? GraduationBenchMarkReviewData { get; set; }

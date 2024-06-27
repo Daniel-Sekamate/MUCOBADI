@@ -103,7 +103,7 @@
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <SfDataManager AdaptorInstance="@typeof(VslaGroupCompositionAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
             <GridEvents OnActionBegin="OnVslaGroupCompositionActionBegin" OnActionComplete="@OnVslaGroupCompositionActionComplete" TValue="VslaGroupComposition"></GridEvents>
-            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <Template Context="VslaGroupCompositionContext">
                     @{
                         VslaGroupCompositionReviewData = (VslaGroupCompositionContext as VslaGroupComposition);
@@ -570,6 +570,8 @@
             new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
         };
     #endregion Toasters
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
     CycleModel NextCycleModel { get; set; } = new CycleModel();
     SfDialog GroupDialog;
     SfDialog GroupCycleDialog;

@@ -4,7 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using MUCOBADI.DTOs;
 using MUCOBADI.Interfaces.SMUtools;
 using MUCOBADI.Models;
+<<<<<<< HEAD
 using System;
+=======
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,6 +45,7 @@ namespace MUCOBADI.Controller
             var result = await _smuTools.GetClientRegisteredByGroupId(SMUGroupId);
             return Ok(result);
         }
+<<<<<<< HEAD
 
         //[HttpGet("GenerateClientRegistrationReport")]
         //public async Task<IActionResult> GenerateClientRegistrationReport(
@@ -60,5 +64,7 @@ namespace MUCOBADI.Controller
 
         //    return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ClientRegistrationReport.xlsx");
         //}
+=======
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
     }
 }

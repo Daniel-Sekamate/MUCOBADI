@@ -66,7 +66,7 @@
     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
     <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
     <GridEvents OnActionBegin="OnGraduationCriteriaActionBegin" TValue="AGraduationCriteria"></GridEvents>
-    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+    <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
         <HeaderTemplate>
             @{
                 var text = GetGraduationCriteriaHeader((context as AGraduationCriteria));
@@ -124,6 +124,7 @@
 
     private SfGrid<AGraduationCriteria> GraduationCriteriaGrid;
     public string ButtonText { get; set; }
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
 
     protected override async Task OnInitializedAsync()
     {

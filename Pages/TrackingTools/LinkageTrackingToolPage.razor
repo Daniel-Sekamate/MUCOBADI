@@ -53,7 +53,7 @@
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <SfDataManager AdaptorInstance="@typeof(BeneficiaryLinkageTrackingToolAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
             <GridEvents OnActionBegin="OnBeneficiaryLinkageTrackingToolActionBegin" OnActionComplete="@OnBeneficiaryLinkageTrackingToolActionComplete" TValue="BeneficiaryLinkageTrackingTool"></GridEvents>
-            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <Template Context="BeneficiaryLinkageTrackingToolContext">
                     @{
                         BeneficiaryLinkageTrackingToolReviewData = (BeneficiaryLinkageTrackingToolContext as BeneficiaryLinkageTrackingTool);
@@ -423,6 +423,8 @@
             new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
         };
     #endregion Toasters
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
 
     SfGrid<BeneficiaryLinkageTrackingTool> BeneficiaryLinkageTrackingToolGrid;
     private BeneficiaryLinkageTrackingTool BeneficiaryLinkageTrackingToolReviewData { get; set; }

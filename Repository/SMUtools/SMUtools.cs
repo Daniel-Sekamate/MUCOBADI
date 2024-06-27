@@ -10,6 +10,7 @@ using MUCOBADI.DTOs;
 using System;
 using BlazorStrap;
 using Syncfusion.DocIO.DLS;
+<<<<<<< HEAD
 using Syncfusion.XlsIO;
 using System.Data;
 using System.IO;
@@ -17,17 +18,27 @@ using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
 using Syncfusion.ExcelExport;
 using Microsoft.AspNetCore.Hosting;
+=======
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 
 namespace MUCOBADI.Repository.SMUtools
 {
     public class SMUtools : ISMUtools
     {
         private readonly MUCOBADIContext _context;
+<<<<<<< HEAD
         private readonly IWebHostEnvironment _hostingEnvironment;
         public SMUtools(MUCOBADIContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             _hostingEnvironment = hostingEnvironment;
+=======
+        
+        public SMUtools(MUCOBADIContext context)
+        {
+            _context = context;
+                
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
         }
 
         public async Task<List<SmuClientRegistrationForm>> GetClientRegisteredByGroupId(int SMUGroupId)
@@ -38,7 +49,11 @@ namespace MUCOBADI.Repository.SMUtools
                 .ToListAsync();
             return data;
         }
+<<<<<<< HEAD
         public async Task<List<ViewSmuAssessmentGuide>> GetViewSmuAssessmentGuideListId(int SMUGroupId)
+=======
+       public async Task<List<ViewSmuAssessmentGuide>> GetViewSmuAssessmentGuideListId(int SMUGroupId)
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
         {
             var data = await _context.ViewSmuAssessmentGuide
                .AsNoTracking()
@@ -142,7 +157,11 @@ namespace MUCOBADI.Repository.SMUtools
            .AsNoTracking()
            .Where(std => std.SmuAssementGuideId == SelectedAssessmentGuideId)
            .ToListAsync();
+<<<<<<< HEAD
             return data;
+=======
+                return data;
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
         }
         public async Task<List<SmuSafetyPlanningFormWarningSigns>> GetSmuSafetyPlanningFormWarningSigns(int SelectedSafetyPlanningFormId)
         {
@@ -212,11 +231,30 @@ namespace MUCOBADI.Repository.SMUtools
                 }
                 else
                 {
+<<<<<<< HEAD
                   _context.Entry(GroupExists).CurrentValues.SetValues(data);
                   _context.Entry(GroupExists).State = EntityState.Modified;
                   await _context.SaveChangesAsync();
                   _context.Entry(GroupExists).State = EntityState.Detached;
                   await _context.SaveChangesAsync();
+=======
+                    if (
+                        GroupExists.SmuGroupName != data.SmuGroupName ||
+                        GroupExists.DistrictId != data.DistrictId ||
+                        GroupExists.RegionId != data.RegionId ||
+                        GroupExists.RegistartionDate != data.RegistartionDate ||
+                        GroupExists.SmuFacilitatorId != data.SmuFacilitatorId ||
+                        GroupExists.SmuOfficeId != data.SmuOfficeId ||
+                        GroupExists.SubcountyId != data.SubcountyId
+                        )
+                    {
+                        _context.Entry(GroupExists).CurrentValues.SetValues(data);
+                        _context.Entry(GroupExists).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+                        _context.Entry(GroupExists).State = EntityState.Detached;
+                        await _context.SaveChangesAsync();
+                    }
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
 
                 }
                 if (data.SmuClientRegistrationForm != null && data.SmuClientRegistrationForm.Count > 0)
@@ -277,6 +315,7 @@ namespace MUCOBADI.Repository.SMUtools
                                 }
 
                             }
+<<<<<<< HEAD
                             //if (form.SmuAssessmentGuide != null && form.SmuAssessmentGuide.Count > 0)
                             //{
                             //    foreach (var guide in form.SmuAssessmentGuide)
@@ -426,6 +465,224 @@ namespace MUCOBADI.Repository.SMUtools
             catch (DbUpdateException ex)
             {
 
+=======
+                            if (form.SmuAssessmentGuide != null && form.SmuAssessmentGuide.Count > 0)
+                            {
+                                foreach (var guide in form.SmuAssessmentGuide)
+                                {
+                                    var guideExists = await _context.SmuAssessmentGuide.FirstOrDefaultAsync(o => o.AssementGuideId == guide.AssementGuideId);
+                                    if(guideExists == null)
+                                    {
+                                        int id = 1;
+                                        var lastGuide = await _context.SmuAssessmentGuide.OrderByDescending(o => o.AssementGuideId).FirstOrDefaultAsync();
+                                        if (lastGuide != null) 
+                                        {
+                                            id = (lastGuide.AssementGuideId + 1);
+                                        }
+                                        guide.AssementGuideId = id;
+                                        SmuAssessmentGuide mm = new SmuAssessmentGuide();
+                                        mm.AssementGuideId = guide.AssementGuideId;
+                                        mm.DateOfAssessment = guide.DateOfAssessment;
+                                        mm.StaffVolunteerName = guide.StaffVolunteerName;
+                                        mm.RespondantGenderId = guide.RespondantGenderId;
+                                        mm.RespondantAge = form.ClientAgeRangeId;
+                                        mm.SchoolNameOrPrisonName = guide.SchoolNameOrPrisonName;
+                                        mm.SubCountyId = form.SubCountyId;
+                                        mm.DistrictId = form.DistrictId;
+                                        mm.RegionId = form.RegionId;
+                                        mm.ExperiencedThoughtsOffDeadHurting = guide.ExperiencedThoughtsOffDeadHurting;
+                                        mm.ExperiencedGenderBasedViolence = guide.ExperiencedGenderBasedViolence;
+                                        mm.SmuGroupId = form.SmuGroupId;
+                                        mm.ClientRegistrationId = form.ClientRegistrationFormId;
+                                        mm.SuicideAssementQuestionOneResponse = guide.SuicideAssementQuestionOneResponse;
+                                        mm.SuicideAssementQuestionOneScore = guide.SuicideAssementQuestionOneScore;
+                                        mm.SuicideAssementQuestionTwoResponse = guide.SuicideAssementQuestionTwoResponse;
+                                        mm.SuicideAssementQuestionTwoScore = guide.SuicideAssementQuestionTwoScore;
+                                        mm.SuicideAssementQuestionThreeResponse = guide.SuicideAssementQuestionThreeResponse;
+                                        mm.SuicideAssementQuestionThreeScore = guide.SuicideAssementQuestionThreeScore;
+                                        mm.SuicideAssementQuestionFourResponse = guide.SuicideAssementQuestionFourResponse;
+                                        mm.SuicideAssementQuestionFourScore = guide.SuicideAssementQuestionFourScore;
+                                        mm.SuicideAssementQuestionFiveResponse = guide.SuicideAssementQuestionFiveResponse;
+                                        mm.SuicideAssementQuestionFiveScore = guide.SuicideAssementQuestionFiveScore;
+                                        mm.SuicideAssementQuestionSixResponse = guide.SuicideAssementQuestionSixResponse;
+                                        mm.SuicideAssementQuestionSixScore = guide.SuicideAssementQuestionSixScore;
+                                        mm.SuicideAssementQuestionSevenResponse = guide.SuicideAssementQuestionSevenResponse;
+                                        mm.SuicideAssementQuestionSevenScore = guide.SuicideAssementQuestionSevenScore;
+                                        mm.SuicideAssementQuestionEightResponse = guide.SuicideAssementQuestionEightResponse;
+                                        mm.SuicideAssementQuestionEightScore = guide.SuicideAssementQuestionEightScore;
+                                        mm.SuicideAssementQuestionNineResponse = guide.SuicideAssementQuestionNineResponse;
+                                        mm.SuicideAssementQuestionNineScore = guide.SuicideAssementQuestionNineScore;
+                                        mm.SuicideAssementQuestionTenResponse = guide.SuicideAssementQuestionTenResponse;
+                                        mm.SuicideAssementQuestionTenScore = guide.SuicideAssementQuestionTenScore;
+                                        mm.SuicideAssementTotalScore = guide.SuicideAssementTotalScore;
+                                        mm.ConsentObtainedYesNo = guide.ConsentObtainedYesNo;
+                                        mm.SmuProgramId = guide.SmuProgramId;
+                                    }
+                                    else
+                                    {
+                                        if
+                                     (
+                                     guideExists.DateOfAssessment != guide.DateOfAssessment ||
+                                     guideExists.StaffVolunteerName != guide.StaffVolunteerName ||
+                                     guideExists.RespondantGenderId != guide.RespondantGenderId ||
+                                     guideExists.RespondantAge != guide.RespondantAge ||
+                                     guideExists.SchoolNameOrPrisonName != guide.SchoolNameOrPrisonName ||
+                                     guideExists.SubCountyId != guide.SubCountyId ||
+                                     guideExists.DistrictId != guide.DistrictId ||
+                                     guideExists.RegionId != guide.RegionId ||
+                                     guideExists.ExperiencedThoughtsOffDeadHurting != guide.ExperiencedThoughtsOffDeadHurting ||
+                                     guideExists.ExperiencedGenderBasedViolence != guide.ExperiencedGenderBasedViolence ||
+                                     guideExists.SmuGroupId != guide.SmuGroupId ||
+                                     guideExists.ClientRegistrationId != guide.ClientRegistrationId ||
+                                     guideExists.SuicideAssementQuestionOneResponse != guide.SuicideAssementQuestionOneResponse ||
+                                     guideExists.SuicideAssementQuestionOneScore != guide.SuicideAssementQuestionOneScore ||
+                                     guideExists.SuicideAssementQuestionTwoResponse != guide.SuicideAssementQuestionTwoResponse ||
+                                     guideExists.SuicideAssementQuestionTwoScore != guide.SuicideAssementQuestionTwoScore ||
+                                     guideExists.SuicideAssementQuestionThreeResponse != guide.SuicideAssementQuestionThreeResponse ||
+                                     guideExists.SuicideAssementQuestionThreeScore != guide.SuicideAssementQuestionThreeScore ||
+                                     guideExists.SuicideAssementQuestionFourResponse != guide.SuicideAssementQuestionFourResponse ||
+                                     guideExists.SuicideAssementQuestionFourScore != guide.SuicideAssementQuestionFourScore ||
+                                     guideExists.SuicideAssementQuestionFiveResponse != guide.SuicideAssementQuestionFiveResponse ||
+                                     guideExists.SuicideAssementQuestionFiveScore != guide.SuicideAssementQuestionFiveScore ||
+                                     guideExists.SuicideAssementQuestionSixResponse != guide.SuicideAssementQuestionSixResponse ||
+                                     guideExists.SuicideAssementQuestionSixScore != guide.SuicideAssementQuestionSixScore ||
+                                     guideExists.SuicideAssementQuestionSevenResponse != guide.SuicideAssementQuestionSevenResponse ||
+                                     guideExists.SuicideAssementQuestionSevenScore != guide.SuicideAssementQuestionSevenScore ||
+                                     guideExists.SuicideAssementQuestionEightResponse != guide.SuicideAssementQuestionEightResponse ||
+                                     guideExists.SuicideAssementQuestionEightScore != guide.SuicideAssementQuestionEightScore ||
+                                     guideExists.SuicideAssementQuestionNineResponse != guide.SuicideAssementQuestionNineResponse ||
+                                     guideExists.SuicideAssementQuestionNineScore != guide.SuicideAssementQuestionNineScore ||
+                                     guideExists.SuicideAssementQuestionTenResponse != guide.SuicideAssementQuestionTenResponse ||
+                                     guideExists.SuicideAssementQuestionTenScore != guide.SuicideAssementQuestionTenScore ||
+                                     guideExists.SuicideAssementTotalScore != guide.SuicideAssementTotalScore ||
+                                     guideExists.ConsentObtainedYesNo != guide.ConsentObtainedYesNo ||
+                                     guideExists.SmuProgramId != guide.SmuProgramId ||
+                                     guideExists.SmuOfficeId != guide.SmuOfficeId
+                                     //guideExists.SMU
+                                     )
+                                        {
+                                            Console.WriteLine("we are reach save 1");
+                                            _context.Entry(guideExists).CurrentValues.SetValues(guide);
+                                            _context.Entry(guideExists).State = EntityState.Modified;
+                                            await _context.SaveChangesAsync();
+                                            _context.Entry(guideExists).State = EntityState.Detached;
+                                            await _context.SaveChangesAsync();
+                                        }
+                                    }
+                                    if(guide.SmuSucideAssementFormHeader != null && guide.SmuSucideAssementFormHeader.Count > 0)
+                                    {
+                                        foreach (var suicide in guide.SmuSucideAssementFormHeader)
+                                        {
+                                            var suicideExists = await _context.SmuSucideAssementFormHeader.FirstOrDefaultAsync(o=>o.SucideAssessmentFormHeaderId ==suicide.SucideAssessmentFormHeaderId);
+                                            if(suicideExists != null)
+                                            {
+                                                if (
+                                                suicideExists.SucideAssementResponseId != suicide.SucideAssementResponseId ||
+                                                suicideExists.SuicideAssesmentScore != suicide.SuicideAssesmentScore
+                                                   )
+                                                {
+                                                    Console.WriteLine("we are in the method");
+                                                    var entry = _context.ChangeTracker.Entries<SmuSucideAssementFormHeader>().FirstOrDefault(e => e.Entity.SucideAssessmentFormHeaderId == suicideExists.SucideAssessmentFormHeaderId);
+                                                    if (entry == null)
+                                                    {
+                                                        // Update the existing entity with the new values
+                                                        _context.Attach(suicideExists);
+                                                        _context.Entry(suicideExists).CurrentValues.SetValues(suicide);
+                                                        Console.WriteLine("we are reach save");
+                                                        await _context.SaveChangesAsync();
+                                                    }
+                                                    else
+                                                    {
+                                                        // If the entity is already tracked, you can directly modify its properties
+                                                        //  _context.Attach(fixedDepositExists);
+                                                        _context.Entry(suicideExists).CurrentValues.SetValues(suicide);
+                                                        await _context.SaveChangesAsync();
+                                                    }
+                                                }
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (data.SmuAttendenceHeader != null && data.SmuAttendenceHeader.Count > 0)
+                {
+                    foreach (var attendanceHeader in data.SmuAttendenceHeader)
+                    {
+                        var attendanceHeaderExists = await _context.SmuAttendenceHeader.FirstOrDefaultAsync(o => o.AttendenceFormHeaderId == attendanceHeader.AttendenceFormHeaderId);
+                        if (attendanceHeaderExists == null)
+                        {
+                            int id = 1;
+                            var lastattendanceHeader = await _context.SmuAttendenceHeader.OrderByDescending(o => o.AttendenceFormHeaderId).FirstOrDefaultAsync();
+                            if (lastattendanceHeader != null)
+                            {
+                                id = (lastattendanceHeader.AttendenceFormHeaderId + 1);
+                            }
+                            attendanceHeader.AttendenceFormHeaderId = id;
+                            SmuAttendenceHeader m = new SmuAttendenceHeader();
+                            m.AttendenceFormHeaderId = attendanceHeader.AttendenceFormHeaderId;
+                            m.SmuGroupId = data.SmuGroupId;
+                            m.AttendenceYearId = attendanceHeader.AttendenceYearId;
+                            m.AttendenceCycleId = attendanceHeader.AttendenceCycleId;
+                            m.DateCreated = DateTime.Now;
+                            m.CapturedBy = attendanceHeader.CapturedBy;
+                        }
+                        else
+                        {
+                            if (
+                               attendanceHeaderExists.SmuGroupId != attendanceHeader.SmuGroupId ||
+                               attendanceHeaderExists.AttendenceYearId != attendanceHeader.AttendenceYearId ||
+                               attendanceHeaderExists.AttendenceCycleId != attendanceHeader.AttendenceCycleId
+                               )
+                            {
+                                Console.WriteLine("we are in the method");
+                                var entry = _context.ChangeTracker.Entries<SmuSucideAssementFormHeader>().FirstOrDefault(e => e.Entity.SucideAssessmentFormHeaderId == attendanceHeaderExists.AttendenceFormHeaderId);
+                                if (entry == null)
+                                {
+                                    // Update the existing entity with the new values
+                                    _context.Attach(attendanceHeaderExists);
+                                    _context.Entry(attendanceHeaderExists).CurrentValues.SetValues(attendanceHeader);
+                                    Console.WriteLine("we are reach save");
+                                    await _context.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                  // If the entity is already tracked, you can directly modify its properties
+                               //  .Attach(fixedDepositExists);
+                                    _context.Entry(attendanceHeaderExists).CurrentValues.SetValues(attendanceHeader);
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+
+                        }
+                    }
+                }
+              
+            }
+            catch (DbUpdateException ex)
+            {
+                //// Handle specific database update exceptions
+                ////Console.WriteLine("Database update error: " + ex.Message);
+                //int id = 1;
+                //var lastGroup = await _context.ErrorLog.OrderByDescending(o => o.ErrorLogId).FirstOrDefaultAsync();
+                //if (lastGroup != null)
+                //{
+                //    id = (lastGroup.ErrorLogId + 1);
+                //}
+                //data.SmuGroupId = id;
+                //var errorLog = new ErrorLog
+                //{
+                //    ErrorLogId = id,
+                //    ErrorDateTime = DateTime.Now,
+                //    ErrorMessage = "Database update error: " + ex.Message
+                //    // Other properties as needed
+                //};
+                //_context.ErrorLog.Add(errorLog);
+                // await _context.SaveChangesAsync();
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             }
             return _data;
         }
@@ -456,7 +713,11 @@ namespace MUCOBADI.Repository.SMUtools
                         await _context.SaveChangesAsync();
                     }
                 }
+<<<<<<< HEAD
                 if (data.SmuAssessmentGuidePh9Questions != null && data.SmuAssessmentGuidePh9Questions.Count > 0)
+=======
+                if(data.SmuAssessmentGuidePh9Questions != null && data.SmuAssessmentGuidePh9Questions.Count > 0)
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
                 {
                     foreach (var GuidePh9Questions in data.SmuAssessmentGuidePh9Questions)
                     {
@@ -480,11 +741,19 @@ namespace MUCOBADI.Repository.SMUtools
                         }
                     }
                 }
+<<<<<<< HEAD
                 if (data.SmuSucideAssementFormHeader != null && data.SmuSucideAssementFormHeader.Count > 0)
                 {
                     foreach (var Suicide in data.SmuSucideAssementFormHeader)
                     {
                         if (Suicide.SuicideAssesmentScore != null && Suicide.SucideAssementResponseId != null)
+=======
+                if(data.SmuSucideAssementFormHeader != null && data.SmuSucideAssementFormHeader.Count > 0)
+                {
+                    foreach (var Suicide in data.SmuSucideAssementFormHeader)
+                    {
+                        if(Suicide.SuicideAssesmentScore != null && Suicide.SucideAssementResponseId != null)
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
                         {
                             var SuicideExists = await _context.SmuSucideAssementFormHeader.FirstOrDefaultAsync(o => o.SucideAssessmentFormHeaderId == Suicide.SucideAssessmentFormHeaderId);
                             if (SuicideExists != null)
@@ -507,7 +776,28 @@ namespace MUCOBADI.Repository.SMUtools
             }
             catch (DbUpdateException ex)
             {
+<<<<<<< HEAD
 
+=======
+                // Handle specific database update exceptions
+                //Console.WriteLine("Database update error: " + ex.Message);
+                //int id = 1;
+                //var lastGroup = await _context.ErrorLog.OrderByDescending(o => o.ErrorLogId).FirstOrDefaultAsync();
+                //if (lastGroup != null)
+                //{
+                //    id = (lastGroup.ErrorLogId + 1);
+                //}
+                //data.SmuGroupId = id;
+                //var errorLog = new ErrorLog
+                //{
+                //    ErrorLogId = id,
+                //    ErrorDateTime = DateTime.Now,
+                //    ErrorMessage = "Database update error: " + ex.Message
+                //    // Other properties as needed
+                //};
+                //_context.ErrorLog.Add(errorLog);
+                //await _context.SaveChangesAsync();
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             }
             return _data;
         }
@@ -521,7 +811,11 @@ namespace MUCOBADI.Repository.SMUtools
                 {
                     if (
                        SafetyPlanningExists.StaffVolunteerName != data.StaffVolunteerName ||
+<<<<<<< HEAD
                        SafetyPlanningExists.InterviewDate != data.InterviewDate
+=======
+                       SafetyPlanningExists.InterviewDate != data.InterviewDate 
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
                        )
                     {
                         _context.Entry(SafetyPlanningExists).CurrentValues.SetValues(data);
@@ -773,7 +1067,25 @@ namespace MUCOBADI.Repository.SMUtools
             }
             catch (DbUpdateException ex)
             {
+<<<<<<< HEAD
 
+=======
+                //int id = 1;
+                //var lastGroup = await _context.ErrorLog.OrderByDescending(o => o.ErrorLogId).FirstOrDefaultAsync();
+                //if (lastGroup != null)
+                //{
+                //    id = (lastGroup.ErrorLogId + 1);
+                //}
+                //data.SmuGroupId = id;
+                //var errorLog = new ErrorLog
+                //{
+                //    ErrorLogId = id,
+                //    ErrorDateTime = DateTime.Now,
+                //    ErrorMessage = "Database update error: " + ex.Message
+                //};
+                //_context.ErrorLog.Add(errorLog);
+                //await _context.SaveChangesAsync();
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             }
             return _data;
         }
@@ -801,7 +1113,11 @@ namespace MUCOBADI.Repository.SMUtools
                 {
                     foreach (var Ph9Questions in data.SmuPreGroupGuidePh9Questions)
                     {
+<<<<<<< HEAD
                         if (Ph9Questions.Ph9QuestionHeaderId != null && Ph9Questions.SerialNumber != null && Ph9Questions.SmuPreGroupGuidePh9QuestionsSored != null)
+=======
+                        if (Ph9Questions.Ph9QuestionHeaderId != null &&  Ph9Questions.SerialNumber != null && Ph9Questions.SmuPreGroupGuidePh9QuestionsSored != null)
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
                         {
                             var Ph9QuestionsExists = await _context.SmuPreGroupGuidePh9Questions.FirstOrDefaultAsync(o => o.Ph9QuestionsId == Ph9Questions.Ph9QuestionsId);
                             if (Ph9QuestionsExists != null)
@@ -819,6 +1135,7 @@ namespace MUCOBADI.Repository.SMUtools
                                     await _context.SaveChangesAsync();
                                 }
                             }
+<<<<<<< HEAD
 
                         }
                     }
@@ -828,6 +1145,31 @@ namespace MUCOBADI.Repository.SMUtools
             catch (DbUpdateException ex)
             {
 
+=======
+                           
+                        }
+                    }
+                }
+              
+            }
+            catch (DbUpdateException ex)
+            {
+                //int id = 1;
+                //var lastGroup = await _context.ErrorLog.OrderByDescending(o => o.ErrorLogId).FirstOrDefaultAsync();
+                //if (lastGroup != null)
+                //{
+                //    id = (lastGroup.ErrorLogId + 1);
+                //}
+                //data.SmuGroupId = id;
+                //var errorLog = new ErrorLog
+                //{
+                //    ErrorLogId = id,
+                //    ErrorDateTime = DateTime.Now,
+                //    ErrorMessage = "Database update error: " + ex.Message
+                //};
+                //_context.ErrorLog.Add(errorLog);
+                //await _context.SaveChangesAsync();
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
             }
             return _data;
         }
@@ -948,7 +1290,11 @@ namespace MUCOBADI.Repository.SMUtools
                 {
                     foreach (var TerminantionPh9Qns in data.SmuTerminantionGuidePh9Questions)
                     {
+<<<<<<< HEAD
                         if (TerminantionPh9Qns.SmuTerminantionGuidePh9QuestionsSored != null && TerminantionPh9Qns.Ph9QuestionHeaderId != null)
+=======
+                        if(TerminantionPh9Qns.SmuTerminantionGuidePh9QuestionsSored != null && TerminantionPh9Qns.Ph9QuestionHeaderId != null)
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699
                         {
                             var TerminantionPh9QnsExists = await _context.SmuTerminantionGuidePh9Questions.FirstOrDefaultAsync(o => o.SmuTerminantionGuidePh9QuestionsId == TerminantionPh9Qns.SmuTerminantionGuidePh9QuestionsId);
                             if (TerminantionPh9QnsExists != null)
@@ -990,6 +1336,7 @@ namespace MUCOBADI.Repository.SMUtools
             }
             return _data;
         }
+<<<<<<< HEAD
         public async Task<byte[]> GenerateClientRegistrationReportAsync(DateTime? startDate, DateTime? endDate, string? smuGroupIds = "", string? regionIds = "", string? districtIds = "", string? subcountyIds = "", string? clientAgeRangeIds = "", string? smuOfficeIds = "", string? smuFacilitatorIds = "")
         {
             using (ExcelEngine excelEngine = new ExcelEngine())
@@ -1280,3 +1627,7 @@ namespace MUCOBADI.Repository.SMUtools
       
     }
 }
+=======
+    }
+}
+>>>>>>> 8bc1de6fbfadf219bc83e728615777a61ac50699

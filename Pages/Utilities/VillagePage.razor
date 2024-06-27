@@ -132,7 +132,7 @@
             <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
             <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
             <GridEvents OnActionBegin="OnVillageActionBegin" TValue="ViewAVillage"></GridEvents>
-            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
                 <HeaderTemplate>
                     @{
                         var text = GetVillageHeader((context as ViewAVillage));
@@ -224,6 +224,8 @@
     bool isSubcountyEnabled { get; set; } = false;
     bool isParishEnabled { get; set; } = false;
     bool isVillageEnabled { get; set; } = false;
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
 
     public void ChangeDistrict(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, ADistrict> args)
     {
