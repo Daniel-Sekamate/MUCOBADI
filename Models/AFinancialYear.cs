@@ -11,6 +11,7 @@ namespace MUCOBADI.Models
         {
             ATargets = new HashSet<ATargets>();
             ProjectIndicatorTargetsHeader = new HashSet<ProjectIndicatorTargetsHeader>();
+            SmuAttendenceHeader = new HashSet<SmuAttendenceHeader>();
             StakeHolderDataCapture = new HashSet<StakeHolderDataCapture>();
         }
 
@@ -19,6 +20,7 @@ namespace MUCOBADI.Models
 
         public virtual ICollection<ATargets> ATargets { get; set; }
         public virtual ICollection<ProjectIndicatorTargetsHeader> ProjectIndicatorTargetsHeader { get; set; }
+        public virtual ICollection<SmuAttendenceHeader> SmuAttendenceHeader { get; set; }
         public virtual ICollection<StakeHolderDataCapture> StakeHolderDataCapture { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace MUCOBADI.Models
         public virtual HouseHoldMembers HouseHoldMember { get; set; }
         public virtual AImplementingPartner ImplementingPartner { get; set; }
         public virtual ALinkageServiceCategory LinkageServiceCategory { get; set; }
-        public virtual AServiceLinkedTo LinkageTrackingTool { get; set; }
+        public virtual AServiceLinkedTo ServiceLinkedTo { get; set; }
         public virtual AServiceProvider ServiceProvider { get; set; }
         public virtual AServiceReceived ServiceReceivedNavigation { get; set; }
         public virtual ASubcounty Subcounty { get; set; }

@@ -164,6 +164,18 @@ using static MUCOBADI.Pages.Utilities.ViralLoadResultsPage;
 using static MUCOBADI.Pages.Utilities.ViralLoadSuppressedPage;
 using static MUCOBADI.Pages.Utilities.VSLA_Group_TrainerPage;
 using static MUCOBADI.Pages.TrackingTools.TBSensitizationPage;
+using Quartz.Impl;
+using Quartz.Spi;
+using Quartz;
+using MUCOBADI.Interfaces.SMUtools;
+using MUCOBADI.Repository.SMUtools;
+using MUCOBADI.Context;
+//using static MUCOBADI.Pages.BIM.IsvatheaderPage;
+//using static MUCOBADI.Pages.BIM.BusinessTrackingLedgerPage;
+//using static MUCOBADI.Pages.BIM.BusinessPlanHeaderPage;
+//using static MUCOBADI.Pages.NMN.NmnquestionairePage;
+//using static MUCOBADI.Pages.NMN.InterventionAttendanceFormPage;
+using MudBlazor.Services;
 
 namespace MUCOBADI
 {
@@ -181,16 +193,68 @@ namespace MUCOBADI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"), sqloptions => sqloptions.CommandTimeout(9000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking), ServiceLifetime.Scoped);
-            services.AddDbContext<MUCOBADIContext>(options =>
-               options.UseSqlServer(
-                   Configuration.GetConnectionString("DefaultConnection"), sqloptions => sqloptions.CommandTimeout(9000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),ServiceLifetime.Scoped);
-            services.AddDbContext<SPToCoreContext>(options =>
-              options.UseSqlServer(
-                  Configuration.GetConnectionString("DefaultConnection"), sqloptions => sqloptions.CommandTimeout(9000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking), ServiceLifetime.Scoped);
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+
+			//services.AddDbContext<ApplicationDbContext>(options =>
+			//    options.UseSqlServer(
+			//        Configuration.GetConnectionString("DefaultConnection"),
+			//        sqloptions => sqloptions.CommandTimeout(9000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking), 
+			//        ServiceLifetime.Scoped);
+			services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+			{
+				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+					sqlServerOptions =>
+					{
+						sqlServerOptions.EnableRetryOnFailure(
+							maxRetryCount: 5, // Maximum number of retries
+							maxRetryDelay: TimeSpan.FromSeconds(30), // Maximum delay between retries
+							errorNumbersToAdd: null // SQL error numbers to consider transient
+						);
+					})
+				.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+			}, ServiceLifetime.Scoped);
+			//         services.AddDbContext<MUCOBADIContext>(options =>
+			//   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+			//sqloptions => sqloptions.CommandTimeout(9000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
+			//           ServiceLifetime.Scoped);
+
+			services.AddDbContext<MUCOBADIContext>((serviceProvider, options) =>
+			{
+				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+					sqlServerOptions =>
+					{
+						sqlServerOptions.EnableRetryOnFailure(
+							maxRetryCount: 5, // Maximum number of retries
+							maxRetryDelay: TimeSpan.FromSeconds(30), // Maximum delay between retries
+							errorNumbersToAdd: null // SQL error numbers to consider transient
+						);
+					})
+				.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+			}, ServiceLifetime.Scoped);
+
+            services.AddDbContext<BIMContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                sqloptions => sqloptions.CommandTimeout(900000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking), ServiceLifetime.Scoped);
+            services.AddDbContext<UtilitiesContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                sqloptions => sqloptions.CommandTimeout(900000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking), ServiceLifetime.Scoped);
+
+
+            //services.AddDbContext<SPToCoreContext>(options =>
+            //           options.UseSqlServer(
+            //               Configuration.GetConnectionString("DefaultConnection"), sqloptions => sqloptions.CommandTimeout(9000)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking), ServiceLifetime.Scoped);
+            services.AddDbContext<SPToCoreContext>((serviceProvider, options) =>
+			{
+				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+					sqlServerOptions =>
+					{
+						sqlServerOptions.EnableRetryOnFailure(
+							maxRetryCount: 5, // Maximum number of retries
+							maxRetryDelay: TimeSpan.FromSeconds(30), // Maximum delay between retries
+							errorNumbersToAdd: null // SQL error numbers to consider transient
+						);
+					})
+				.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+			}, ServiceLifetime.Scoped);
+
+			services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             var baseurl = Configuration.GetValue<string>("ApiUrl:Url");
@@ -208,6 +272,7 @@ namespace MUCOBADI
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSingleton<WeatherForecastService>();
             services.AddSyncfusionBlazor();
+            services.AddMudServices();
             services.AddBootstrapCss();
             services.AddBlazoredToast();
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson(options =>
@@ -421,14 +486,39 @@ namespace MUCOBADI
             services.AddScoped<IOvcHealthService, OvcHealthServiceRepository>();
             services.AddScoped<IOvcHhICare, OvcHhICareRepository>();
             services.AddScoped<IOvcPss, OvcPssRepository>();
+            services.AddScoped<ISMUtools, SMUtools>();
+            //services.AddScoped<IBimService, BimService>();
+          //  services.AddScoped<INmnService, NmnService>();
             services.AddScoped<BeneficiaryLinkageTrackingToolNewAdapter>();
             services.AddScoped<GraduationBenchMarkAdapter>();
 			services.AddScoped<TargetsAdapter>(); 
             services.AddScoped<StakeHolderDataCaptureAdaptor>(); 
             services.AddScoped<DataCaptureHeaderAdapter>();
             services.AddScoped<TbSensitizationAdapter>();
+			services.AddSingleton<IJobFactory, SingletonJobFactory>();
+			services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+			services.AddHostedService<QuartzHostedService>();
 
-            SchedulerTask.StartAsync().GetAwaiter().GetResult();
+            //Updating Tables
+            services.AddSingleton<SystemNotificationSchedule>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(SystemNotificationSchedule),
+             cronExpression: "0 0 00 ? * MON")); //Monday 4 am   0 0 00 ? * MON
+
+			//services.AddSingleton(new JobSchedule(
+			//jobType: typeof(SystemNotificationSchedule), 0 0 15 ? * MON *
+			//cronExpression: "0 4 ? * 2"));
+
+			//cronExpression: "0 0 0/2 ? * MON-SUN"));//2 Hours
+			//cronExpression: "0 0/2 0-23 ? * MON-SUN"));//2 Minutes
+
+			services.AddSingleton<MonthlySchedule>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(MonthlySchedule),
+            cronExpression: "0 0 00 ? * MON")); //0 0 4 L-1 * ?
+                                  //cronExpression: "0 0 0/2 ? * MON-SUN"));//2 Hours
+                                  //cronExpression: "0 0/2 0-23 ? * MON-SUN"));//2 Minutes
+
 
             services.AddCors(o => o.AddPolicy("AllowAnyOrigins", builder =>
             {
@@ -445,7 +535,8 @@ namespace MUCOBADI
         {
             //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTMwOTMyOUAzMjMwMmUzNDJlMzBHRG1KR3BMTUZQd25XYmNXa2U1M2xkUkVNQmoyc2ovcGRiU0V1dDk3SFJVPQ==");
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjU2MjUyMUAzMjMyMmUzMDJlMzBoYTB5OFBJa0IxZlc5Z1RHUVYycWRuV2k3cTNqd1BIU2Q1emIvcjAxWllnPQ==");
-            if (env.IsDevelopment())
+			ServiceActivator.Configure(app.ApplicationServices);
+			if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseMigrationsEndPoint();
@@ -474,8 +565,8 @@ namespace MUCOBADI
         }
     }
 }
-//Scaffold-DbContext "Server=.;Database=MUCOBADI;User Id=sa;password=8686;Trusted_Connection=False;MultipleActiveResultSets=true;" Microsoft.EntityFrameworkCore.SqlServer -o Models -f -context "MUCOBADIContext" -NoPluralize
 
+//Scaffold-DbContext "Server=DESKTOP-KOVCOUM\DSOFT;Database=Ver1_MUCOBADI;User Id=sa;password=**Root@85;Trusted_Connection=False;MultipleActiveResultSets=true;" Microsoft.EntityFrameworkCore.SqlServer -o Models -f -context "MUCOBADIContext" -NoPluralize
 //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //{
 //	if (!optionsBuilder.IsConfigured)
@@ -488,13 +579,11 @@ namespace MUCOBADI
 //		optionsBuilder.UseSqlServer(connectionString);
 //	}
 //}
-
-
 //using Microsoft.Extensions.Configuration;
 //using System.IO;
 
 
-//SPToCore.exe scan -cnn "Data Source=.;Initial Catalog=MUCOBADI;Persist Security Info=True;User ID=sa;Password=8686;" -sch * -nsp MUCOBADI -ctx MUCOBADIContext -sf Models -pf D:\MVCProjects\BlazorProject\MUCOBADI06Jan2023\MUCOBADI_21_12_2022\MUCOBADI06Jan2023\Models\ -f SPToCoreContext.cs
+//SPToCore.exe scan -cnn "Data Source=DESKTOP-KOVCOUM\DSOFT;Initial Catalog=MUCOBADI;Persist Security Info=True;User ID=sa;Password=**Root@85;" -sch * -nsp MUCOBADI -ctx MUCOBADIContext -sf Models -pf C:\IBS\MUCOBADI29Aug2023\MUCOBADI\Models\ -f SPToCoreContext.cs
 
 //SfCarousel indicator type
 //https://blazor.syncfusion.com/demos/carousel/indicator-type?theme=fluent&_gl=1*10lhko1*_ga*Mzg0MTE4NDM5LjE2NTU3MjY3NTk.*_ga_WC4JKKPHH0*MTY4OTA2NjAxNC40MDUuMS4xNjg5MDY4NzE4LjU5LjAuMA..*_ga_2QTHE2Y2YX*MTY4OTA2NjAxNS4yOS4xLjE2ODkwNjg3MTguNjAuMC4w&_ga=2.124005699.894994975.1688991822-384118439.1655726759

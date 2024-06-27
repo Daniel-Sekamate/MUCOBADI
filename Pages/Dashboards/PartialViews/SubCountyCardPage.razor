@@ -1,0 +1,233 @@
+﻿@page "/card_tile"
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Buttons
+<SfChip>
+     <ChipItems>
+        <ChipItem Text="@CurrentDate" CssClass="e-primary">
+            </ChipItem>
+      @*  <ChipItem Text="@CurrentYear"  CssClass="e-success">
+            </ChipItem>*@
+        <ChipItem Text="@Quarter" CssClass="e-warning">
+                </ChipItem>
+        <ChipItem Text="@_daysLeftInQuarter" CssClass="e-danger">
+                </ChipItem>
+        </ChipItems>
+    </SfChip>
+<div class="row">
+    <div class="control-section col-lg-9 card-control-section tile_layout">
+        <SfCard Orientation="CardOrientation.Horizontal" ID="Trimmer">
+            <div class="col-md-12">
+                <div class="control-section" align='center'>
+                    <div class="control-section">
+                        <SfAccumulationChart EnableBorderOnMouseMove="false" Title="Percentage Visited" EnableAnimation="true">
+                            <AccumulationChartTooltipSettings Header="" Format="<b>${point.x}</b><br>Proportion of export: <b>${point.y}%</b>" Enable="true"></AccumulationChartTooltipSettings>
+                            <AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
+                            <AccumulationChartSeriesCollection>
+                                <AccumulationChartSeries DataSource="@PieChartPoints" XName="Browser" YName="Users" Radius="@Radius" Name="Browser" StartAngle="@StartAngle"
+                                                         InnerRadius="0%" ExplodeIndex="0" Explode="true" ExplodeOffset="@ExplodeRadius">
+                                    <AccumulationDataLabelSettings Visible="true" Name="DataLabelMappingName" Position="AccumulationLabelPosition.Outside">
+                                        <AccumulationChartDataLabelFont Size=@Size FontWeight="600"></AccumulationChartDataLabelFont>
+                                        <AccumulationChartConnector Length=@ConnectorLength Type="ConnectorType.Curve"></AccumulationChartConnector>
+                                    </AccumulationDataLabelSettings>
+                                </AccumulationChartSeries>
+                            </AccumulationChartSeriesCollection>
+                        </SfAccumulationChart>
+                    </div>
+                </div>
+            </div>
+         
+            <div class="col-md-12">
+                <div class="control-section" align='center'>
+                    <div class="control-section">
+                        <CardStacked>
+                            <CardHeader Title="@DistrictName" />
+                            <CardContent>
+                                <div class="col-md-12">
+                                    <div class="control-section" align='center'>
+                                        <SfChart Title="Import Values of services from different Regions to EAC" EnableSideBySidePlacement="false" Width="@Width" Height="@height">
+                                            <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+                                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1" Title="Regions">
+                                                <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+                                                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                                            </ChartPrimaryXAxis>
+                                            <ChartPrimaryYAxis Title="Services Count">
+                                                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                                                <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+                                            </ChartPrimaryYAxis>
+                                            <ChartSeriesCollection>
+                                                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.5" XName="ConsumerName" YName="TotalCount" Name="Total" Type="ChartSeriesType.Column">
+                                                    <ChartMarker>
+                                                        <ChartDataLabel Visible="true" Alignment="@DataLabelAlignment" Name="DataLabelMappingName" EnableRotation="@Rotation" Angle="@AngleRotate" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                                                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                                                        </ChartDataLabel>
+                                                    </ChartMarker>
+                                                </ChartSeries>
+                                                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.4" XName="ConsumerName" YName="AppleCount" Name="Education" Type="ChartSeriesType.Column">
+                                                    <ChartMarker>
+                                                        <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                                                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                                                        </ChartDataLabel>
+                                                    </ChartMarker>
+                                                </ChartSeries>
+                                                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.3" XName="ConsumerName" YName="OrangeCount" Name="Health" Type="ChartSeriesType.Column">
+                                                    <ChartMarker>
+                                                        <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                                                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                                                        </ChartDataLabel>
+                                                    </ChartMarker>
+                                                </ChartSeries>
+                                                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.2" XName="ConsumerName" YName="GrapesCount" Name="Contruction" Type="ChartSeriesType.Column">
+                                                    <ChartMarker>
+                                                        <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                                                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                                                        </ChartDataLabel>
+                                                    </ChartMarker>
+                                                </ChartSeries>
+                                            </ChartSeriesCollection>
+                                            <ChartTooltipSettings Enable="true" Shared="true"></ChartTooltipSettings>
+                                            <ChartLegendSettings Visible="true"></ChartLegendSettings>
+                                        </SfChart>
+                                    </div>
+                                </div>
+                             
+                            </CardContent>
+                            <CardFooter>
+
+                            </CardFooter>
+                        </CardStacked>
+                    </div>
+                </div>
+            </div>
+           <div>
+
+           </div>
+        </SfCard>
+    </div>
+</div>
+@code{
+    private string CurrentDate = "Date:" + " " + DateTime.Now.ToString();
+    private string CurrentYear => "Year:" + " " + DateTime.Now.Year.ToString();
+    private string currentQuarter  = null;
+    private string currentDay = null;
+    public string Quarter { get; set; }
+    private string _daysLeftInQuarter;
+    protected override void OnInitialized()
+    {
+        DateTime endDate;
+        DateTime today = DateTime.Now;
+        int currentMonth = today.Month;
+        string _currentDate = DateTime.Now.ToString();
+        int quarter = (currentMonth - 1) / 3 + 1;
+        if (currentMonth >= 10 && currentMonth <= 12)
+        {
+            quarter = 1;
+            Quarter = "Quarter:One";
+            //endDate = 2023-12-31;
+            
+        }
+        else if (currentMonth >= 1 && currentMonth <= 3)
+        {
+            quarter = 2;
+            Quarter = "Quarter:Two";
+        }
+        else if (currentMonth >= 4 && currentMonth <= 6)
+        {
+            quarter = 3;
+            Quarter = "Quarter:Three";
+        }
+        else if (currentMonth >= 7 && currentMonth <= 9)
+        {
+            quarter = 4;
+            Quarter = "Quarter:Four";
+        }
+        int currentYear = today.Year;
+
+       //Computing days left
+        int lastMonthOfQuarter = quarter * 3;
+        int lastDayOfMonth = DateTime.DaysInMonth(currentYear, lastMonthOfQuarter);
+
+        // Adjusting for the last month of the quarter exceeding December
+        if (lastMonthOfQuarter > 12)
+        {
+            lastMonthOfQuarter = 12;
+            lastDayOfMonth = DateTime.DaysInMonth(currentYear, lastMonthOfQuarter);
+        }
+
+        DateTime lastDateOfCurrentQuarter = new DateTime(currentYear, lastMonthOfQuarter, lastDayOfMonth);
+        TimeSpan remainingTime = lastDateOfCurrentQuarter - today;
+        int remainingDays = remainingTime.Days;
+        _daysLeftInQuarter = Convert.ToString(remainingDays) + "" + "Days left";
+    }
+    [Parameter]
+    public string DistrictName { get; set; } = "Mukono";
+    [Parameter]
+    public string PieChartTitle { get; set; }
+    public int ExplodeIndex { get; set; } = 1;
+    public string ExplodeRadius = "10%";
+    public string Radius { get; set; } = "50%";
+    public string ConnectorLength { get; set; } = "20px";
+    public int StartAngle = 30;
+    public string Size { get; set; } = "12px";
+     public class ColumnPlacementChartData
+    {
+        public string ConsumerName { get; set; }
+        public double TotalCount { get; set; }
+        public double AppleCount { get; set; }
+        public double OrangeCount { get; set; }
+        public double GrapesCount { get; set; }
+        public string DataLabelMappingName { get; set; }
+    }
+    public class PieData
+    {
+        public string Browser { get; set; }
+        public double Users { get; set; }
+        public string DataLabelMappingName { get; set; }
+    }
+    public List<PieData> PieChartPoints { get; set; } = new List<PieData>
+    {
+        new PieData { Browser = "Labour", Users = 59.28, DataLabelMappingName = "Labour: 39.28%"},
+        new PieData { Browser = "Agricultural", Users = 4.37, DataLabelMappingName = "Agricultural: 4.37%"},
+        new PieData { Browser = "Electronics", Users = 6.12, DataLabelMappingName = "Electronics: 6.12%"},
+        new PieData { Browser = "Industrial", Users = 1.37, DataLabelMappingName = "Industrial: 1.37%"},
+        new PieData { Browser = "Automotive", Users = 3.96, DataLabelMappingName = "Automotive: 3.96%"},
+        new PieData { Browser = "Health and Household", Users = 4.73, DataLabelMappingName = "Health and Household: 4.73%"},
+        new PieData { Browser = "Music and Movies", Users = 3.12, DataLabelMappingName = "Music and Movies: 3.12%"},
+        new PieData { Browser = "Software", Users = 7.48, DataLabelMappingName = "Software: 7.48%"},
+        new PieData { Browser = "Sports and Outdoors", Users = 20, DataLabelMappingName = "Sports and Outdoors: 20%"},
+        new PieData { Browser = "Others", Users = 9.57, DataLabelMappingName = "Others: 9.57%"},
+    };
+    public string Width { get; set; } = "100%";
+    public string height { get; set; } = "70%";
+    public Syncfusion.Blazor.Charts.Alignment DataLabelAlignment { get; set; } = Syncfusion.Blazor.Charts.Alignment.Center;
+    public double AngleRotate { get; set; } = 0;
+    public bool Rotation { get; set; } = false;
+    public List<ColumnPlacementChartData> ChartPoints { get; set; } = new List<ColumnPlacementChartData>
+    {
+      new ColumnPlacementChartData { ConsumerName = "Asia", TotalCount = 100, AppleCount = 50, OrangeCount = 40, GrapesCount = 10, DataLabelMappingName = "100" },
+      new ColumnPlacementChartData { ConsumerName = "Middle East", TotalCount = 90, AppleCount = 40, OrangeCount = 30, GrapesCount = 20, DataLabelMappingName = "90" },
+      new ColumnPlacementChartData { ConsumerName = "Europe", TotalCount = 110, AppleCount = 50, OrangeCount = 40, GrapesCount = 20, DataLabelMappingName = "110" },
+      new ColumnPlacementChartData { ConsumerName = "North America", TotalCount = 80, AppleCount = 50, OrangeCount = 20, GrapesCount = 10, DataLabelMappingName = "T80" },
+      new ColumnPlacementChartData { ConsumerName = "South America", TotalCount = 100, AppleCount = 60, OrangeCount = 30, GrapesCount = 10, DataLabelMappingName = "100" },
+       new ColumnPlacementChartData { ConsumerName = "America", TotalCount = 100, AppleCount = 60, OrangeCount = 30, GrapesCount = 10, DataLabelMappingName = "100" },
+        new ColumnPlacementChartData { ConsumerName = "South", TotalCount = 100, AppleCount = 60, OrangeCount = 30, GrapesCount = 10, DataLabelMappingName = "100" },
+         new ColumnPlacementChartData { ConsumerName = "South.A", TotalCount = 100, AppleCount = 60, OrangeCount = 30, GrapesCount = 10, DataLabelMappingName = "100" },
+          new ColumnPlacementChartData { ConsumerName = "S.America", TotalCount = 100, AppleCount = 60, OrangeCount = 30, GrapesCount = 10, DataLabelMappingName = "100" }
+    };
+}
+<style>
+    .e-card-image {
+        background: url('./sample.jpg');
+        height: 160px;
+    }
+
+    .e-card {
+        width: 1550px;
+     /*  // margin: auto;*/
+        height : 50vh
+    }
+
+        .e-card .e-card-horizontal {
+      /*      margin: auto;*/
+            width: inherit;
+        }
+</style>

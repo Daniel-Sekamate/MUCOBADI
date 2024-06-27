@@ -1,0 +1,81 @@
+﻿@page "/column_placement"
+@using Syncfusion.Blazor
+
+@using Syncfusion.Blazor.Charts
+@inject NavigationManager NavigationManager
+<div class="col-md-6">
+    <div class="control-section" align='center'>
+        <SfChart Title="Import Values of services from different Regions to EAC" EnableSideBySidePlacement="false" Width="@Width">
+            <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1" Title="Regions">
+                <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            </ChartPrimaryXAxis>
+            <ChartPrimaryYAxis Title="Services Count">
+                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            </ChartPrimaryYAxis>
+            <ChartSeriesCollection>
+                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.5" XName="ConsumerName" YName="TotalCount" Name="Total" Type="ChartSeriesType.Column">
+                    <ChartMarker>
+                        <ChartDataLabel Visible="true" Alignment="@DataLabelAlignment" Name="DataLabelMappingName" EnableRotation="@Rotation" Angle="@AngleRotate" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                        </ChartDataLabel>
+                    </ChartMarker>
+                </ChartSeries>
+                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.4" XName="ConsumerName" YName="AppleCount" Name="Education" Type="ChartSeriesType.Column">
+                    <ChartMarker>
+                        <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                        </ChartDataLabel>
+                    </ChartMarker>
+                </ChartSeries>
+                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.3" XName="ConsumerName" YName="OrangeCount" Name="Health" Type="ChartSeriesType.Column">
+                    <ChartMarker>
+                        <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                        </ChartDataLabel>
+                    </ChartMarker>
+                </ChartSeries>
+                <ChartSeries DataSource="@ChartPoints" ColumnWidth="0.2" XName="ConsumerName" YName="GrapesCount" Name="Contruction" Type="ChartSeriesType.Column">
+                    <ChartMarker>
+                        <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                        </ChartDataLabel>
+                    </ChartMarker>
+                </ChartSeries>
+            </ChartSeriesCollection>
+            <ChartTooltipSettings Enable="true" Shared="true"></ChartTooltipSettings>
+            <ChartLegendSettings Visible="true"></ChartLegendSettings>
+        </SfChart>
+    </div>
+</div>
+
+@code {
+
+    public string Width { get; set; } = "90%";
+    public Syncfusion.Blazor.Charts.Alignment DataLabelAlignment { get; set; } = Syncfusion.Blazor.Charts.Alignment.Center;
+    public double AngleRotate { get; set; } = 0;
+    public bool Rotation { get; set; } = false;
+    public List<ColumnPlacementChartData> ChartPoints { get; set; } = new List<ColumnPlacementChartData>
+    {
+      new ColumnPlacementChartData { ConsumerName = "Asia", TotalCount = 100, AppleCount = 50, OrangeCount = 40, GrapesCount = 10, DataLabelMappingName = "Total 100" },
+      new ColumnPlacementChartData { ConsumerName = "Middle East", TotalCount = 90, AppleCount = 40, OrangeCount = 30, GrapesCount = 20, DataLabelMappingName = "Total 90" },
+      new ColumnPlacementChartData { ConsumerName = "Europe", TotalCount = 110, AppleCount = 50, OrangeCount = 40, GrapesCount = 20, DataLabelMappingName = "Total 110" },
+      new ColumnPlacementChartData { ConsumerName = "North America", TotalCount = 80, AppleCount = 50, OrangeCount = 20, GrapesCount = 10, DataLabelMappingName = "Total 80" },
+      new ColumnPlacementChartData { ConsumerName = "South America", TotalCount = 100, AppleCount = 60, OrangeCount = 30, GrapesCount = 10, DataLabelMappingName = "Total 100" }
+    };
+    protected override void OnInitialized()
+    {
+
+    }
+    public class ColumnPlacementChartData
+    {
+        public string ConsumerName { get; set; }
+        public double TotalCount { get; set; }
+        public double AppleCount { get; set; }
+        public double OrangeCount { get; set; }
+        public double GrapesCount { get; set; }
+        public string DataLabelMappingName { get; set; }
+    }
+}

@@ -1,0 +1,60 @@
+﻿@using MUCOBADI.DTOs.Dashboard;
+@using Syncfusion.Blazor.Charts
+
+<SfChart>
+    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
+    <ChartSeriesCollection>
+        <ChartSeries DataSource="@MixedChartModelData" Name="Female" XName="Description" Width="2" Opacity="1" YName="Female" Type="ChartSeriesType.Column">
+            <ChartMarker>
+                <ChartDataLabel Visible="true">
+                    <ChartDataLabelFont Color="#222f3e" FontWeight="200"></ChartDataLabelFont>
+                </ChartDataLabel>
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries DataSource="@MixedChartModelData" Name="Male" XName="Description" Width="2" Opacity="1" YName="Male" Type="ChartSeriesType.Column">
+            <ChartMarker>
+                <ChartDataLabel Visible="true">
+                    <ChartDataLabelFont Color="#222f3e" FontWeight="200"></ChartDataLabelFont>
+                </ChartDataLabel>
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries DataSource="@MixedChartModelData" Name="Overall" XName="Description" Width="2" Opacity="1" YName="Overall" Type="ChartSeriesType.Column">
+            <ChartMarker>
+                <ChartDataLabel Visible="true">
+                    <ChartDataLabelFont Color="#222f3e" FontWeight="200"></ChartDataLabelFont>
+                </ChartDataLabel>
+            </ChartMarker>
+        </ChartSeries>
+    </ChartSeriesCollection>
+</SfChart>
+
+@code {
+    [Parameter]
+    public List<MixedChartModel> MixedChartModelData{ get; set; }
+    //[Parameter]
+    //public string Female{ get; set; }
+    // [Parameter]
+    //public string Male{ get; set; }
+    //[Parameter]
+    //public string Overall { get; set; }
+
+    //public class ChartData
+    //{
+    //    public string Country { get; set; }
+    //    public double Gold { get; set; }
+    //    public double Silver { get; set; }
+    //    public double Bronze { get; set; }
+    //}
+
+    //public List<ChartData> MedalDetails = new List<ChartData>
+    //{
+    //    new ChartData{ Country= "USA", Gold=50, Silver=70, Bronze=45 },
+    //    new ChartData{ Country="China", Gold=40, Silver= 60, Bronze=55 },
+    //    new ChartData{ Country= "Japan", Gold=70, Silver= 60, Bronze=50 },
+    //    new ChartData{ Country= "Australia", Gold=60, Silver= 56, Bronze=40 },
+    //    new ChartData{ Country= "France", Gold=50, Silver= 45, Bronze=35 },
+    //    new ChartData{ Country= "Germany", Gold=40, Silver=30, Bronze=22 },
+    //    new ChartData{ Country= "Italy", Gold=40, Silver=35, Bronze=37 },
+    //    new ChartData{ Country= "Sweden", Gold=30, Silver=25, Bronze=27 }
+    //};
+}

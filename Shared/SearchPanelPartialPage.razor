@@ -1,0 +1,264 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Data
+@using Microsoft.EntityFrameworkCore
+@*<h3>SearchPanelPartialPage</h3>*@
+@inject IToastService toastService;
+@inject NavigationManager NavManager;
+<div class="col-md-4">
+    <p>District</p>
+    <SfMultiSelect @bind-Value="@InputModel.DistrictId" Enabled="@EnableDistrict" TValue="int[]" TItem="ADistrict" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@DistrictData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search District" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+        <MultiSelectFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></MultiSelectFieldSettings>
+        <MultiSelectEvents TValue="int[]" TItem="ADistrict" ValueChange="OnDistrictChange"></MultiSelectEvents>
+    </SfMultiSelect>
+</div>
+<div class="col-md-4">
+    <p>Sub-County</p>
+    <SfMultiSelect @bind-Value="@InputModel.SubcountyId" Enabled="@EnableSubcounty" TValue="int[]" TItem="ASubcounty" AllowFiltering="true" Placeholder="Please select"
+                   Mode="@VisualMode.CheckBox" DataSource="@SubcountyData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true"
+                   FilterBarPlaceholder="Search Sub-county" FloatLabelType="FloatLabelType.Never" PopupHeight="350px" Query="@SubCountyQuery">
+        <MultiSelectFieldSettings Value="@nameof(ASubcounty.SubcountyId)" Text="@nameof(ASubcounty.SubcountyDescription)"></MultiSelectFieldSettings>
+        <MultiSelectEvents TValue="int[]" TItem="ASubcounty" ValueChange="OnSubcountyChange"></MultiSelectEvents>
+    </SfMultiSelect>
+</div>
+<div class="col-md-4">
+    <p>Household</p>
+    <SfMultiSelect @bind-Value="@InputModel.HouseholdId" TValue="int[]" TItem="BeneficiaryIdentificationRegister" AllowFiltering="true"
+                   Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@HouseHoldData" ShowSelectAll="true" EnableSelectionOrder="true"
+                   ShowDropDownIcon="true" FilterBarPlaceholder="Search Household" FloatLabelType="FloatLabelType.Never" PopupHeight="350px"
+                   Query="@HouseholdQuery">
+        <MultiSelectFieldSettings Value="@nameof(BeneficiaryIdentificationRegister.HouseHoldId)" Text="@nameof(BeneficiaryIdentificationRegister.HouseHoldCode)"></MultiSelectFieldSettings>
+    </SfMultiSelect>
+</div>
+<div class="col-md-4">
+    <p>Start date</p>
+    <SfDatePicker @bind-Value="@InputModel.StartDate" Format="dd/MM/yyyy" Placeholder="Please select date" FloatLabelType="FloatLabelType.Never"></SfDatePicker>
+</div>
+<div class="col-md-4">
+    <p>End date</p>
+    <SfDatePicker @bind-Value="@InputModel.EndDate" Format="dd/MM/yyyy" Placeholder="Please select date" FloatLabelType="FloatLabelType.Never"></SfDatePicker>
+</div>
+
+
+@code {
+    Query? MainQuery { get; set; }
+    [Parameter]
+    public List<ASubcounty>? SubcountyData { get; set; }
+    [Parameter]
+    public List<ADistrict>? DistrictData { get; set; }
+    [Parameter]
+    public List<BeneficiaryIdentificationRegister>? HouseHoldData { get; set; }
+    [Parameter]
+    public ViewUserManagement? Credentials { get; set; }
+
+    private EnrolmentSearchModel InputModel = new();
+
+    bool EnableDistrict { get; set; } = true;
+    bool EnableSubcounty { get; set; } = true;
+
+    Query? SubCountyQuery { get; set; }
+    Query? HouseholdQuery { get; set; }
+
+    public void OnDistrictChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]?> args)
+    {
+        if (args.Value != null)
+        {
+            List<WhereFilter> filterList = new List<WhereFilter>();
+            foreach (var item in args.Value)
+            {
+                filterList.Add(new WhereFilter() { Field = "DistrictId", Operator = "equal", value = item, IgnoreCase = true });
+            }
+
+            var orWhere = WhereFilter.Or(filterList);
+            SubCountyQuery = new Query().Where(orWhere);
+        }
+        else
+        {
+            SubCountyQuery = new Query();
+        }
+    }
+    public void OnSubcountyChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]?> args)
+    {
+        if (args.Value != null)
+        {
+            if (args.Value != null)
+            {
+                List<WhereFilter> filterList = new List<WhereFilter>();
+                foreach (var item in args.Value)
+                {
+                    filterList.Add(new WhereFilter() { Field = "SubcountyId", Operator = "equal", value = item, IgnoreCase = true });
+                }
+
+                var orWhere = WhereFilter.Or(filterList);
+                HouseholdQuery = new Query().Where(orWhere);
+            }
+            else
+            {
+                HouseholdQuery = new Query();
+            }
+        }
+    }
+
+    public Query SearchRecords()
+    {
+        try
+        {
+            MainQuery = new Query();
+            if (InputModel.DistrictId != null)
+            {
+                MainQuery.AddParams("DistrictId", string.Join(",", InputModel.DistrictId));
+            }
+            if (InputModel.SubcountyId != null)
+            {
+                MainQuery.AddParams("SubcountyId", string.Join(",", InputModel.SubcountyId));
+            }
+            if (InputModel.HouseholdId != null)
+            {
+                MainQuery.AddParams("HouseholdId", string.Join(",", InputModel.HouseholdId));
+            }
+            if (InputModel.StartDate.HasValue)
+            {
+                MainQuery.AddParams("StartDate", string.Join(",", InputModel.StartDate.Value.ToString("dd/MM/yyyy")));
+            }
+            if (InputModel.EndDate.HasValue)
+            {
+                MainQuery.AddParams("EndDate", string.Join(",", InputModel.EndDate.Value.ToString("dd/MM/yyyy")));
+            }
+        }
+        catch (Exception ex)
+        {
+            MainQuery = new Query();
+            toastService.ShowError(ex.Message.ToString());
+        }
+        return MainQuery;
+    }
+    public Query ClearSearchBtnClick()
+    {
+        if (Credentials != null)
+        {
+            InputModel = new();
+            List<int> DistrictId = new List<int>();
+            List<int> SubCountyId = new List<int>();
+            if (!string.IsNullOrEmpty(Credentials.DistrictId))
+            {
+                var a = Credentials.DistrictId.Split(',');
+
+                List<WhereFilter> filterList = new List<WhereFilter>();
+                foreach (var item in a)
+                {
+                    int b = 0;
+                    if (int.TryParse(item, System.Globalization.NumberStyles.None, null, out b))
+                    {
+                        DistrictId.Add(b);
+                        filterList.Add(new WhereFilter() { Field = "DistrictId", Operator = "equal", value = b, IgnoreCase = true });
+                    }
+                }
+
+                var orWhere = WhereFilter.Or(filterList);
+                SubCountyQuery = new Query().Where(orWhere);
+                EnableDistrict = false;
+            }
+            if (!string.IsNullOrEmpty(Credentials.SubCountyId))
+            {
+                var a = Credentials.SubCountyId.Split(',');
+
+                List<WhereFilter> filterList = new List<WhereFilter>();
+                foreach (var item in a)
+                {
+                    int b = 0;
+                    if (int.TryParse(item, System.Globalization.NumberStyles.None, null, out b))
+                    {
+                        SubCountyId.Add(b);
+                        filterList.Add(new WhereFilter() { Field = "SubcountyId", Operator = "equal", value = b, IgnoreCase = true });
+                    }
+                }
+                var orWhere = WhereFilter.Or(filterList);
+                HouseholdQuery = new Query().Where(orWhere);
+                EnableSubcounty = false;
+            }
+
+            if (DistrictId.Count > 0)
+            {
+                InputModel.DistrictId = DistrictId.ToArray();
+            }
+            if (SubCountyId.Count > 0)
+            {
+                InputModel.SubcountyId = SubCountyId.ToArray();
+            }
+        }
+
+        MainQuery = SearchRecords();
+        return MainQuery;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            // var username = userManagement.GetUserName();
+            // Credentials = await db.ViewUserManagement.FirstOrDefaultAsync(o => o.UserName == username);
+            if (Credentials != null)
+            {
+                InputModel = new();
+                List<int> DistrictId = new List<int>();
+                List<int> SubCountyId = new List<int>();
+                if (!string.IsNullOrEmpty(Credentials.DistrictId))
+                {
+                    var a = Credentials.DistrictId.Split(',');
+
+                    List<WhereFilter> filterList = new List<WhereFilter>();
+                    foreach (var item in a)
+                    {
+                        int b = 0;
+                        if (int.TryParse(item, System.Globalization.NumberStyles.None, null, out b))
+                        {
+                            DistrictId.Add(b);
+                            filterList.Add(new WhereFilter() { Field = "DistrictId", Operator = "equal", value = b, IgnoreCase = true });
+                        }
+                    }
+
+                    var orWhere = WhereFilter.Or(filterList);
+                    SubCountyQuery = new Query().Where(orWhere);
+                    EnableDistrict = false;
+                }
+                if (!string.IsNullOrEmpty(Credentials.SubCountyId))
+                {
+                    var a = Credentials.SubCountyId.Split(',');
+
+                    List<WhereFilter> filterList = new List<WhereFilter>();
+                    foreach (var item in a)
+                    {
+                        int b = 0;
+                        if (int.TryParse(item, System.Globalization.NumberStyles.None, null, out b))
+                        {
+                            SubCountyId.Add(b);
+                            filterList.Add(new WhereFilter() { Field = "SubcountyId", Operator = "equal", value = b, IgnoreCase = true });
+                        }
+                    }
+                    var orWhere = WhereFilter.Or(filterList);
+                    HouseholdQuery = new Query().Where(orWhere);
+                    EnableSubcounty = false;
+                }
+
+                if (DistrictId.Count > 0)
+                {
+                    InputModel.DistrictId = DistrictId.ToArray();
+                }
+                if (SubCountyId.Count > 0)
+                {
+                    InputModel.SubcountyId = SubCountyId.ToArray();
+                }
+            }
+            else
+            {
+                NavManager.NavigateTo("/loginPage", true);
+            }
+        }
+        catch (Exception ex)
+        {
+            
+            //throw;
+        }
+        
+    }
+}

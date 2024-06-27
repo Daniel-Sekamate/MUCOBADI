@@ -1,0 +1,371 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+@if (SmuSuicideAssessmentFormHeaderDataSource != null)
+{
+    <SfGrid @ref=@SmuSuicideAssessmentFormHeaderGrid TValue="SmuSucideAssementFormHeader"
+            DataSource="SmuSuicideAssessmentFormHeaderDataSource" RowHeight="30"
+            AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+            AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridEvents TValue="SmuSucideAssementFormHeader" CellSaved="OnCellSaved"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(SmuSucideAssementFormHeader.SucideAssessmentFormHeaderId) HeaderText="Question #" AllowEditing="false" Visible=false IsPrimaryKey="true" Width="50"></GridColumn>
+            <GridColumn Field=@nameof(SmuSucideAssementFormHeader.SucideAssementQuestionId) HeaderText="Question #" AllowEditing="false" Visible=true IsPrimaryKey="true" Width="50"></GridColumn>
+            <GridForeignColumn Field="@(nameof(SmuSucideAssementFormHeader.SucideAssementQuestionId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Questions" Width="350" ForeignKeyField="@(nameof(SmuSucideAssementQuestion.SucideAssementQuestionId))" AllowEditing="true" ForeignKeyValue="@(nameof(SmuSucideAssementQuestion.SucideAssementQuestion))" ForeignDataSource="@SmuSuicideAssessmentQuestionData"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(SmuSucideAssementFormHeader.SucideAssementResponseId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Response" Width="180" ForeignKeyField="@(nameof(SmuSucideAssementResponse.SucideAssementResponseId))" AllowEditing="true" ForeignKeyValue="@(nameof(SmuSucideAssementResponse.SucideAssementResponse))" ForeignDataSource="@SmuSuicideAssessmentResponseData"></GridForeignColumn>
+            <GridColumn Field=@nameof(SmuSucideAssementFormHeader.SuicideAssesmentScore) HeaderText="Score" AllowEditing="true" Visible="true" Width="100"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+  @*   <div class="col-md-12">
+        <p><strong>PH 4 Score Key:</strong>  No Depression 0-2; Mild 3-4; Moderate 5-8; Severe 9-12 </p>
+        <p><strong>The PHQ 4 score is:</strong>@TotalScore </p>
+    </div> *@
+}
+
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    public double? TotalScore { get; set; }
+    int? PreviousSelectedAssessmentGuideId { get; set; }
+    [Parameter]
+    public int SelectedAssessmentGuideId { get; set; }
+    [Parameter]
+    public List<SmuSucideAssementResponse>? SmuSuicideAssessmentResponseData { get; set; }
+    [Parameter]
+    public List<SmuSucideAssementQuestion>? SmuSuicideAssessmentQuestionData { get; set; }
+    [Parameter]
+    public EventCallback<List<SmuSucideAssementFormHeader>?> SmuSuicideAssessmentFormHeaderCallBack { get; set; }
+    private SfGrid<SmuSucideAssementFormHeader>? SmuSuicideAssessmentFormHeaderGrid;
+    List<SmuSucideAssementFormHeader>? SmuSuicideAssessmentFormHeaderDataSource { get; set; }
+
+    public async Task OnCellSaved(CellSaveArgs<SmuSucideAssementFormHeader> args)
+    {
+        if (args.Data.SucideAssementQuestionId != null && args.Data.SucideAssementResponseId != null
+         && args.Data.SuicideAssesmentScore != null && args.Data.AssementGuideId != null)
+        {
+            double? TotalScore = 0.0;
+            double? scoreQN1 = 0.0;
+            double? scoreQN2 = 0.0;
+            double? scoreQN3 = 0.0;
+            double? scoreQN4 = 0.0;
+            double? scoreQN5 = 0.0;
+            double? scoreQN6 = 0.0;
+            double? scoreQN7 = 0.0;
+            double? scoreQN8 = 0.0;
+            double? scoreQN9 = 0.0;
+            double? scoreQN10 = 0.0;
+            var index = await SmuSuicideAssessmentFormHeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.SucideAssementQuestionId);
+            if (args.Data.SucideAssementQuestionId == 1)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 1;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 9;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN1 = args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 2)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 1;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 9;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN2 = args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 3)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 6;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN3 = args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 4)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 4;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 4;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN4 = args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 5)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 3;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    scoreQN5 = args.Data.SuicideAssesmentScore;
+                }
+            }
+            else if (args.Data.SucideAssementQuestionId == 6)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 1;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 2;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN6 = args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 7)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 1;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 3;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN7 = args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 8)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 2;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 2;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN8 = args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 9)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 2;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 2;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN9= args.Data.SuicideAssesmentScore;
+            }
+            else if (args.Data.SucideAssementQuestionId == 10)
+            {
+                if (args.Data.SucideAssementResponseId.HasValue)
+                {
+                    if (args.Data.SucideAssementResponseId == 1)
+                    {
+                        args.Data.SuicideAssesmentScore = 3;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 2)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 3)
+                    {
+                        args.Data.SuicideAssesmentScore = 3;
+                    }
+                    else if (args.Data.SucideAssementResponseId == 4)
+                    {
+                        args.Data.SuicideAssesmentScore = 0;
+                    }
+                }
+                scoreQN10 = args.Data.SuicideAssesmentScore;
+            }
+            TotalScore = (scoreQN1 + scoreQN2 + scoreQN3 + scoreQN4 + scoreQN5 + scoreQN5 + scoreQN6 + scoreQN7 + scoreQN8 + scoreQN9 + scoreQN10);
+            await this.SmuSuicideAssessmentFormHeaderGrid?.EndEditAsync();
+            await SmuSuicideAssessmentFormHeaderCallBack.InvokeAsync(SmuSuicideAssessmentFormHeaderDataSource);
+        }
+    }
+   
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuSuicideAssessmentFormHeaderDataSource = new List<SmuSucideAssementFormHeader>();
+            if (SelectedAssessmentGuideId > 0)
+            {
+                try
+                {
+                    var _SmuTerminantionGuidePh9QuestionsPublicData = await _ISMUTools.GetSmuSucideAssementFormHeader(SelectedAssessmentGuideId);
+                    if (_SmuTerminantionGuidePh9QuestionsPublicData != null)
+                    {
+                        SmuSuicideAssessmentFormHeaderDataSource = _SmuTerminantionGuidePh9QuestionsPublicData;
+                        StateHasChanged();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+            PreviousSelectedAssessmentGuideId = SelectedAssessmentGuideId;
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+    public async Task<List<SmuSucideAssementFormHeader>?> returnData()
+    {
+        if (SmuSuicideAssessmentFormHeaderGrid != null)
+        {
+            await SmuSuicideAssessmentFormHeaderGrid.EndEditAsync();
+        }
+        return SmuSuicideAssessmentFormHeaderDataSource;
+    }
+}

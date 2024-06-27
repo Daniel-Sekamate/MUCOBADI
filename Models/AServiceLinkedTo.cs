@@ -11,6 +11,7 @@ namespace MUCOBADI.Models
         {
             BeneficiaryLinkageTrackingToolDirectMember = new HashSet<BeneficiaryLinkageTrackingToolDirectMember>();
             BeneficiaryLinkageTrackingToolIndirectMember = new HashSet<BeneficiaryLinkageTrackingToolIndirectMember>();
+            BeneficiaryLinkageTrackingToolNew = new HashSet<BeneficiaryLinkageTrackingToolNew>();
         }
 
         public int ServiceLinkedToId { get; set; }
@@ -18,8 +19,8 @@ namespace MUCOBADI.Models
         public string ServiceLinkedToDesc { get; set; }
 
         public virtual ALinkageServiceCategory LinkageServiceCategory { get; set; }
-        public virtual BeneficiaryLinkageTrackingToolNew BeneficiaryLinkageTrackingToolNew { get; set; }
         public virtual ICollection<BeneficiaryLinkageTrackingToolDirectMember> BeneficiaryLinkageTrackingToolDirectMember { get; set; }
         public virtual ICollection<BeneficiaryLinkageTrackingToolIndirectMember> BeneficiaryLinkageTrackingToolIndirectMember { get; set; }
+        public virtual ICollection<BeneficiaryLinkageTrackingToolNew> BeneficiaryLinkageTrackingToolNew { get; set; }
     }
 }

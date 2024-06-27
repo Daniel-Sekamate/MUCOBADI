@@ -58,8 +58,8 @@
                                         </SfMultiSelect>
                                     </div>
                                     <div class="col-md-3">
-                                        <BSButton Color="Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
-                                        <BSButton Color="Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
                                     </div>
                                     <div class="col-md-12">
                                         <DataAnnotationsValidator />
@@ -560,9 +560,9 @@
                     _VillageId = VillageId.Split(',');
                 }
 
-                data = await db.CommunityTbSensitization.Where(o => (_district.Length == 0 || (o.DistrictId != null && _district.Any(a => a == o.DistrictId.ToString()) == true)) &&
+                data = (await db.CommunityTbSensitization.ToListAsync()).Where(o => (_district.Length == 0 || (o.DistrictId != null && _district.Any(a => a == o.DistrictId.ToString()) == true)) &&
                 (_SubcountyId.Length == 0 || (o.SubCountyId != null && _SubcountyId.Any(a => a == o.SubCountyId.ToString()) == true))
-                ).ToListAsync();
+                ).ToList();
             }
             catch (Exception ex)
             {
@@ -652,6 +652,8 @@
                 var exist = db.CommunityTbSensitization.FirstOrDefault(o => o.SensitizationId == val.SensitizationId);
                 if (exist != null)
                 {
+                    db.Entry(exist).State = EntityState.Detached;
+                    await db.SaveChangesAsync();
                     db.Entry(exist).CurrentValues.SetValues(val);
                     db.Entry(exist).State = EntityState.Modified;
                     await db.SaveChangesAsync();

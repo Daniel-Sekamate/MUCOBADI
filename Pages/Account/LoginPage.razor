@@ -128,39 +128,26 @@
     a {
         color: ghostwhite;
     }
+
+    .mb-3, .my-3 {
+        margin-bottom: 2px !important;
+    }
+
+    .mb-4, .my-4 {
+        margin-bottom: 2px !important;
+    }
 </style>
 <img src="/Login/images/USAIDlogo.png" width="260" height="80" class="LeftImage" />
 <img src="/Login/images/MucobadiLogo2.png" width="180" height="80" style="margin-top:-80px;" class="RightImage" />
 <div class="MainLogin">
     <div class="form-row">
-        <div class="form-group col-md-7">
+        @* <div class="form-group col-md-7">
             <h3 style="text-align: left; margin-bottom: 50px; margin-top:70px;">ICARE Management Information Systems (MIS) </h3>
-            @*<p style="margin-bottom:50px;">
-                The e-WPRS is an online system to facilitate the recommendation of work permits in the Oil & Gas industry.
-            </p>
-            <p style="margin-bottom:120px;">For enquires and support please contact us on <a href="mailto:ewprs@pau.go.ug" trget="_blank" style="color: #08abdc !important;">ewprs@pau.go.ug</a></p>*@
-            @*<div class="form-row">
-                <div class="form-group col-md-6">
-                    <h4>Head Office</h4>
-                    <p><span class="fa fa-location-arrow"></span> Plot 34-36, Lugard Avenue, Entebbe <br />P.O. Box 833 Entebbe, Uganda <br /><span class="fa fa-phone"></span> +256 414 320 423</p>
-
-                </div>
-                <div class="form-group col-md-6">
-                    <h4>Liaison Office</h4>
-                    <p><span class="fa fa-location-arrow"></span> Plot 29-33, Kampala Road | Amber House, 4th Floor, Block B <br /><span class="fa fa-phone"></span> +256 414 231 924</p>
-                </div>
-                <div class="form-group col-md-6">
-                <p><span class="fa fa-fax"></span> Fax: +256 414 420 459</p>
-                </div>
-                <div class="form-group col-md-6">
-                    <p><span class="fa fa-mobile"></span>  +256-782-283-285</p>
-                </div>
-            </div>*@
-            @*<p style="    color: ghostwhite;"><a style="    color: ghostwhite;" href="https://www.pau.go.ug/"><span class="fa fa-internet-explorer"></span> www.pau.go.ug</a> | <a style="    color: ghostwhite;" href="https://twitter.com/PAU_Uganda"><span class="fa fa-twitter"></span> @@PAU_Uganda</a> | <a style="    color: ghostwhite;" href="https://facebook.com/PetroleumAuthorityUganda/"><span class="fa fa-facebook"></span> PetroleumAuthorityUganda</a></p>*@
-        </div>
-        <div class="form-group col-md-5" style="padding:5%;">
+            
+        </div> *@
+        <div class="form-group col-md-12" style="padding-left: 5%; padding-right: 5%;">
             <div class="form-group d-md-flex">
-                <h3 class="mb-4">Sign In</h3>
+                <h3 class="mb-4">ICARE Management Information Systems (MIS)</h3>
             </div>
             <EditForm Model="@InputModel" class="signin-form" style="margin-left:10px;" OnValidSubmit="@LoginUser">
                 <div class="form-group mb-3">
@@ -202,11 +189,19 @@
                 <ValidationSummary />
             </EditForm>
             <div class="form-group d-md-flex" style="margin-left:8px;">
-                <div class="w-50 text-left">
+                @* <div class="w-50 text-left">
                     <button class="fg-btn" @onclick="@ForgotPasswordclick">Forgot Password?</button>
                 </div>
                 <div class="w-50 text-md-right">
                     <button class="fg-btn" @onclick="@signUpclick"><i class="fa fa-pie-chart"></i> View Dashboards</button>
+                </div> *@
+                <div class="row">
+                    <div class="col-md-6">
+                        <button class="fg-btn" @onclick="@ForgotPasswordclick">Forgot Password?</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="fg-btn" @onclick="@signUpclick"><i class="fa fa-pie-chart"></i> View Dashboards</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -357,7 +352,7 @@
     private void signUpclick()
     {
         //NavManager.NavigateTo("DashboardMaintenancePage", true);
-        NavManager.NavigateTo("DashboardPage", true);
+        NavManager.NavigateTo("LCDPage", true);
     }
     private void ForgotPasswordclick()
     {

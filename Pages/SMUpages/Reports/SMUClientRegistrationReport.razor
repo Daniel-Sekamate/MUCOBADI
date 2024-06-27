@@ -1,0 +1,208 @@
+﻿@page "/SMUClientRegistrationReport"
+@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+@inject HttpClient _HttpClient;
+@inject IJSRuntime JS;
+<style>
+    .custom-button {
+        background-color: green;
+        color: white; /* Text color */
+    }
+</style>
+<SfAccordion>
+    <AccordionItems>
+        <AccordionItem>
+            <HeaderTemplate>
+                Search Panel
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Mental Health Group:</p>
+                        <SfMultiSelect TValue="string" TItem="SmuGroup" @bind-Value="selectedSmuGroupId" DataSource="@SmuGroupData"
+                            Placeholder="Select Mental Health Group" Mode="@VisualMode.CheckBox" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true">
+                            <MultiSelectFieldSettings Value="@nameof(SmuGroup.SmuGroupId)" Text="@nameof(SmuGroup.SmuGroupName)"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Mental Health Facilitator:</p>
+                        <SfMultiSelect TValue="string" TItem="SmuFacilitator" @bind-Value="SelectedFacilitator" DataSource="@FacilitatorData"
+                                       Placeholder="Select Mental Health Facilitator" Mode="@VisualMode.CheckBox" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true">
+                            <MultiSelectFieldSettings Value="@nameof(SmuFacilitator.SmuFacilitatorId)" Text="@nameof(SmuFacilitator.SmuFacilitatorName)"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Client Gender:</p>
+                        <SfMultiSelect TValue="string" TItem="AGender" @bind-Value="selectedSmuGroupId" DataSource="@GenderData"
+                                       Placeholder="Select Gender" Mode="@VisualMode.CheckBox" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true">
+                            <MultiSelectFieldSettings Value="@nameof(AGender.GenderId)" Text="@nameof(AGender.GenderDescription)"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Client Age Group:</p>
+                        <SfMultiSelect TValue="string" TItem="SmuAgeGroup" @bind-Value="SelectedAgeGroup" DataSource="@AgeGroupData"
+                                       Placeholder="Select Age Group" Mode="@VisualMode.CheckBox" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true">
+                            <MultiSelectFieldSettings Value="@nameof(SmuAgeGroup.AgeGroupId)" Text="@nameof(SmuAgeGroup.AgeGroup)"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+                    <div class="col-md-3">
+                        <p>Region:</p>
+                        <SfMultiSelect TValue="string" TItem="ARegion" @bind-Value="SelectedRegionId" DataSource="@RegionData"
+                                       Placeholder="Select Region" Mode="@VisualMode.CheckBox" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true">
+                            <MultiSelectFieldSettings Value="@nameof(ARegion.RegionId)" Text="@nameof(ARegion.RegionDescription)"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+                    <div class="col-md-3">
+                        <p>District:</p>
+                        <SfMultiSelect TValue="string" TItem="ADistrict" @bind-Value="SelectedDistrictId" DataSource="@DistrictData"
+                                       Placeholder="Select District" Mode="@VisualMode.CheckBox" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true">
+                            <MultiSelectFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+                    <div class="col-md-3">
+                        <p>Sub-Country:</p>
+                        <SfMultiSelect TValue="string" TItem="ASubcounty" @bind-Value="SelectedSubcounty" DataSource="@SubcountyData"
+                                       Placeholder="Select Sub-County" Mode="@VisualMode.CheckBox" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true">
+                            <MultiSelectFieldSettings Value="@nameof(ASubcounty.SubcountyId)" Text="@nameof(ASubcounty.SubcountyDescription)"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+                    <div class="col-md-2" style="margin-top:10px">
+                        <button @onclick="GenerateReport" class="btn btn-primary" style="width: 100%;"> Search Records</button>
+                    </div>
+                    <div class="col-md-2" style="margin-top:10px">
+                        <button @onclick="ClearSearch" class="btn btn-danger" style="width: 100%;"> Clear Search</button>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+    </AccordionItems>
+</SfAccordion>
+
+@code {
+    private string errorMessage;
+    // private DateTime? SelectedStartDate { get; set; } = DateTime.MinValue;
+    // private DateTime? SelectedEndDate { get; set; } = DateTime.MaxValue;
+    private DateTime? SelectedStartDate { get; set; }
+    private DateTime? SelectedEndDate { get; set; }
+    private string selectedSmuGroupId { get; set; } = string.Empty;
+    private string SelectedRegionId { get; set; } = string.Empty;
+    private string SelectedDistrictId { get; set; } = string.Empty;
+    private string SelectedSubcounty { get; set; } = string.Empty;
+    private string SelectedFacilitator { get; set; } = string.Empty;
+    private string SelectedOffice { get; set; } = string.Empty;
+    private string SelectedAgeGroup { get; set; } = string.Empty;
+
+    List<AGender> GenderData = new List<AGender>();
+    List<SmuAgeGroup> AgeGroupData = new List<SmuAgeGroup>();
+    List<ADistrict> DistrictData = new List<ADistrict>();
+    List<ASubcounty> SubcountyData = new List<ASubcounty>();
+    List<ARegion> RegionData = new List<ARegion>();
+    List<SmuOffice> SmuOfficeData = new List<SmuOffice>();
+    List<SmuGroup> SmuGroupData = new List<SmuGroup>();
+    List<SmuFacilitator> FacilitatorData = new List<SmuFacilitator>();
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            if (!userManagement.IsSignedIn())
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                using (var db = new MUCOBADIContext())
+                {
+                    FacilitatorData = db.SmuFacilitator.AsNoTracking().ToList();
+                    DistrictData = db.ADistrict.AsNoTracking().ToList();
+                    RegionData = db.ARegion.AsNoTracking().ToList();
+                    SmuOfficeData = db.SmuOffice.AsNoTracking().ToList();
+                    SubcountyData = db.ASubcounty.AsNoTracking().ToList();
+                    GenderData = db.AGender.AsNoTracking().ToList();
+                    AgeGroupData = db.SmuAgeGroup.AsNoTracking().ToList();
+                    SmuGroupData = db.SmuGroup.AsNoTracking().ToList();
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            //await ToastObj.ShowAsync(new ToastModel { Title = "Error!", Content = ex.Message.ToString(), CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+    
+    }
+    // private async Task LoadClientDetails()
+    // {
+    //     // Call the report generation method
+    //     byte[] reportData = await _ISMUTools.GenerateClientRegistrationReport(
+    //         SelectedStartDate,
+    //         SelectedEndDate,
+    //         selectedSmuGroupId,
+    //         SelectedRegionId,
+    //         SelectedDistrictId,
+    //         SelectedSubcounty,
+    //         SelectedAgeGroup,
+    //         SelectedOffice,
+    //         SelectedFacilitator);
+    // }
+    private void ClearSearch()
+    {
+    selectedSmuGroupId = string.Empty;
+    SelectedRegionId  = string.Empty;
+    SelectedDistrictId  = string.Empty;
+    SelectedSubcounty  = string.Empty;
+    SelectedFacilitator  = string.Empty;
+    SelectedOffice  = string.Empty;
+    SelectedAgeGroup  = string.Empty;
+    SelectedStartDate = null;
+    SelectedEndDate = null;
+    }
+    private async Task GenerateReport()
+    {
+        // var startDate = new DateTime(2023, 1, 1); // Example dates, replace with your values
+        // var endDate = new DateTime(2024, 1, 1);
+        // string smuGroupIds = "1,2";
+        // string regionIds = "1";
+        // string districtIds = "1";
+        // string subcountyIds = "1";
+        // string clientAgeRangeIds = "1";
+        // string smuOfficeIds = "1";
+        // string smuFacilitatorIds = "1";
+
+        //var reportData = SMUtools.GenerateClientRegistrationReport(startDate, endDate, smuGroupIds, regionIds, districtIds, subcountyIds, clientAgeRangeIds, smuOfficeIds, smuFacilitatorIds);
+        var reportData = await _ISMUTools.GenerateClientRegistrationReportAsync(
+           SelectedStartDate,
+           SelectedEndDate,
+           selectedSmuGroupId,
+           SelectedRegionId,
+           SelectedDistrictId,
+           SelectedSubcounty,
+           SelectedAgeGroup,
+           SelectedOffice,
+           SelectedFacilitator);
+        var fileName = "ClientRegistrationReport.xlsx";
+        var fileStream = new MemoryStream(reportData);
+        var streamRef = new DotNetStreamReference(stream: fileStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+        fileStream.Close();
+    }
+   
+}
+

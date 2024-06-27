@@ -1,0 +1,220 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+
+    .e-spinner-pane .e-spinner-inner .e-spin-bootstrap {
+        fill: black;
+        stroke: black;
+    }
+</style>
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+
+@* @if (SpinnerVisible == true)
+{ *@
+ @*    <SfSpinner @bind-Visible="SpinnerVisible" Type="@SpinnerType.Bootstrap" Size="50" Label="Data loading">
+    </SfSpinner> *@
+  @*   <p>Loading please wait.........</p> *@
+@* }
+else
+{ *@
+    @if (SmuAssessmentGuidePh9QuestionsPublicDataSource != null)
+    {
+        <SfGrid @ref=@SmuAssessmentGuidePh9QuestionsGrid TValue="SmuAssessmentGuidePh9Questions"
+                DataSource="SmuAssessmentGuidePh9QuestionsPublicDataSource" RowHeight="35"
+                AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+                AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+            <GridPageSettings PageSizes="true"></GridPageSettings>
+            <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+            <GridEvents TValue="SmuAssessmentGuidePh9Questions" CellSaved="OnCellSaved"></GridEvents>
+            <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+            <GridColumns>
+                <GridColumn Field=@nameof(SmuAssessmentGuidePh9Questions.SmuAssessmentGuidePh9QuestionsId) HeaderText="SmuAssessmentGuidePh9QuestionsId" AllowEditing="false" Visible=false IsPrimaryKey="true" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(SmuAssessmentGuidePh9Questions.SerialNumber) HeaderText="S/N" AllowEditing="true" Visible="true" Width="40"></GridColumn>
+                <GridForeignColumn Field="@(nameof(SmuAssessmentGuidePh9Questions.Ph9QuestionsId))" TextAlign="TextAlign.Left" Visible="true"
+                                   HeaderText="Over the last 2 weeks, how often have you been bothered by the following problems?" Width="500"
+                                   ForeignKeyField="@(nameof(SmuPh9Question.Ph9QuestionId))" AllowEditing="true" ForeignKeyValue="@(nameof(SmuPh9Question.Ph9Question))" ForeignDataSource="@SmuPh9QuestionData">
+                </GridForeignColumn>
+                <GridForeignColumn Field="@(nameof(SmuAssessmentGuidePh9Questions.Ph9QuestionHeaderId))" TextAlign="TextAlign.Left" Visible="true"
+                                   HeaderText="Response" Width="180"
+                                   ForeignKeyField="@(nameof(SmuPh9QuestionHeader.Ph9QuestionHeaderId))" AllowEditing="true" ForeignKeyValue="@(nameof(SmuPh9QuestionHeader.Ph9QuestionDescription))" ForeignDataSource="@SmuPh9QuestionHeaderData">
+                </GridForeignColumn>
+                <GridColumn Field=@nameof(SmuAssessmentGuidePh9Questions.SmuAssessmentGuidePh9QuestionsSored) HeaderText="Score" AllowEditing="false" Visible="true" Width="70"></GridColumn>
+            </GridColumns>
+            <div class="col-md-12">
+                <p><strong>PH 4 Score Key:</strong>  No Depression 0-2; Mild 3-4; Moderate 5-8; Severe 9-12 </p>
+                @*  <p><strong>The PHQ 4 score is:</strong>@TotalScore </p> *@
+            </div>
+        </SfGrid>
+    }
+@* } *@
+
+
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    SfTab? Tab;
+    bool IsSaving { get; set; }
+    public bool SpinnerVisible { get; set; } = true;
+    int? PreviousAssessmentGuideId { get; set; }
+    public double? TotalScore { get; set; }
+    [Parameter]
+    public int AssessmentGuideId { get; set; }
+    [Parameter]
+    public List<SmuPh9Question> SmuPh9QuestionData { get; set; }
+    [Parameter]
+    public List<SmuPh9QuestionHeader> SmuPh9QuestionHeaderData { get; set; }
+    [Parameter]
+    public EventCallback<List<SmuAssessmentGuidePh9Questions>?> SmuAssessmentGuidePh9QuestionsCallBack { get; set; }
+    private SfGrid<SmuAssessmentGuidePh9Questions>? SmuAssessmentGuidePh9QuestionsGrid;
+    List<SmuAssessmentGuidePh9Questions>? SmuAssessmentGuidePh9QuestionsPublicDataSource { get; set; }
+    [Parameter]
+    public List<SmuAssessmentGuidePh9Questions>? SmuAssessmentGuidePh9QuestionsPublicData { get; set; }
+    public async Task OnCellSaved(CellSaveArgs<SmuAssessmentGuidePh9Questions> args)
+    {
+        if (args.Data.Ph9QuestionsId != null && args.Data.Ph9QuestionHeaderId != null)
+        {
+            var index = await SmuAssessmentGuidePh9QuestionsGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.SmuAssessmentGuidePh9QuestionsId);
+            double? _Question1Score = 0.0;
+            double? _Question2Score = 0.0;
+            double? _Question3Score = 0.0;
+            double? _Question4Score = 0.0;
+            if (args.Data.Ph9QuestionHeaderId.HasValue)
+            {
+                if (args.Data.Ph9QuestionHeaderId == 1)
+                {
+                    _Question1Score = 0;
+                }
+                else if (args.Data.Ph9QuestionHeaderId == 2)
+                {
+                    _Question1Score = 1;
+                }
+                else if (args.Data.Ph9QuestionHeaderId == 3)
+                {
+                    _Question1Score = 2;
+                }
+                else if (args.Data.Ph9QuestionHeaderId == 4)
+                {
+                    _Question1Score = 3;
+                }
+            }
+
+            if (args.Data.Ph9QuestionsId == 1)
+            {
+                args.Data.SmuAssessmentGuidePh9QuestionsSored = _Question1Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 2)
+            {
+                _Question2Score = _Question1Score;
+                args.Data.SmuAssessmentGuidePh9QuestionsSored = _Question2Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 10)
+            {
+                _Question3Score = _Question1Score;
+                args.Data.SmuAssessmentGuidePh9QuestionsSored = _Question3Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 11)
+            {
+                _Question4Score = _Question1Score;
+                args.Data.SmuAssessmentGuidePh9QuestionsSored = _Question4Score;
+            }
+            await this.SmuAssessmentGuidePh9QuestionsGrid?.EndEditAsync();
+            await SmuAssessmentGuidePh9QuestionsCallBack.InvokeAsync(SmuAssessmentGuidePh9QuestionsPublicDataSource);
+        }
+    }
+    public async Task SaveData()
+    {
+        await this.SmuAssessmentGuidePh9QuestionsGrid?.EndEditAsync();
+        await SmuAssessmentGuidePh9QuestionsCallBack.InvokeAsync(SmuAssessmentGuidePh9QuestionsPublicDataSource);
+    }
+    public async Task<List<SmuAssessmentGuidePh9Questions>?> returnData()
+    {
+        if (SmuAssessmentGuidePh9QuestionsGrid != null)
+        {
+            await SmuAssessmentGuidePh9QuestionsGrid.EndEditAsync();
+        }
+        return SmuAssessmentGuidePh9QuestionsPublicDataSource;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+           // SpinnerVisible = true;
+            await base.OnInitializedAsync();
+            SmuAssessmentGuidePh9QuestionsPublicDataSource = new List<SmuAssessmentGuidePh9Questions>();
+            if (AssessmentGuideId > 0)
+            {
+                var _SmuAssessmentGuidePh9QuestionsPublicData = await _ISMUTools.GetSmuAssessmentGuidePh9Questions(AssessmentGuideId);
+                if (_SmuAssessmentGuidePh9QuestionsPublicData != null)
+                {
+                    SmuAssessmentGuidePh9QuestionsPublicDataSource = _SmuAssessmentGuidePh9QuestionsPublicData;
+                    StateHasChanged();
+                }
+                // else
+                // {
+                //     SmuAssessmentGuidePh9QuestionsPublicDataSource = new List<SmuAssessmentGuidePh9Questions>();
+                // }
+            }
+            else
+            {
+                if (SmuAssessmentGuidePh9QuestionsPublicData != null && SmuAssessmentGuidePh9QuestionsPublicData.Any())
+                {
+                    var _SmuAssessmentGuidePh9QuestionsPublicData = SmuAssessmentGuidePh9QuestionsPublicData;
+                    if (_SmuAssessmentGuidePh9QuestionsPublicData != null && _SmuAssessmentGuidePh9QuestionsPublicData.Count > 0)
+                    {
+                        SmuAssessmentGuidePh9QuestionsPublicDataSource = _SmuAssessmentGuidePh9QuestionsPublicData;
+                        StateHasChanged();
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //Console.Write(ex.Message.ToString());
+            /// await ToastObj.ShowAsync(new ToastModel { Title = "Warning!", Content = ex.Message.ToString(), CssClass = "e-toast-warning", Icon = "e-warning toast-icons" });
+        }
+        finally
+        {
+          //  SpinnerVisible = false;
+        }
+    }
+}

@@ -1,0 +1,126 @@
+﻿<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+@if (SmuClientRegistrationFormDataSource != null)
+{
+    <SfGrid @ref=@SmuClientRegistrationFormGrid TValue="SmuClientRegistrationForm"
+            DataSource="SmuClientRegistrationFormDataSource" RowHeight="30"
+            AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+            AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridEvents TValue="SmuClientRegistrationForm" CellSaved="OnCellSaved"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(SmuClientRegistrationForm.ClientRegistrationFormId) HeaderText="ClientRegistrationFormId" AllowEditing="false" Visible=false IsPrimaryKey="true" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(SmuClientRegistrationForm.SerialNumber) HeaderText="S/N" AllowEditing="true" Visible="true" Width="30"></GridColumn>
+            <GridColumn Field=@nameof(SmuClientRegistrationForm.SmuClientName) HeaderText="Client Name" AllowEditing="true" Visible="true" Width="250"></GridColumn>
+            <GridForeignColumn Field="@(nameof(SmuClientRegistrationForm.ClientGenderId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Gender" Width="100" ForeignKeyField="@(nameof(AGender.GenderId))" AllowEditing="true" ForeignKeyValue="@(nameof(AGender.GenderDescription))" ForeignDataSource="@GenderData"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(SmuClientRegistrationForm.ClientAgeRangeId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Age / Group" Width="100" ForeignKeyField="@(nameof(SmuAgeGroup.AgeGroupId))" AllowEditing="true" ForeignKeyValue="@(nameof(SmuAgeGroup.AgeGroup))" ForeignDataSource="@AgeGroupData"></GridForeignColumn>
+            <GridColumn Field=@nameof(SmuClientRegistrationForm.ClientContact) HeaderText="Phone Number" AllowEditing="true" Visible="true" Width="100"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    [Parameter]
+    public int? GroupId { get; set; }
+    int? PreviousGroupId { get; set; }
+    private SfGrid<SmuClientRegistrationForm>? SmuClientRegistrationFormGrid;
+    List<SmuClientRegistrationForm>? SmuClientRegistrationFormDataSource { get; set; }
+    [Parameter]
+    public List<AGender> GenderData { get; set; }
+    [Parameter]
+    public List<SmuAgeGroup> AgeGroupData
+    {
+        get; set;
+    }
+    [Parameter]
+    public EventCallback<List<SmuClientRegistrationForm>?> ClientRegistrationFormCallBack { get; set; }
+    [Parameter]
+    public List<SmuClientRegistrationForm>? SmuClientRegistrationFormData { get; set; }
+    public async Task OnCellSaved(CellSaveArgs<SmuClientRegistrationForm> args)
+    {
+        if (args.Data.SmuClientName != null && args.Data.ClientGenderId != null
+         && args.Data.ClientAgeRangeId != null)
+        {
+            await this.SmuClientRegistrationFormGrid?.EndEditAsync();
+            await ClientRegistrationFormCallBack.InvokeAsync(SmuClientRegistrationFormDataSource);
+        }
+    }
+    // Handle batch edit events and update data
+    private async Task OnBatchEditComplete()
+    {
+        // Logic to handle batch edit completion
+        await SmuClientRegistrationFormGrid?.EndEditAsync();
+        await ClientRegistrationFormCallBack.InvokeAsync(SmuClientRegistrationFormDataSource);
+    }
+    public async Task<List<SmuClientRegistrationForm>?> returnData()
+    {
+        if (SmuClientRegistrationFormGrid != null)
+        {
+            await SmuClientRegistrationFormGrid.EndEditAsync();
+        }
+        return SmuClientRegistrationFormDataSource;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuClientRegistrationFormDataSource = new List<SmuClientRegistrationForm>();
+            if (SmuClientRegistrationFormData != null && SmuClientRegistrationFormData.Count > 0)
+            {
+                SmuClientRegistrationFormDataSource.AddRange(SmuClientRegistrationFormData.OrderBy(o => o.ClientRegistrationFormId).ToList());
+                int count = -100;
+                for (int i = 1; i <= 1; i++)
+                {
+                    SmuClientRegistrationFormDataSource.Add(new SmuClientRegistrationForm()
+                        {
+                            ClientRegistrationFormId = count,
+                            SmuGroupId = GroupId,
+                        });
+                    count++;
+                }
+            }
+            else
+            {
+                int count = -100;
+                for (int i = 1; i <= 12; i++)
+                {
+                    SmuClientRegistrationFormDataSource.Add(new SmuClientRegistrationForm()
+                        {
+                            ClientRegistrationFormId = count,
+                            SmuGroupId = GroupId,
+                        });
+                    count++;
+                }
+            }
+            PreviousGroupId = GroupId;
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+}

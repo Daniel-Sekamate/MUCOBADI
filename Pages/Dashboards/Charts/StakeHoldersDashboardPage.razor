@@ -2,9 +2,10 @@
 @using MUCOBADI.DTOs.Dashboard;
 @using MUCOBADI.Models;
 @using MUCOBADI.Data;
+@using MUCOBADI.Pages.Dashboards.PartialViews;
 @using Microsoft.EntityFrameworkCore;
 @using Syncfusion.Blazor;
-@using Syncfusion.Blazor.ProgressBar;
+@using Syncfusion.Blazor.Cards
 @inject SPToCoreContext dbcontext;
 @inject IToastService toastService;
 <style>
@@ -54,7 +55,7 @@ h5 {
   display: block;
   font-size: -1em;
   font-weight: bold;
-  color:maroon;
+  color: #353b48;
   background-color: white;
 }
 
@@ -100,7 +101,11 @@ height: auto;
 	}
 
 </style>
-
+<style>
+	#Card {
+		width: 300px;
+	}
+</style>
 <div class="row">
     <div class="col-lg-12 control-section">
         <SfToast @ref="ToastObj" ID="toast_type">
@@ -117,4154 +122,402 @@ height: auto;
 		</ol>
 		<p style="color:purple;"><center><strong>DATA FOR YEAR: @DateTime.Now.Year</strong></center></p>
 	</div>
-	<div class="col-md-5">
-		<SfCarousel AnimationEffect="CarouselAnimationEffect.Fade"
-					AutoPlay="true"
-					Interval="300000" 
-					ButtonsVisibility="CarouselButtonVisibility.Visible"
-					CssClass="indicator-type"
-					IndicatorsType="CarouselIndicatorsType.Progress">
-			<CarouselItem>
-				<h5>Number of individuals reached with integrated health information campaigns to prevent violence (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==1))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">	
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}									
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">	
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}									
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}									
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent adolescents knowledgeable about HIV & violence prevention (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==2))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent individuals with a disclosed HIV status (1st 95% ending epidemic) (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==3))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent HIV Positive Individuals Currently on ART (2nd 95% ending epidemic) (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==4))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent HIV Positive Individuals Virally Suppressed (3rd 95% ending epidemic) (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==5))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals reached with TB prevention & treatment education (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==6))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals screened for TB risk (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==7))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals with Presumptive TB (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==8))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of Individuals on preventive treatment (TPT) (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==9))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals reached with education to prevent & treat malaria   (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==10))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals provided insecticide treated nets (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==11))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of Individuals reached during Epidemic Outbreaks (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==12))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of vulnerable adolescents supported to access SRHS  (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==13))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals reached with community education on WASH (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==14))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of school going children in upper primary (Primary five to seven) oriented in menstrual hygiene (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==15))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of People Reached by MUCOBADI programs (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==16))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of youths supported to attend apprenticeship/ vocational training (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==17))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of children reached with education interventions (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==18))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of households integrated ecosystems management in routine land use (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==19))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of people reached with services/ awareness messages on children & women's rights (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==20))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of child abuse cases (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==21))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of households skilled in modern agronomy practices (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==22))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of malnourished children &lt; 5 years reached with nutritional services  (Overrall)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (StakeholderdatalistOverrall != null)
-					{
-						@foreach (var item in StakeholderdatalistOverrall.Where(o=>o.IndicatorId==23))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-		</SfCarousel>
-	</div>
-	<div class="col-md-7">
-		<SfCarousel AnimationEffect="CarouselAnimationEffect.Fade"
-					AutoPlay="true"
-					Interval="300000" ButtonsVisibility="CarouselButtonVisibility.Visible"
-					CssClass="indicator-type"
-					IndicatorsType="CarouselIndicatorsType.Progress">
-
-			<CarouselItem>
-				<h5>Number of individuals reached with integrated health information campaigns to prevent violence (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 1))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent adolescents knowledgeable about HIV & violence prevention (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 2))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent individuals with a disclosed HIV status (1st 95% ending epidemic) (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 3))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent HIV Positive Individuals Currently on ART (2nd 95% ending epidemic) (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 4))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Percent HIV Positive Individuals Virally Suppressed (3rd 95% ending epidemic) (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 5))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals reached with TB prevention & treatment education (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 6))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals screened for TB risk (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 7))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals with Presumptive TB (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 8))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of Individuals on preventive treatment (TPT) (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 9))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals reached with education to prevent & treat malaria (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 10))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals provided insecticide treated nets (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 11))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of Individuals reached during Epidemic Outbreaks (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 12))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of vulnerable adolescents supported to access SRHS (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 13))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of individuals reached with community education on WASH (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 14))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of school going children in upper primary (Primary five to seven) oriented in menstrual hygiene (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 15))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of People Reached by MUCOBADI programs (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 16))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of youths supported to attend apprenticeship/ vocational training (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 17))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of children reached with education interventions (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 18))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of households integrated ecosystems management in routine land use (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 19))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of people reached with services/ awareness messages on children & women's rights (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 20))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of child abuse cases (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 21))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of households skilled in modern agronomy practices (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 22))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style ="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-			<CarouselItem>
-				<h5>Number of malnourished children &lt; 5 years reached with nutritional services (By District)</h5>
-				<table style="width:100%;font-size:20px">
-					<tr>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Stakeholder</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>District</strong>
-						</td>
-
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q1</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q2</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q3</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Q4</strong>
-						</td>
-						<td style="border-color:ghostwhite; background-color:black; color:ghostwhite;">
-							<strong>Annual</strong>
-						</td>
-					</tr>
-					@{
-						double? QuarterOne = 0;
-						double? QuarterTwo = 0;
-						double? QuarterThree = 0;
-						double? QuarterFour = 0;
-						double? Annual = 0;
-						double? OverrallAnnual = 0;
-					}
-					@if (Stakeholderdatalist != null)
-					{
-						@foreach (var item in Stakeholderdatalist.Where(o => o.IndicatorId == 23))
-						{
-							<tr>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.ServiceProviderDesc
-								</td>
-								<td style="background-color:ghostwhite; color:black;">
-									@item.DistrictDescription
-								</td>
-								<td style="text-align:right">
-									@item.QuarterOne.ToString("#,##0")
-									@{
-										QuarterOne += item.QuarterOne;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterTwo.ToString("#,##0")
-									@{
-										QuarterTwo += item.QuarterTwo;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterThree.ToString("#,##0")
-									@{
-										QuarterThree += item.QuarterThree;
-									}
-								</td>
-								<td style="text-align:right">
-									@item.QuarterFour.ToString("#,##0")
-									@{
-										QuarterFour += item.QuarterFour;
-									}
-								</td>
-								<td style="text-align:right">
-									@{
-										Annual = @item.QuarterOne + @item.QuarterTwo + @item.QuarterThree + @item.QuarterFour;
-										OverrallAnnual += Annual;
-									}
-										<strong>@Annual.Value.ToString("#,##0")</strong>
-								</td>
-							</tr>
-						}
-					}
-					<tr>
-						<td><strong>Total</strong></td>
-						<td style="text-align:right"></td>
-						<td style ="text-align:right"><strong>@QuarterOne.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterTwo.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterThree.Value.ToString("#,##0")</strong></td>
-						<td style ="text-align:right"><strong>@QuarterFour.Value.ToString("#,##0")</strong></td>			
-						<td style ="text-align:right"><strong>@OverrallAnnual.Value.ToString("#,##0")</strong></td>
-					</tr>
-				</table>
-			</CarouselItem>
-
-		</SfCarousel>
-	</div>
 </div>
+<div class="row" style="margin-top:5px;">
+	<SfCarousel AnimationEffect="CarouselAnimationEffect.Fade"
+				AutoPlay="true"
+				Interval="60000"
+				ButtonsVisibility="CarouselButtonVisibility.Visible"
+				ShowIndicators="false">
+		@try
+		{
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>MUCOBADI Overall Reach</center></h5>
+					</div>
+					<div class="col-md-9">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage 
+								TitleDescription="MUCO.001:Number of People Reached by MUCOBADI programs"
+								 IndicatorIdd="16" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<h5>Thematic Areas</h5>
+								<CardDashboardPage></CardDashboardPage>
+							</div>
+				    	</div>
+					
+					</div>
+				</div>
+			</CarouselItem>
 
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.1 HIV & Sexual Violence Prevention</center></h5>
+					</div>
+					<div class="col-md-8">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.070:Number of individuals reached with integrated health information campaigns to prevent violence"
+								 IndicatorIdd="1" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+							<MUCOBADI.Pages.Dashboards.PartialViews.DonutDashboardPage @ref="@DonutDashboardComponent" IndicatorIdd="2"
+							TitleDescription="MUCO.073:Percent adolescents knowledgeable about HIV & violence prevention"
+							 OnDataLoaded="HandleDataLoaded" DonutParameterDataSource="@DonutParameterDataSource" InputModel="@InputModel">
+							</MUCOBADI.Pages.Dashboards.PartialViews.DonutDashboardPage>
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.2 HIV Care & Treatment (Dashboard 1)</center></h5>
+					</div>
+					<div class="col-md-4">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+							<MUCOBADI.Pages.Dashboards.PartialViews.DonutDashboardPage @ref="@DonutDashboardComponent76" IndicatorIdd="3"
+							TitleDescription="MUCO.076:Percent individuals with a disclosed HIV status (1st 95% ending epidemic)"
+							 OnDataLoaded="HandleDataLoaded76" DonutParameterDataSource="@DonutParameterDataSource" InputModel="@InputModel">
+							</MUCOBADI.Pages.Dashboards.PartialViews.DonutDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-8">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+						    
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage 
+								TitleDescription="MUCO.076:Number of individuals with a disclosed HIV status (1st 95% ending epidemic)"
+								 IndicatorIdd="3" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+								
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.2 HIV Care & Treatment (Dashboard 2)</center></h5>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+						    	
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.077:Number of HIV Positive Individuals Currently on ART  (2nd 95% ending epidemic)"
+								 IndicatorIdd="4" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+								
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage 
+								TitleDescription="MUCO.078:Number of HIV Positive Individuals Virally Suppressed (3rd 95% ending epidemic)"
+								 IndicatorIdd="5" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.3 TB Prevention & Prevention (Dashboard :1)</center></h5>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage 
+								TitleDescription="MUCO.090:Number of individuals reached with TB prevention & treatment education"
+								 IndicatorIdd="6" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.091:Number of individuals screened for TB risk"
+								 IndicatorIdd="7" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.3 TB Prevention & Prevention (Dashboard :2)</center></h5>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.092:Number of individuals with Presumptive TB"
+								 IndicatorIdd="8" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.094:Number of Individuals on preventive treatment (TPT)"
+								 IndicatorIdd="9" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.4 Malaria Control</center></h5>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.150:Number of individuals reached with education to prevent & treat malaria"
+								 IndicatorIdd="10" InputModel="@InputModel"> 
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+								
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.151:Number of individuals provided insecticide treated nets"
+								 IndicatorIdd="11" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.5 Family Health,WASH,MCH,Non-Communicable Diseases & Epidemic Outbreaks (Dashboard 1)</center></h5>
+					</div>
+					<div class="col-md-12">
+						<div class="control-section" align='center'>
+						<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.021:Number of vulnerable adolescents supported to access SRHS"
+								 IndicatorIdd="13" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 1.5 Family Health,WASH,MCH,Non-Communicable Diseases & Epidemic Outbreaks (Dashboard 2)</center></h5>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.022:Number of individuals reached with community education on WASH"
+								 IndicatorIdd="14" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+							
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.026:Number of school going children in upper primary (Primary five to seven) oriented in menstrual hygiene"
+								 IndicatorIdd="15" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 2.1 Food Security & Nutrition</center></h5>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.060:Number of households skilled in modern agronomy practices"
+								 IndicatorIdd="22" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.061:Number of malnourished children <5 years reached with nutritional services "
+								 IndicatorIdd="23" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 2.3 Education & Development</center></h5>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.111:Number of youths supported to attend apprenticeship/ vocational training"
+								 IndicatorIdd="17" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<h5>MUCO.112</h5>
+						
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 2.4 Environment & Nature Conservation</center></h5>
+					</div>
+					<div class="col-md-12">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.120:Number of households integrated ecosystems management in routine land use"
+								 IndicatorIdd="19" InputModel="@InputModel"> 
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+			<CarouselItem>
+				<div class="row">
+					<div class="col-md-12">
+						<h5><center>Sub Result 3.1 Child Care & Protection</center></h5>
+					</div>
+					<div class="col-md-12">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage
+								TitleDescription="MUCO.130:Number of people reached with services/ awareness messages on children & women's rights"
+								 IndicatorIdd="20" InputModel="@InputModel">
+								</MUCOBADI.Pages.Dashboards.PartialViews.HeatMapDashboardPage>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="control-section" align='center'>
+							<div class="control-section">
+								<h5>MUCO.131</h5>
+				
+							</div>
+						</div>
+					</div>
+				</div>
+			</CarouselItem>
+
+
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	</SfCarousel>
+</div>
 @code {
 	#region Toasters
-    public static string? ToastContent { get; set; }
-    SfToast? ToastObj;
-    SfToast? DeleteToastObj;
-    private string ToastPosition = "Right";
-    private int AlarmTimeout { get; set; } = 120000;
-    private List<ToastModel> Toast = new List<ToastModel>
+	public static string? ToastContent { get; set; }
+	SfToast? ToastObj;
+	SfToast? DeleteToastObj;
+	private string ToastPosition = "Right";
+	private int AlarmTimeout { get; set; } = 120000;
+	private List<ToastModel> Toast = new List<ToastModel>
     {
         new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
         new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
         new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
         new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
     };
-    #endregion Toasters
+	#endregion Toasters
 	List<ViewDashboardStakeholderTargetsPivoted> StakeholderData { get; set; }
 	List<ViewDashboardStakeholderTargetsPivotedOverrall> StakeholderDataOverrall { get; set; }
-
+	SearchPanel SearchModel { get; set; } = new();
+	UtilitiesSearchPanel InputModel { get; set; } = new();
+	List<StakeholdersData> stakeholdersDatas { get; set; }
+	double CompletionPercentage { get; set; }
+	public string TitleDescription { get; set; }
 	public class Stakeholderdata
 	{
 		public int? IndicatorId { get; set; }
-        public string IndicatorDescription { get; set; }
-        public int? DistrictId { get; set; }
-        public string DistrictDescription { get; set; }
-        public int? FinancialYearId { get; set; }
-        public string FinancialYearDesc { get; set; }
-        public int? ServiceProviderId { get; set; }
-        public string ServiceProviderDesc { get; set; }
-        public int QuarterOne { get; set; }
-        public int QuarterTwo { get; set; }
-        public int QuarterThree { get; set; }
-        public int QuarterFour { get; set; }
+		public string IndicatorDescription { get; set; }
+		public int? DistrictId { get; set; }
+		public string DistrictDescription { get; set; }
+		public int? FinancialYearId { get; set; }
+		public string FinancialYearDesc { get; set; }
+		public int? ServiceProviderId { get; set; }
+		public string ServiceProviderDesc { get; set; }
+		public int QuarterOne { get; set; }
+		public int QuarterTwo { get; set; }
+		public int QuarterThree { get; set; }
+		public int QuarterFour { get; set; }
 	}
 	List<Stakeholderdata> Stakeholderdatalist = new List<Stakeholderdata>();
-
+	StakeholdersData StakeholderRecord;
+	SfGrid<Stakeholderdata> StakeholderGrid;
 	public class StakeholderdataOverrall
 	{
 		public int? IndicatorId { get; set; }
@@ -4279,63 +532,24 @@ height: auto;
 		public int QuarterFour { get; set; }
 	}
 	List<StakeholderdataOverrall> StakeholderdatalistOverrall = new List<StakeholderdataOverrall>();
-
+	List<AQuarter> QuarterData { get; set; }
+	List<DonutParameters> DonutParametersData { get; set; }
+	public List<int> IndicatorValues { get; set; }
+	
 	protected override async Task OnInitializedAsync()
 	{
 		try
-		{				
+		{
 			var currentMonth = DateTime.Now.Month;
 			var currentYear = DateTime.Now.Year;
-
-			await base.OnInitializedAsync();
-			
+			//	IndicatorIdd = 
 			StakeholderData = dbcontext.ViewDashboardStakeholderTargetsPivoted
 			.Where(o=>o.FinancialYearDesc==currentYear.ToString()).ToList();
 
 			StakeholderDataOverrall = dbcontext.ViewDashboardStakeholderTargetsPivotedOverrall
 			.Where(o => o.FinancialYearDesc == currentYear.ToString()).ToList();
 
-			//Stakeholder Data
-			foreach (var item in StakeholderData)
-			{
-				Stakeholderdata mm = new Stakeholderdata();
-				mm.IndicatorId = item.IndicatorId;
-				mm.IndicatorDescription = item.IndicatorDescription;
-				mm.DistrictId = item.DistrictId;
-				mm.DistrictDescription = item.DistrictDescription;
-				mm.FinancialYearId = item.FinancialYearId;
-				mm.FinancialYearDesc = item.FinancialYearDesc;
-				mm.ServiceProviderId = item.ServiceProviderId;
-				mm.ServiceProviderDesc = item.ServiceProviderDesc;
-				mm.QuarterOne = item.QuarterOne;
-				mm.QuarterTwo = item.QuarterTwo;
-				mm.QuarterThree = item.QuarterThree;
-				mm.QuarterFour = item.QuarterFour;
-
-				Stakeholderdatalist.Add(mm);
-			}
-			Stakeholderdatalist = Stakeholderdatalist.OrderBy(o => o.DistrictDescription).ToList();
-
-			//Stakeholder Data Overrall
-			foreach (var item in StakeholderDataOverrall)
-			{
-				StakeholderdataOverrall mm = new StakeholderdataOverrall();
-				mm.IndicatorId = item.IndicatorId;
-				mm.IndicatorDescription = item.IndicatorDescription;
-				mm.FinancialYearId = item.FinancialYearId;
-				mm.FinancialYearDesc = item.FinancialYearDesc;
-				mm.ServiceProviderId = item.ServiceProviderId;
-				mm.ServiceProviderDesc = item.ServiceProviderDesc;
-				mm.QuarterOne = item.QuarterOne;
-				mm.QuarterTwo = item.QuarterTwo;
-				mm.QuarterThree = item.QuarterThree;
-				mm.QuarterFour = item.QuarterFour;
-
-				StakeholderdatalistOverrall.Add(mm);
-			}
-			StakeholderdatalistOverrall = StakeholderdatalistOverrall.OrderBy(o => o.ServiceProviderId).ToList();
-
-
+			//await LoadDashboards();
 		}
 		catch (Exception ex)
 		{
@@ -4346,5 +560,64 @@ height: auto;
 		{
 			//await LoadingDialogue.HideAsync();
 		}
+	}
+	private async Task LoadChildData()
+	{
+		if (DonutDashboardComponent != null)
+		{
+			//	await DonutDashboardComponent.LoadDashboards();
+		}
+	}
+
+	string QuarterNo { get; set; }
+	string Qtr = null;
+	string PreviousQtr = null;
+	string Yr = null;
+	string ProjectId = null;
+	public int IndicatorIdd{ get; set; }
+	
+	List<spInstitution_IndicatorsResult> IndicatorsResultData { get; set; }
+	List<DonutParameters> DonutParameterDataSource;
+	private DonutDashboardPage DonutDashboardComponent;
+	private DonutDashboardPage DonutDashboardComponent76;
+	private List<DonutParameters> DonutData;
+	List<HeatMapData> HeatMapDataList { get; set; }
+	private void HandleDataLoaded(List<DonutParameters> data)
+	{
+		DonutParameterDataSource = data;
+	}
+	private void HandleDataLoaded76(List<DonutParameters> data)
+	{
+		DonutParameterDataSource = data;
+	}
+
+	static string GetQuarter(DateTime date)
+	{
+		int month = date.Month;
+		if (month >= 10 || month <= 12)
+			return "1";
+		else if (month >= 1 && month <= 3)
+			return "2";
+		else if (month >= 4 && month <= 6)
+			return "3";
+		else // month is >= 7 and <= 9
+			return "4";
+	}
+	static List<string> GetQuartersBetweenDates(DateTime startDate, DateTime endDate)
+	{
+		List<string> quarters = new List<string>();
+		// Iterate through months between start and end dates
+		DateTime currentDate = startDate;
+		while (currentDate <= endDate)
+		{
+			string quarter = GetQuarter(currentDate);
+			if (!quarters.Contains(quarter))
+			{
+				quarters.Add(quarter);
+			}
+			// Move to the next month
+			currentDate = currentDate.AddMonths(1);
+		}
+		return quarters;
 	}
 }

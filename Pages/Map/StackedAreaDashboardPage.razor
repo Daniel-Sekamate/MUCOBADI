@@ -1,0 +1,54 @@
+﻿@page "/stackedArea"
+@using Syncfusion.Blazor.Charts
+<div class="row">
+    <div class="col-md-8">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfChart Title="EAC Partner State Contribution to Intra-EAC trade(Accounting for Imports and Exports)">
+
+                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Title="Financial Years">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryXAxis>
+                    <ChartPrimaryYAxis Title="Contribution(%)">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryYAxis>
+                    <ChartSeriesCollection>
+                        <ChartSeries DataSource="@MedalDetails" Name="Uganda" XName="X" YName="Y" Type="ChartSeriesType.StackingArea" />
+                        <ChartSeries DataSource="@MedalDetails" Name="Kenya" XName="X" YName="Y1" Type="ChartSeriesType.StackingArea" />
+                        <ChartSeries DataSource="@MedalDetails" Name="Tanzania" XName="X" YName="Y2" Type="ChartSeriesType.StackingArea" />
+                        <ChartSeries DataSource="@MedalDetails" Name="Rwanda" XName="X" YName="Y3" Type="ChartSeriesType.StackingArea" />
+                        <ChartSeries DataSource="@MedalDetails" Name="Burundi" XName="X" YName="Y4" Type="ChartSeriesType.StackingArea" />
+                        <ChartSeries DataSource="@MedalDetails" Name="Congo" XName="X" YName="Y5" Type="ChartSeriesType.StackingArea" />
+                        <ChartSeries DataSource="@MedalDetails" Name="South Sudan" XName="X" YName="Y6" Type="ChartSeriesType.StackingArea" />
+                    </ChartSeriesCollection>
+                </SfChart>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public class ChartData
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Y1 { get; set; }
+        public double Y2 { get; set; }
+        public double Y3 { get; set; }
+        public double Y4 { get; set; }
+        public double Y5 { get; set; }
+        public double Y6 { get; set; }
+    }
+
+    public List<ChartData> MedalDetails = new List<ChartData>
+    {
+        new ChartData{ X=2000, Y= 0.61, Y1= 0.03, Y2= 0.48, Y3= 0.38, Y4= 0.28,Y5= 0.18,Y6= 0.58},
+        new ChartData{ X=2019, Y= 0.81, Y1= 0.05, Y2= 0.53, Y3= 0.48, Y4= 0.43,Y5= 0.28,Y6= 0.38 },
+        new ChartData{ X=2020, Y= 0.91, Y1= 0.06, Y2= 0.57, Y3= 0.58, Y4= 0.68,Y5= 0.38,Y6= 0.18 },
+        new ChartData{ X=2021, Y= 1, Y1= 0.09, Y2= 0.61, Y3= 0.68, Y4= 0.58,Y5= 0.58,Y6= 0.98 },
+        new ChartData{ X=2022, Y= 1.19, Y1= 0.14, Y2= 0.63, Y3= 0.18, Y4= 0.8,Y5= 0.18,Y6= 0.74 },
+        new ChartData{ X=2023, Y= 1.47, Y1= 0.20, Y2= 0.64, Y3= 0.88, Y4= 0.18,Y5= 0.28,Y6= 0.8 }
+
+    };
+}

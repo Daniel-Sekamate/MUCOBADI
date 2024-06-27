@@ -1,0 +1,44 @@
+﻿@page "/heat_Chart"
+@using Syncfusion.Blazor.HeatMap
+  <div class="col-md-6">
+    <div class="control-section" style="text-align: center">
+        <SfHeatMap DataSource="@HeatMapData">
+            <HeatMapTitleSettings Text="Trade values between the EAC and other RECs (US$)">
+            </HeatMapTitleSettings>
+            <HeatMapXAxis Labels="@XAxisLabels"></HeatMapXAxis>
+            <HeatMapYAxis Labels="@YAxisLabels"></HeatMapYAxis>
+            <HeatMapCellSettings ShowLabel="true" TileType="CellType.Rect"></HeatMapCellSettings>
+            <HeatMapPaletteSettings Type="PaletteType.Gradient">
+                <HeatMapPalettes>
+                    <HeatMapPalette Color="#C06C84"></HeatMapPalette>
+                    <HeatMapPalette Color="#6C5B7B"></HeatMapPalette>
+                    <HeatMapPalette Color="#355C7D"></HeatMapPalette>
+                </HeatMapPalettes>
+            </HeatMapPaletteSettings>
+        </SfHeatMap>
+    </div>
+  </div>
+
+
+@code {
+    int[,] GetDefaultData()
+    {
+        int[,] dataSource = new int[,]
+        {
+            {7300, 3900},
+            {9300, 5800},
+            {9900, 2800},
+            {1400, 2600},
+            {700, 4600},
+            {4100, 5500}
+        };
+        return dataSource;
+    }
+    string[] XAxisLabels = new string[] { "UMA", "COMESA", "SADC", "SACU", "ECOWAS", "IGAD", "EU" };
+    string[] YAxisLabels = new string[] { "IMPORTS", "EXPORTS"};
+    public object HeatMapData { get; set; }
+    protected override void OnInitialized()
+    {
+        HeatMapData = GetDefaultData();
+    }
+}

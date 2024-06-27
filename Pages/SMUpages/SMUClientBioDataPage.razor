@@ -1,0 +1,99 @@
+﻿@using MUCOBADI.Data
+@using MUCOBADI.Interfaces.SMUtools
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@inject ISMUtools _ISMUTools
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+
+    .title {
+        text-align: center;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .custom-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        .custom-table th,
+        .custom-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .custom-table th {
+            background-color: #f2f2f2;
+        }
+</style>
+
+<table class="custom-table">
+    <tr>
+        <th colspan="4">Respondent's Name</th>
+        <th colspan="2">Gender</th>
+        <th colspan="2">Age</th>
+        <th colspan="2">Telephone</th>
+        <th colspan="2">Sub-County</th>
+    </tr>
+    <tr>
+        @if (ViewSmuAssessmentGuideData != null)
+        {
+            <td colspan="4">@ViewSmuAssessmentGuideData.SmuClientName</td>
+            <td colspan="2">@ViewSmuAssessmentGuideData.GenderDescription</td>
+            <td colspan="2">@ViewSmuAssessmentGuideData.AgeGroup</td>
+            <td colspan="2">@ViewSmuAssessmentGuideData.ClientContact</td>
+            <td colspan="2">@ViewSmuAssessmentGuideData.SubcountyDescription</td>
+        }
+    </tr>
+</table>
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    [Parameter]
+    public ViewSmuAssessmentGuide ViewSmuAssessmentGuideData { get; set; }
+    [Parameter]
+    public int SelectedPreAssessmentGuideId { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            if (!userManagement.IsSignedIn())
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                using (var db = new MUCOBADIContext())
+                {
+                    if (SelectedPreAssessmentGuideId > 0)
+                    {
+                        ViewSmuAssessmentGuideData = await _ISMUTools.GetListViewSmuAssessmentGuideId(SelectedPreAssessmentGuideId);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await ToastObj.ShowAsync(new ToastModel { Title = "Error!", Content = ex.Message.ToString(), CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+    }
+}

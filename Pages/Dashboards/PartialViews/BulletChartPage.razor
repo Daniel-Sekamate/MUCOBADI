@@ -1,0 +1,48 @@
+﻿
+@using MUCOBADI.DTOs.Dashboard;
+@using Syncfusion.Blazor.Charts
+<div class="row">
+  <div class="col-md-12">
+   <div class="control-section" align='center'>
+       <div class="control-section">
+        <div class="col-md-12">
+          <SfBulletChart DataSource="@BulletsChartData" TitlePosition="TextPosition.Top" Height="30px" Subtitle="@DistrictValueAchieved"
+             Title="@DistrictName" ValueField="FieldValue" TargetField="TargetValue" Minimum="0" Maximum="120" Interval="20"
+                  TargetColor="red" TargetWidth="10">
+            <BulletChartTitleStyle Color="red" Opacity="1" Size="15px"></BulletChartTitleStyle>
+            <BulletChartSubTitleStyle Color="red" Opacity="0.5" Size="13px" FontStyle="italic" MaximumTitleWidth="70"
+             TextOverflow="Syncfusion.Blazor.Charts.TextOverflow.Trim"></BulletChartSubTitleStyle>
+            <BulletChartRangeCollection>
+                <BulletChartRange End=75> </BulletChartRange>
+                <BulletChartRange End=95></BulletChartRange>
+                <BulletChartRange End=120></BulletChartRange>
+            </BulletChartRangeCollection>
+        </SfBulletChart>
+        </div>
+       
+    </div>
+     </div>
+</div>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public string DistrictName { get; set; }
+    [Parameter]
+    public string DistrictValueAchieved { get; set; }
+    //[Parameter]
+    //public double MaximumValue { get; set; }
+    [Parameter]
+    public List<BulletChartData> BulletsChartData { get; set; }
+    //public class BulletChartData
+    //{
+    //    public double FieldValue { get; set; }
+    //    public double TargetValue { get; set; }
+    //}
+    //public List<ChartData> BulletChartData = new List<ChartData>
+    //{
+    //    new ChartData { FieldValue = 55, TargetValue = 75 }
+    //};
+}

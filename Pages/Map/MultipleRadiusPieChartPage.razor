@@ -1,0 +1,43 @@
+﻿@page "/pieChart"
+@using Syncfusion.Blazor.Charts
+
+<SfAccumulationChart Title="Proportion of Export Revenue(USD) by Product Categories"
+    EnableAnimation="true" EnableSmartLabels="true">
+    <AccumulationChartLegendSettings Visible="true"></AccumulationChartLegendSettings>
+
+    <AccumulationChartSeriesCollection>
+        <AccumulationChartSeries DataSource="@StatisticsDetails" XName="Browser" YName="Users" InnerRadius="20%" Radius="R">
+            <AccumulationDataLabelSettings TextWrap="@Wrap" MaxWidth="@Width"  Visible="true" Position="DataLabelPosition">
+                <AccumulationChartConnector Length=@ConnectorLength Type="ConnectorType.Curve"></AccumulationChartConnector>
+                <AccumulationChartDataLabelFont Size=@Size FontWeight="600"></AccumulationChartDataLabelFont>
+            </AccumulationDataLabelSettings>
+        </AccumulationChartSeries>
+    </AccumulationChartSeriesCollection>
+</SfAccumulationChart>
+
+@code {
+
+    public TextWrap Wrap { get; set; } = TextWrap.Normal;
+    public double Width { get; set; } = double.NaN;
+    public AccumulationLabelPosition DataLabelPosition = AccumulationLabelPosition.Outside;
+    public string ConnectorLength { get; set; } = "20px";
+    public string Size { get; set; } = "12px";
+    private string Name { get; set; }
+    public class Statistics
+    {
+        public string Browser { get; set; }
+        public double Users { get; set; }
+        public string R { get; set; }
+    }
+
+    public List<Statistics> StatisticsDetails = new List<Statistics>
+    {
+        new Statistics { Browser = "Electronics", Users = 505370, R = "100"},
+        new Statistics { Browser = "Energy and Minerals",    Users = 551500, R = "118.7"},
+        new Statistics { Browser = "Chemicals and Pharmaceuticals",  Users = 312685 , R = "124.6"},
+        new Statistics { Browser = "Agricultural", Users = 350000 , R = "137.5"},
+        new Statistics { Browser = "Automotive", Users = 301000 , R = "150.8"},
+        new Statistics { Browser = "Industrial Machinery and Equipment", Users = 300000, R = "155.5"},
+        new Statistics { Browser = "Textiles",  Users = 357022, R = "160.6"}
+    };
+}

@@ -1,0 +1,69 @@
+﻿@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Charts
+@inject NavigationManager NavigationManager
+<div class="control-section" align='center'>
+    <SfChart Title="District Visits Trend" Width="@Width">
+        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1" LabelIntersectAction="@Label" LabelRotation="@Rotation">
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+            <ChartAxisMinorGridLines Width="0"></ChartAxisMinorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            <ChartAxisMinorTickLines Width="0"></ChartAxisMinorTickLines>
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis LabelFormat="{value}" Interval="300" Minimum="0" Maximum="1200">
+            <ChartAxisMajorGridLines Width="1"></ChartAxisMajorGridLines>
+            <ChartAxisMinorGridLines Width="1"></ChartAxisMinorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            <ChartAxisMinorTickLines Width="0"></ChartAxisMinorTickLines>
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+        </ChartPrimaryYAxis>
+        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+        <ChartLegendSettings EnableHighlight="true"></ChartLegendSettings>
+        <ChartSeriesCollection>
+           
+            <ChartSeries DataSource="@ChartPointsData" Name="Visited Once" XName="Quarter" Width="2"
+                         Opacity="1" YName="VisitedOnce" Type="ChartSeriesType.StackingLine">
+                <ChartMarker IsFilled="true" Visible="true" Height="6" Width="6" Shape="ChartShape.Triangle">
+                </ChartMarker>
+            </ChartSeries>
+
+            <ChartSeries DataSource="@ChartPointsData" Name="Visited Twice" XName="Quarter" Width="2"
+                         Opacity="1" YName="VisitedTwice" Type="ChartSeriesType.StackingLine">
+                <ChartMarker IsFilled="true" Visible="true" Height="5" Width="5" Shape="ChartShape.Triangle">
+                </ChartMarker>
+            </ChartSeries>
+
+            <ChartSeries DataSource="@ChartPointsData" Name="Visited Thrice" XName="Quarter" Width="2"
+                         Opacity="1" YName="VisitedThrice" Type="ChartSeriesType.StackingLine">
+                <ChartMarker IsFilled="true" Visible="true" Height="4" Width="4" Shape="ChartShape.Triangle">
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+    </SfChart>
+</div>
+@code {
+
+    public string Width { get; set; } = "90%";
+    public double Rotation { get; set; } = 0;
+    public Syncfusion.Blazor.Charts.LabelIntersectAction Label { get; set; } = Syncfusion.Blazor.Charts.LabelIntersectAction.Trim;
+    [Parameter]
+    public List<SubCountyLine> ChartPointsData { get; set; }
+   
+    protected override void OnInitialized()
+    {
+        Label = Syncfusion.Blazor.Charts.LabelIntersectAction.None;
+        Width = "100%";
+        Rotation = -45;
+    }
+ 
+
+    public class SubCountyLine
+    {
+        public string Quarter { get; set; }
+        public double VisitedOnce { get; set; }
+        public double VisitedTwice { get; set; }
+        public double VisitedThrice { get; set; }
+        
+    }
+}

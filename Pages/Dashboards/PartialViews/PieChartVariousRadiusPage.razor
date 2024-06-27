@@ -1,0 +1,31 @@
+﻿@*@page "/donutPage"*@
+@using MUCOBADI.DTOs.Dashboard;
+@using MUCOBADI.Data;
+@using Syncfusion.Blazor.Charts
+
+@if (DonutParameterDataSource != null && DonutParameterDataSource.Count > 0)
+{
+	<SfAccumulationChart EnableAnimation="true" EnableSmartLabels="true">
+		<AccumulationChartLegendSettings Visible="true"></AccumulationChartLegendSettings>
+		<AccumulationChartSeriesCollection>
+			<AccumulationChartSeries DataSource="@DonutParameterDataSource" XName="xName" YName="yName"
+									 InnerRadius="20%" Radius="R">
+				<AccumulationDataLabelSettings Visible="true" Name="RR"></AccumulationDataLabelSettings>
+			</AccumulationChartSeries>
+		</AccumulationChartSeriesCollection>
+	</SfAccumulationChart>
+}
+else
+{
+	<p>No data available for the chart.</p>
+}
+@code {
+	[Parameter]
+	public List<DonutParameters>? DonutParameterDataSource { get; set; }
+	[Parameter]
+	public string ChartTitle{ get; set; }
+	protected override async Task OnInitializedAsync()
+	{
+		
+	}
+}

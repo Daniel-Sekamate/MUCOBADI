@@ -1,0 +1,714 @@
+﻿@page "/subPage"
+@using MUCOBADI.DTOs.Dashboard
+@using MUCOBADI.Data
+@using Microsoft.EntityFrameworkCore
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Charts
+@inject NavigationManager NavigationManager
+@inject SPToCoreContext _dbcontext;
+
+
+            @* <CarouselItem> *@
+				<div class="row">
+						@if (this.BugiriData.Count == 0 && 
+						     this.BugweriData.Count == 0 &&
+						     this.BuikweData.Count == 0)
+						{
+							<div class="e-error">
+								<div class="e-error-content">No results found. Please try a different search.</div>
+							</div>
+						}
+						else
+						{
+						if ((BugiriData != null && BugiriData.Count > 0) ||
+		                   (BugweriData != null && BugweriData.Count > 0) || 
+						   (BuikweData != null && BuikweData.Count > 0))
+						{
+						<div class="row">
+						<div class="col-md-4" style="width: calc(100vw - 20rem);">
+							<SfCard ID="Card1">
+								<CardHeader Title="BUGIRI" />
+								<CardContent>
+								@* 	<div>
+										The fastest 135mm telephoto lens in its class. Two UD-glass elements correct secondary spectrum for outstanding sharpness and color.
+									</div><br> *@
+							  <SfGrid DataSource="@BugiriData" AllowPaging="true" AllowSorting="true" RowHeight="20" Width="100%">
+										<GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+										
+										 <GridPageSettings PageSize="10"></GridPageSettings> 
+										<GridColumns>
+											<GridColumn Field="@nameof(SubcountyDetails.SubcountyDescription)" HeaderText="Sub-County" Width="120"></GridColumn>
+											<GridColumn HeaderText="Visitations" HeaderTextAlign="TextAlign.Center">
+												<GridColumns>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedOnce)" HeaderText="1" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedTwice)" HeaderText="2" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedThrice)" HeaderText="3" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+												</GridColumns>
+											</GridColumn>
+											@* <GridColumn Field="@nameof(SubcountyDetails.PercentageVisited)" HeaderText="% age" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn> *@
+										</GridColumns>
+									</SfGrid>
+									<div class="col-md-12">
+								<div class="control-section" align='center'>
+									<div class="control-section">
+										<SfAccumulationChart EnableBorderOnMouseMove="false" Title="Browser Market Share" EnableAnimation="true">
+											<AccumulationChartTooltipSettings Header="" Format="<b>${point.x}</b><br>Browser Share: <b>${point.y}%</b>" Enable="true"></AccumulationChartTooltipSettings>
+											<AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
+											<AccumulationChartSeriesCollection>
+												<AccumulationChartSeries DataSource="@PieChartPoints" XName="Browser" YName="Users" Radius="@Radius" Name="Browser" StartAngle="@StartAngle"
+																		 InnerRadius="0%" ExplodeIndex="0" Explode="true" ExplodeOffset="@ExplodeRadius">
+													<AccumulationDataLabelSettings Visible="true" Name="DataLabelMappingName" Position="AccumulationLabelPosition.Outside">
+														<AccumulationChartDataLabelFont Size=@Size FontWeight="600"></AccumulationChartDataLabelFont>
+														<AccumulationChartConnector Length=@ConnectorLength Type="ConnectorType.Curve"></AccumulationChartConnector>
+													</AccumulationDataLabelSettings>
+												</AccumulationChartSeries>
+											</AccumulationChartSeriesCollection>
+										</SfAccumulationChart>
+									</div>
+								</div>
+									</div>
+								</CardContent>
+							</SfCard>
+						</div>
+						<div class="col-md-4" style="width: calc(100vw - 20rem);">
+							<SfCard ID="Card1">
+								<CardHeader Title="BUGWERI" />
+								<CardContent>
+									@* <div>
+										The fastest 135mm telephoto lens in its class. Two UD-glass elements correct secondary spectrum for outstanding sharpness and color.
+									</div><br> *@
+									<SfGrid DataSource="@BugweriData" AllowPaging="true" AllowSorting="true" RowHeight="20" Width="100%">
+										<GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+										 <GridPageSettings PageSize="10"></GridPageSettings> 
+										<GridColumns>
+											<GridColumn Field="@nameof(SubcountyDetails.SubcountyDescription)" HeaderText="Sub-County" Width="120"></GridColumn>
+											<GridColumn HeaderText="Visitations" HeaderTextAlign="TextAlign.Center">
+												<GridColumns>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedOnce)" HeaderText="1" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedTwice)" HeaderText="2" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedThrice)" HeaderText="3" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+												</GridColumns>
+											</GridColumn>
+											@* <GridColumn Field="@nameof(SubcountyDetails.PercentageVisited)" HeaderText="% age" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn> *@
+										</GridColumns>
+									</SfGrid>
+							<div class="col-md-12">
+								<div class="control-section">
+									<SfAccumulationChart EnableBorderOnMouseMove="false" Title="Browser Market Share" EnableAnimation="true">
+										<AccumulationChartTooltipSettings Header="" Format="<b>${point.x}</b><br>Browser Share: <b>${point.y}%</b>" Enable="true"></AccumulationChartTooltipSettings>
+										<AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
+										<AccumulationChartSeriesCollection>
+											<AccumulationChartSeries DataSource="@PieChartPoints" XName="Browser" YName="Users" Radius="@Radius" Name="Browser" StartAngle="@StartAngle"
+												 InnerRadius="0%" ExplodeIndex="0" Explode="true" ExplodeOffset="@ExplodeRadius">
+												<AccumulationDataLabelSettings Visible="true" Name="DataLabelMappingName" Position="AccumulationLabelPosition.Outside">
+													<AccumulationChartDataLabelFont Size=@Size FontWeight="600"></AccumulationChartDataLabelFont>
+													<AccumulationChartConnector Length=@ConnectorLength Type="ConnectorType.Curve"></AccumulationChartConnector>
+												</AccumulationDataLabelSettings>
+											</AccumulationChartSeries>
+										</AccumulationChartSeriesCollection>
+									</SfAccumulationChart>
+									</div>
+							</div>
+								</CardContent>
+							</SfCard>
+						</div>
+						<div class="col-md-4" style="width: calc(100vw - 20rem);">
+							<SfCard ID="Card1">
+								<CardHeader Title="BUIKWE" />
+								<CardContent>
+									@* <div>
+							The fastest 135mm telephoto lens in its class. Two UD-glass elements correct secondary spectrum for outstanding sharpness and color.
+							</div><br> *@
+									<SfGrid DataSource="@BuikweData" AllowPaging="true" AllowSorting="true" RowHeight="20" Width="100%">
+										<GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+										 <GridPageSettings PageSize="10"></GridPageSettings> 
+										<GridColumns>
+											<GridColumn Field="@nameof(SubcountyDetails.SubcountyDescription)" HeaderText="Sub-County" Width="120"></GridColumn>
+											<GridColumn HeaderText="Visitations" HeaderTextAlign="TextAlign.Center">
+												<GridColumns>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedOnce)" HeaderText="1" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedTwice)" HeaderText="2" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+													<GridColumn Field="@nameof(SubcountyDetails.VisitedThrice)" HeaderText="3" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn>
+												</GridColumns>
+											</GridColumn>
+											@* <GridColumn Field="@nameof(SubcountyDetails.PercentageVisited)" HeaderText="% age" Width="60" HeaderTextAlign="TextAlign.Center"></GridColumn> *@
+										</GridColumns>
+									</SfGrid>
+								</CardContent>
+						<div class="col-md-12">
+							
+						</div>
+							</SfCard>
+				
+						</div>
+					</div>
+					    }
+			            }
+                </div>
+           @* </CarouselItem> *@
+		
+@code {
+	string QuarterNo { get; set; }
+	string Qtr = null;
+	string PreviousQtr = null;
+	string Yr = null;
+	int daysdifference { get; set; }
+	public string Width { get; set; } = "60%";
+	public double Rotation { get; set; } = 0;
+	public string _DistrictName { get; set; }
+	public string DistrictHHVisited { get; set; }
+	List<SubcountyDetails> JinjaData = new List<SubcountyDetails>();
+	List<SubcountyDetails> JinjaCityData = new List<SubcountyDetails>();
+	List<SubcountyDetails> BugiriData = new List<SubcountyDetails>();
+	List<SubcountyDetails> BugweriData = new List<SubcountyDetails>();
+	List<SubcountyDetails> IgangaData = new List<SubcountyDetails>();
+	List<SubcountyDetails> KamuliData = new List<SubcountyDetails>();
+	List<SubcountyDetails> MayugeData = new List<SubcountyDetails>();
+	List<SubcountyDetails> NamayingoData = new List<SubcountyDetails>();
+	List<SubcountyDetails> MukonoData = new List<SubcountyDetails>();
+	List<SubcountyDetails> BuikweData = new List<SubcountyDetails>();
+	List<SubcountyDetails> KayungaData = new List<SubcountyDetails>();
+	List<spHomeVisitsCountSummary_Per_Dsitrict_Per_QuarterResult> HomeVisitsCountDistrictQuarterSummaryData { get; set; }
+	List<SubCountyLine> JinjaChartPointData = new List<SubCountyLine>();
+	List<spHomeVisitsCountSummaryResult> HomeVisitsCountSummaryData { get; set; }
+	public List<DistrictQuarter> DistrictQuarterData = new List<DistrictQuarter>();
+	public Syncfusion.Blazor.Charts.LabelIntersectAction Label { get; set; } = Syncfusion.Blazor.Charts.LabelIntersectAction.Trim;
+	private string CurrentDate = "Date:" + " " + DateTime.Now.ToString();
+	private string CurrentYear1 => "Year:" + " " + DateTime.Now.Year.ToString();
+	private string currentQuarter = null;
+	private string currentDay = null;
+	public string Quarter { get; set; }
+	private string _daysLeftInQuarter;
+	private int currentDistrictIndex = 0;
+	private string CurrentYear => DateTime.Now.Year.ToString();
+	SearchPanel SearchModel { get; set; } = new();
+	List<ViewATargets> TargetsData { get; set; }
+	List<AQuarter> QuarterData { get; set; }
+	List<AFinancialYear> YearsDataSource { get; set; }
+	List<ADistrict> DistrictsDataSource { get; set; }
+	List<ASubcounty> SubcountiesDataSource { get; set; }
+	private async Task GetSubcountyCardDatas()
+	{
+		using (var _dbcontext = new SPToCoreContext())
+		{
+			var currentMonth = DateTime.Now.Month;
+			var currentYear = DateTime.Now.Year;
+			string startDate = null;
+			string endDate = null;
+			currentMonth = 7;
+			var _financialYear = _dbcontext.AFinancialYear.FirstOrDefault(o => o.FinancialYearDesc.Trim() == currentYear.ToString());
+			SearchModel = new SearchPanel();
+			SearchModel.Startdate = new DateTime(DateTime.Now.Year, 1, 1);
+			SearchModel.Enddate = new DateTime(DateTime.Now.Year, 12, 31);
+
+			int StartMonth = 1;
+			int EndMonth = 12;
+
+			if (currentMonth >= 1 && currentMonth <= 3)
+			{
+				QuarterNo = "TWO (JAN-MAR)";
+				startDate = currentYear + "-01-01";
+				endDate = currentYear + "-03-31";
+				Qtr = "2";
+				PreviousQtr = "1";
+				StartMonth = 1;
+				EndMonth = 3;
+			}
+			else if (currentMonth >= 4 && currentMonth <= 6)
+			{
+				QuarterNo = "THREE (APR-JUN)";
+				startDate = currentYear + "-04-01";
+				endDate = currentYear + "-06-30";
+				Qtr = "3";
+				PreviousQtr = "2";
+				StartMonth = 4;
+				EndMonth = 6;
+			}
+			else if (currentMonth >= 7 && currentMonth <= 9)
+			{
+				QuarterNo = "FOUR (JUL-SEP)";
+				startDate = currentYear + "-07-01";
+				endDate = currentYear + "-09-30";
+				Qtr = "4";
+				PreviousQtr = "3";
+				StartMonth = 7;
+				EndMonth = 9;
+			}
+			else if (currentMonth >= 10 && currentMonth <= 12)
+			{
+				QuarterNo = "ONE (OCT-DEC)";
+				startDate = currentYear + "-10-01";
+				endDate = currentYear + "-12-31";
+				Qtr = "1";
+				PreviousQtr = "4";
+				StartMonth = 10;
+				EndMonth = 12;
+			}
+			startDate = "2023-07-01";
+			endDate = "2023-09-30";
+			TargetsData = await _dbcontext.ViewATargets.Where(o => o.FinancialYearDesc.Trim() == currentYear.ToString()).ToListAsync();
+			HomeVisitsCountSummaryData = await _dbcontext.spHomeVisitsCountSummaryAsync(Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), null, null);
+			HomeVisitsCountDistrictQuarterSummaryData = await _dbcontext.spHomeVisitsCountSummary_Per_Dsitrict_Per_QuarterAsync(null, null, null, null, null);
+			string? subcountyDescription = null;
+			string? DistrictName = null;
+			double VisistedOnce = 0.0;
+			double VisistedTwice = 0.0;
+			double VisitedThrice = 0.0;
+			double? percentageVisited = 0.0;
+			if (HomeVisitsCountSummaryData != null && HomeVisitsCountSummaryData.Count > 0)
+			{
+				var distinctFinancialYears = HomeVisitsCountSummaryData
+					.Select(g => g.FinancialYear)
+					.Distinct()
+					.ToList();
+
+				if (distinctFinancialYears != null)
+				{
+					foreach (var financialYear in distinctFinancialYears)
+					{
+						//JINJA
+						var filteredJinja = HomeVisitsCountSummaryData
+							.Where(o => o.DistrictId == 1 && o.FinancialYear == financialYear && o.SubcountyId != null)
+							.ToList();
+						if (filteredJinja != null && filteredJinja.Count > 0)
+						{
+							List<SubcountyDetails> subcountyDetailsList = new List<SubcountyDetails>();
+
+							foreach (var x in filteredJinja)
+							{
+								SubcountyDetails jinja = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+								subcountyDetailsList.Add(jinja);
+							}
+							JinjaData.AddRange(subcountyDetailsList);
+						}
+						//JinjaCity
+						var filteredJinjaCity = HomeVisitsCountSummaryData
+							.Where(o => o.DistrictId == 8 && o.FinancialYear == financialYear && o.SubcountyId != null)
+							.ToList();
+						if (filteredJinjaCity != null && filteredJinjaCity.Count > 0)
+						{
+							List<SubcountyDetails> jinjaCityList = new List<SubcountyDetails>();
+
+							foreach (var x in filteredJinjaCity)
+							{
+								SubcountyDetails jinjaCity = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								jinjaCityList.Add(jinjaCity);
+							}
+							JinjaCityData.AddRange(jinjaCityList);
+						}
+						//Bugiri BugiriData
+						var filterBugiri = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 6 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterBugiri != null && filterBugiri.Count > 0)
+						{
+							List<SubcountyDetails> bugiriList = new List<SubcountyDetails>();
+
+							foreach (var x in filterBugiri)
+							{
+								SubcountyDetails bugiri = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+								bugiriList.Add(bugiri);
+							}
+							BugiriData.AddRange(bugiriList);
+						}
+						//BugweriData 
+						var filterBugweri = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 7 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterBugweri != null && filterBugweri.Count > 0)
+						{
+							List<SubcountyDetails> BugweriList = new List<SubcountyDetails>();
+
+							foreach (var x in filterBugweri)
+							{
+								SubcountyDetails Bugweri = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								BugweriList.Add(Bugweri);
+							}
+							BugweriData.AddRange(BugweriList);
+						}
+						//IgangaData
+						var filterIganga = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 2 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterIganga != null && filterIganga.Count > 0)
+						{
+							List<SubcountyDetails> IgangaList = new List<SubcountyDetails>();
+
+							foreach (var x in filterIganga)
+							{
+								SubcountyDetails Iganga = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								IgangaList.Add(Iganga);
+							}
+							IgangaData.AddRange(IgangaList);
+						}
+						//Kamuli data
+						var filterKamuli = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 4 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterKamuli != null && filterKamuli.Count > 0)
+						{
+							List<SubcountyDetails> KamuliList = new List<SubcountyDetails>();
+
+							foreach (var x in filterKamuli)
+							{
+								SubcountyDetails Kamuli = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								KamuliList.Add(Kamuli);
+							}
+							KamuliData.AddRange(KamuliList);
+						}
+						//Mayuge
+						var filterMayuge = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 3 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterMayuge != null && filterMayuge.Count > 0)
+						{
+							List<SubcountyDetails> MayugeList = new List<SubcountyDetails>();
+
+							foreach (var x in filterMayuge)
+							{
+								SubcountyDetails Mayuge = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								MayugeList.Add(Mayuge);
+							}
+							MayugeData.AddRange(MayugeList);
+						}
+						//Namayingo
+						var filterNamayingo = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 5 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterNamayingo != null && filterNamayingo.Count > 0)
+						{
+							List<SubcountyDetails> NamayingoList = new List<SubcountyDetails>();
+
+							foreach (var x in filterNamayingo)
+							{
+								SubcountyDetails Namayingo = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								NamayingoList.Add(Namayingo);
+							}
+							NamayingoData.AddRange(NamayingoList);
+						}
+						//Mukono
+						var filterMukono = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 11 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterMukono != null && filterMukono.Count > 0)
+						{
+							List<SubcountyDetails> MukonoList = new List<SubcountyDetails>();
+
+							foreach (var x in filterMukono)
+							{
+								SubcountyDetails Mukono = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								MukonoList.Add(Mukono);
+							}
+							MukonoData.AddRange(MukonoList);
+						}
+						//Buikwe
+						var filterBuikwe = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 10 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterBuikwe != null && filterBuikwe.Count > 0)
+						{
+							List<SubcountyDetails> BuikweList = new List<SubcountyDetails>();
+
+							foreach (var x in filterBuikwe)
+							{
+								SubcountyDetails Buikwe = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								BuikweList.Add(Buikwe);
+							}
+							BuikweData.AddRange(BuikweList);
+						}
+						//Kayunga
+						var filterKayunga = HomeVisitsCountSummaryData
+						.Where(o => o.DistrictId == 9 && o.FinancialYear == financialYear && o.SubcountyId != null)
+						.ToList();
+						if (filterKayunga != null && filterKayunga.Count > 0)
+						{
+							List<SubcountyDetails> KayungaList = new List<SubcountyDetails>();
+
+							foreach (var x in filterKayunga)
+							{
+								SubcountyDetails Kayunga = new SubcountyDetails
+									{
+										SubcountyDescription = x.SubcountyDescription,
+										VisitedOnce = Convert.ToDouble(x.VisitedOnce),
+										VisitedTwice = Convert.ToDouble(x.VisitedTwice),
+										VisitedThrice = Convert.ToDouble(x.VisitedThrice)
+									};
+
+								KayungaList.Add(Kayunga);
+							}
+							KayungaData.AddRange(KayungaList);
+						}
+
+					}
+				}
+			}
+
+			if(HomeVisitsCountDistrictQuarterSummaryData != null && HomeVisitsCountDistrictQuarterSummaryData.Count > 0)
+			{
+				if (currentMonth >= 10)
+				{
+					var QuarterData = HomeVisitsCountDistrictQuarterSummaryData
+									.Where(o => o.FinancialYear != null && o.FinancialYear == currentYear).ToList();
+					if(QuarterData != null)
+					{
+						var filteredJinja = QuarterData.FirstOrDefault(o => o.DistrictId == 1 && o.Qtr == 1);
+						var filteredJinjaQ2 = QuarterData.FirstOrDefault(o => o.DistrictId == 1 && o.Qtr == 2);
+						var filteredJinjaQ3 = QuarterData.FirstOrDefault(o => o.DistrictId == 1 && o.Qtr == 3);
+						var filteredJinjaQ4 = QuarterData.FirstOrDefault(o => o.DistrictId == 1 && o.Qtr == 4);
+						List<SubCountyLine> JinjaList = new List<SubCountyLine>();
+						List<SubCountyLine> jinja = new List<SubCountyLine>
+							{
+								new SubCountyLine
+								{
+									Quarter = "Q1",
+									VisitedOnce = Convert.ToDouble(filteredJinja.VisitedOnce),
+									VisitedTwice = Convert.ToDouble(filteredJinja.VisitedTwice),
+									VisitedThrice = Convert.ToDouble(filteredJinja.VisitedThrice)
+								},
+								new SubCountyLine
+								{
+									Quarter = "Q2",
+									VisitedOnce = Convert.ToDouble(filteredJinjaQ2.VisitedOnce),
+									VisitedTwice = Convert.ToDouble(filteredJinjaQ2.VisitedTwice),
+									VisitedThrice = Convert.ToDouble(filteredJinjaQ2.VisitedThrice)
+								},
+								new SubCountyLine
+								{
+									Quarter = "Q3",
+									VisitedOnce = Convert.ToDouble(filteredJinjaQ3.VisitedOnce),
+									VisitedTwice = Convert.ToDouble(filteredJinjaQ3.VisitedTwice),
+									VisitedThrice = Convert.ToDouble(filteredJinjaQ3.VisitedThrice)
+								},
+								new SubCountyLine
+								{
+									Quarter = "Q4",
+									VisitedOnce = Convert.ToDouble(filteredJinjaQ4.VisitedOnce),
+									VisitedTwice = Convert.ToDouble(filteredJinjaQ4.VisitedTwice),
+									VisitedThrice = Convert.ToDouble(filteredJinjaQ4.VisitedThrice)
+								}
+							};
+						//JinjaList.AddRange(jinja);
+						JinjaChartPointData.AddRange(jinja);
+					}
+				}
+				else
+				{
+					
+				}
+				
+
+			}
+
+			
+		}
+	}
+	List<DistrictSubcounty> districts;
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			await base.OnInitializedAsync();
+		//	districts = await GetDistrictsFromStoredProcedureAsync();
+			Width = "60%";
+			Rotation = -45;
+			DateTime today = DateTime.Now;
+			int currentMonth = today.Month;
+			string _currentDate = DateTime.Now.ToString();
+			int quarter = (currentMonth - 1) / 3 + 1;
+			DateTime lastDateOfQuarter;
+			DateTime currentDate = DateTime.Now;
+			if (currentMonth >= 10 && currentMonth <= 12)
+			{
+				quarter = 1;
+				Quarter = "Quarter:One";
+				lastDateOfQuarter = new DateTime(currentDate.Year, 12, 31);
+				TimeSpan difference = lastDateOfQuarter - currentDate;
+				daysdifference = difference.Days;
+				_daysLeftInQuarter = Convert.ToString(difference.Days) + " " + "Days left to end of quarter one";
+			}
+			else if (currentMonth >= 1 && currentMonth <= 3)
+			{
+				quarter = 2;
+				Quarter = "Quarter:Two";
+				lastDateOfQuarter = new DateTime(currentDate.Year, 3, 31);
+				TimeSpan difference = lastDateOfQuarter - currentDate;
+				daysdifference = difference.Days;
+				_daysLeftInQuarter = Convert.ToString(difference.Days) + " " + "Days left to end of quarter two";
+			}
+			else if (currentMonth >= 4 && currentMonth <= 6)
+			{
+				quarter = 3;
+				Quarter = "Quarter:Three";
+				lastDateOfQuarter = new DateTime(currentDate.Year, 6, 30);
+				TimeSpan difference = lastDateOfQuarter - currentDate;
+				daysdifference = difference.Days;
+				_daysLeftInQuarter = Convert.ToString(difference.Days) + " " + "Days left to end of quarter three";
+			}
+			else if (currentMonth >= 7 && currentMonth <= 9)
+			{
+				quarter = 4;
+				Quarter = "Quarter:Four";
+				lastDateOfQuarter = new DateTime(currentDate.Year, 9, 30);
+				TimeSpan difference = lastDateOfQuarter - currentDate;
+				daysdifference = difference.Days;
+				_daysLeftInQuarter = Convert.ToString(difference.Days) + " " + "Days left to end of quarter four";
+			}
+
+			QuarterData = await _dbcontext
+			.AQuarter
+			.Where(o => o.QuarterId >= 1 && o.QuarterId <= 4)
+			.ToListAsync();
+
+			YearsDataSource = await _dbcontext
+			.AFinancialYear
+			.OrderBy(o => o.FinancialYearDesc)
+			.ToListAsync();
+
+			DistrictsDataSource = await _dbcontext
+			.ADistrict
+			.OrderBy(o => o.DistrictDescription)
+			.ToListAsync();
+
+			SubcountiesDataSource = await _dbcontext
+			.ASubcounty
+			.OrderBy(o => o.SubcountyDescription)
+			.ToListAsync();
+
+			await GetSubcountyCardDatas();
+			Label = Syncfusion.Blazor.Charts.LabelIntersectAction.None;
+			Width = "100%";
+			Rotation = -45;
+
+		}
+		catch (Exception ex)
+		{
+			throw ex;
+		}
+
+		finally
+		{
+
+
+		}
+	}
+	public List<StackedChartData> ChartPoints { get; set; } = new List<StackedChartData>
+	{
+		new StackedChartData { ExpensesCategory = "Q1" , JohnExpenses = 190, PeterExpenses = 1140 , SteveExpenses = 470, CharleExpenses = 120},
+		new StackedChartData { ExpensesCategory = "Q2", JohnExpenses = 380, PeterExpenses = 990, SteveExpenses = 110, CharleExpenses = 770 },
+		new StackedChartData { ExpensesCategory = "Q3",JohnExpenses = 850, PeterExpenses = 580, SteveExpenses = 120, CharleExpenses = 750 },
+		new StackedChartData { ExpensesCategory = "Q4",JohnExpenses= 170, PeterExpenses = 930, SteveExpenses = 860, CharleExpenses = 780 },
+
+	};
+	
+	public class StackedChartData
+	{
+		public string ExpensesCategory { get; set; }
+		public double JohnExpenses { get; set; }
+		public double PeterExpenses { get; set; }
+		public double SteveExpenses { get; set; }
+		public double CharleExpenses { get; set; }
+	}
+//Delete
+	
+	public int ExplodeIndex { get; set; } = 1;
+	public string ExplodeRadius = "10%";
+	public string Radius { get; set; } = "42%";
+	public string ConnectorLength { get; set; } = "20px";
+	public int StartAngle = 25;
+	public string Size { get; set; } = "12px";
+	public List<PieData> PieChartPoints { get; set; } = new List<PieData>
+    {
+		new PieData { Browser = "Chrome", Users = 59.28, DataLabelMappingName = "Chrome: 59.28%"},
+		new PieData { Browser = "UC Browser", Users = 4.37, DataLabelMappingName = "UC Browser: 4.37%"},
+		new PieData { Browser = "Internet Explorer", Users = 6.12, DataLabelMappingName = "Internet Explorer: 6.12%"},
+		new PieData { Browser = "Sogou Explorer", Users = 1.37, DataLabelMappingName = "Sogou Explorer: 1.37%"},
+		new PieData { Browser = "QQ", Users = 3.96, DataLabelMappingName = "QQ: 3.96%"},
+		new PieData { Browser = "Safari", Users = 4.73, DataLabelMappingName = "Safari: 4.73%"},
+		new PieData { Browser = "Opera", Users = 3.12, DataLabelMappingName = "Opera: 3.12%"},
+		new PieData { Browser = "Edge", Users = 7.48, DataLabelMappingName = "Edge: 7.48%"},
+		new PieData { Browser = "Others", Users = 9.57, DataLabelMappingName = "Others: 9.57%"},
+	};
+	
+
+}
+<style>
+	#Card {
+		width: 400px;
+		height: 55vh;
+		background-color: white;
+	}
+
+	#Card1 {
+		width: 545px;
+		height: 85vh;
+	}
+</style>

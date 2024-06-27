@@ -1,0 +1,180 @@
+﻿@using MUCOBADI.DTOs.Dashboard;
+@using MUCOBADI.Data;
+
+@if (HeatDataSource != null && HeatDataSource.Length > 0)
+{
+	<div class="row">
+		<div class="col-md-12">
+			<div class="control-section" align='center'>
+				<div class="control-section">
+					<SfHeatMap DataSource="@HeatDataSource">
+						<HeatMapEvents TooltipRendering="@TooltipRendering" CellRendering="@CellRender"></HeatMapEvents>
+						<HeatMapXAxis Labels="@XLabels" OpposedPosition="true">
+							<HeatMapXAxisTextStyle Color="Black"></HeatMapXAxisTextStyle>
+							<HeatMapAxisLabelBorder Width="1" Type="Syncfusion.Blazor.HeatMap.BorderType.Rectangle" Color="#F0D6AD"></HeatMapAxisLabelBorder>
+							<HeatMapMultiLevelLabels>
+								<HeatMapMultiLevelLabel>
+									<HeatMapXAxisMultiLevelLabelBorder Width="1"  Color="#F0D6AD"></HeatMapXAxisMultiLevelLabelBorder>
+									<HeatMapAxisMultiLevelLabelsTextStyle Color="Black" FontWeight="Bold"></HeatMapAxisMultiLevelLabelsTextStyle>
+									<HeatMapAxisMultiLevelCategories Start="0" End="1" Text="<1 Yr">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="2" End="3" Text="1-4 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="4" End="5" Text="5-9 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="6" End="7" Text="10-14 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="8" End="9" Text="15-17 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="10" End="11" Text="18+ Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="12" End="13" Text="Total">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="14" End="14" Text="Overall">
+									</HeatMapAxisMultiLevelCategories>
+								</HeatMapMultiLevelLabel>
+							</HeatMapMultiLevelLabels>
+						</HeatMapXAxis>
+						<HeatMapYAxis Labels="@YLabels" IsInversed=true>
+							<HeatMapAxisLabelBorder Width="0"></HeatMapAxisLabelBorder>
+							<HeatMapYAxisTextStyle Color="Black"></HeatMapYAxisTextStyle>
+							<HeatMapMultiLevelLabels>
+								<HeatMapMultiLevelLabel>
+									<HeatMapYAxisMultiLevelLabelBorder Width="1" Type="Syncfusion.Blazor.HeatMap.BorderType.Brace" Color="#F0D6AD"></HeatMapYAxisMultiLevelLabelBorder>
+									<HeatMapAxisMultiLevelLabelsTextStyle Color="Black" FontWeight="Bold"></HeatMapAxisMultiLevelLabelsTextStyle>
+									<HeatMapAxisMultiLevelCategories Start="0" End="9" Text="Districts">
+									</HeatMapAxisMultiLevelCategories>
+								</HeatMapMultiLevelLabel>
+							</HeatMapMultiLevelLabels>
+
+						</HeatMapYAxis>
+						<HeatMapTitleSettings></HeatMapTitleSettings>
+						<HeatMapCellSettings ShowLabel="true" Format="{value}">
+							<HeatMapCellBorder Width="0"></HeatMapCellBorder>
+						</HeatMapCellSettings>
+						<HeatMapPaletteSettings>
+							<HeatMapPalettes>
+								
+								<HeatMapPalette Color="#F0D6AD"></HeatMapPalette>
+								<HeatMapPalette Color="#9da49a"></HeatMapPalette>
+								<HeatMapPalette Color="#d7c7a7"></HeatMapPalette>
+								<HeatMapPalette Color="#6e888f"></HeatMapPalette>
+								<HeatMapPalette Color="#466f86"></HeatMapPalette>
+								<HeatMapPalette Color="#19547B"></HeatMapPalette>
+							</HeatMapPalettes>
+						</HeatMapPaletteSettings>
+						<HeatMapLegendSettings Visible="true">
+						</HeatMapLegendSettings>
+						<HeatMapTooltipSettings Enable="true">
+							<HeatMapFont Size="12px" FontWeight="500"></HeatMapFont>
+						</HeatMapTooltipSettings>
+					</SfHeatMap>
+				</div>
+			</div>
+		</div>
+	</div>
+
+}
+
+@code {
+	[Parameter]
+	public string TitleDescription { get; set; }
+	[Parameter]
+	public string[] XLabels { get; set; }
+	[Parameter]
+	public string[] YLabels { get; set; }
+	[Parameter]
+	public int[,] HeatDataSource { get; set; }
+	public void TooltipRendering(Syncfusion.Blazor.HeatMap.TooltipEventArgs args)
+	{
+		args.Content = new string[] { args.XLabel + " | " + args.YLabel + " " + args.Value };
+	}
+	public void CellRender(HeatMapCellRenderEventArgs args)
+	{
+		string CellValue = (double.Parse(args.CellValue)).ToString();
+		//if (CellValue)
+		args.CellValue = CellValue;
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		//await LoadDashboards();
+	}
+
+	List<StakeholdersData> stakeholdersDatas { get; set; }
+	List<HeatMapData> HeatMapDataList { get; set; }
+	[Parameter]
+	public SearchPanel SearchModel { get; set; }
+	[Parameter]
+	public List<HeatMapData> HeatMapDataSource { get; set; }
+	List<spInstitution_IndicatorsResult> IndicatorsResultData { get; set; }
+	string QuarterNo { get; set; }
+	string Qtr = null;
+	string PreviousQtr = null;
+	string Yr = null;
+	string ProjectId = null;
+	int[,] HeatMapDataId;
+	List<HeatMapData> heatmapDataList = new List<HeatMapData>();
+	[Parameter]
+	public UtilitiesSearchPanel InputModel { get; set; }
+	
+	public int[,] TransformData(List<spInstitution_IndicatorsResult> data)
+	{
+		// Define the structure of your HeatMap data (2D array)
+		int[,] heatMapData = new int[data.Count, 17]; // Assuming two columns for illustration
+
+		for (int i = 0; i < data.Count; i++)
+		{
+			// Map your data to the HeatMap structure
+			heatMapData[i, 0] = (int)data[i].Female_Under_One_Year;
+			heatMapData[i, 1] = (int)data[i].Male_Under_One_Year;
+			heatMapData[i, 2] = (int)data[i].Female_1_4;
+			heatMapData[i, 3] = (int)data[i].Male_1_4;
+			heatMapData[i, 4] = (int)data[i].Female_5_9;
+			heatMapData[i, 5] = (int)data[i].Male_5_9;
+			heatMapData[i, 6] = (int)data[i].Female_10_14;
+			heatMapData[i, 7] = (int)data[i].Male_10_14;
+			heatMapData[i, 8] = (int)data[i].Female_15_17;
+			heatMapData[i, 9] = (int)data[i].Male_15_17;
+			heatMapData[i, 10] = (int)data[i].Female_18_24;
+			heatMapData[i, 11] = (int)data[i].Male_18_24;
+			heatMapData[i, 12] = (int)data[i].Female_25_Plus;
+			heatMapData[i, 13] = (int)data[i].Male_25_Plus;
+			heatMapData[i, 14] = (int)data[i].FemaleSum;
+			heatMapData[i, 15] = (int)data[i].MaleSum;
+			heatMapData[i, 16] = (int)data[i].OverallSum;
+		}
+
+		return heatMapData;
+	}
+	static string GetQuarter(DateTime date)
+	{
+		int month = date.Month;
+		if (month >= 10 || month <= 12)
+			return "1";
+		else if (month >= 1 && month <= 3)
+			return "2";
+		else if (month >= 4 && month <= 6)
+			return "3";
+		else // month is >= 7 and <= 9
+			return "4";
+	}
+	static List<string> GetQuartersBetweenDates(DateTime startDate, DateTime endDate)
+	{
+		List<string> quarters = new List<string>();
+		// Iterate through months between start and end dates
+		DateTime currentDate = startDate;
+		while (currentDate <= endDate)
+		{
+			string quarter = GetQuarter(currentDate);
+			if (!quarters.Contains(quarter))
+			{
+				quarters.Add(quarter);
+			}
+			// Move to the next month
+			currentDate = currentDate.AddMonths(1);
+		}
+		return quarters;
+	}
+}
+
+

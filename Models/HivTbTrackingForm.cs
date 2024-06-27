@@ -74,6 +74,11 @@ namespace MUCOBADI.Models
         public string ReviewedContact { get; set; }
         public DateTime? ReviewDate { get; set; }
         public string PhoneNumber { get; set; }
+        public string ReasonForTreatmentInterruptionId { get; set; }
+        public string StrategiesForImprovingTreatmentContinuityId { get; set; }
+        public int? OptimizedYesNo { get; set; }
+        public string ReasonsForNonOptimizationId { get; set; }
+        public int? SupportedToDiscloseHivStatusToFamilyYesNoId { get; set; }
 
         public virtual AYesNo AnotherPersonContactedOnBehalfOfClientNavigation { get; set; }
         public virtual ACientClassification CientClassification { get; set; }
@@ -97,10 +102,12 @@ namespace MUCOBADI.Models
         public virtual ATbtreatment IsOnTbpreventiveTreatmentNavigation { get; set; }
         public virtual ATbtreatment IsOnTbtreatmentNavigation { get; set; }
         public virtual AYesNo OnArtNavigation { get; set; }
+        public virtual AYesNo OptimizedYesNoNavigation { get; set; }
         public virtual APersonContacted PersonContacted { get; set; }
         public virtual ARegimen Regimen { get; set; }
         public virtual ARegimenCategory RegimenCategory { get; set; }
         public virtual ASubcounty Subcounty { get; set; }
+        public virtual AYesNo SupportedToDiscloseHivStatusToFamilyYesNo { get; set; }
         public virtual ATbtestResult TbtestResult { get; set; }
         public virtual ATbtreatmentDuration TbtreatmentDurationNavigation { get; set; }
         public virtual AViralLoadSuppressed ViralLoadSuppressed { get; set; }

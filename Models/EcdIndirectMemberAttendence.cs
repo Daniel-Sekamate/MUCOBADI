@@ -23,6 +23,7 @@ namespace MUCOBADI.Models
 
         public virtual AGender CareTakerGender { get; set; }
         public virtual ARelationship Relationship { get; set; }
+        public virtual EcdAttendenceRegister SinoParenting { get; set; }
         public virtual VslaGroupIndirectMember VslaGroupIndirectMember { get; set; }
         public virtual ICollection<EcdIndirectMemberDetail> EcdIndirectMemberDetail { get; set; }
     }

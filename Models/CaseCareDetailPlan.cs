@@ -8,8 +8,8 @@ namespace MUCOBADI.Models
     public partial class CaseCareDetailPlan
     {
         public int CaseCareDetailPlanId { get; set; }
-        public int CaseCareDetailsId { get; set; }
-        public int PriorityAreaId { get; set; }
+        public int? CaseCareDetailsId { get; set; }
+        public int? PriorityAreaId { get; set; }
         public string CasePlanGoal { get; set; }
         public string PriorityAreaCodeId { get; set; }
         public string RefferalPriorityAreaCodeId { get; set; }

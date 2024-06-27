@@ -1,0 +1,183 @@
+﻿@* <h3>NmnquestionaireSectionTwoPage</h3> *@
+@using MUCOBADI.Models
+@inject IToastService toastService;
+
+@if (DataSource != null && DataSource.Count > 0)
+{
+    <SfGrid @ref=@HeaderGrid TValue="NmnquestionaireSectionTwo" DataSource="@DataSource"
+            AllowFiltering=false AllowGrouping=false AllowPaging=false AllowTextWrap=true ShowColumnChooser=true
+            GridLines="GridLine.Both" AllowSelection="true" Toolbar="@(new string[] {"Add","Edit","Update","Cancel","ColumnChooser" })"
+            EnableStickyHeader=true ClipMode="ClipMode.EllipsisWithTooltip" EnableAltRow=true>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridEvents CellSaved="DetailedCellSavedHandler" CellSelected="DetailedCellSelectHandler" OnBatchAdd=@onBatchAddEvent TValue="NmnquestionaireSectionTwo"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field="@(nameof(NmnquestionaireSectionTwo.NmnsectionTwoId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridColumn Field="@(nameof(NmnquestionaireSectionTwo.Nmnid))" HeaderText="Nmnid" Width="130" AllowEditing=false Visible=false ShowInColumnChooser=false></GridColumn>
+            <GridForeignColumn Field="@(nameof(NmnquestionaireSectionTwo.QuestionId))" HeaderText="Question" Width="200" ForeignKeyField="@(nameof(ANmnSectionTwoQuestion.QuestionId))" ForeignKeyValue="@(nameof(ANmnSectionTwoQuestion.QuestionDesc))" ForeignDataSource="@NmnSectionTwoQuestionData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(NmnquestionaireSectionTwo.AnswerId))" HeaderText="Answer" Width="130" ForeignKeyField="@(nameof(ANmnSectionTwoAnswer.AnswerId))" ForeignKeyValue="@(nameof(ANmnSectionTwoAnswer.AnswerDesc))" ForeignDataSource="@NmnSectionTwoAnswerData" EditType="EditType.DropDownEdit">
+                <EditTemplate Context="editContext">
+                    @{
+                        var _NmnSectionTwoAnswerData = NmnSectionTwoAnswerData.Where(o => o.QuestionId == (editContext as NmnquestionaireSectionTwo).QuestionId).ToList();
+                        <SfDropDownList @bind-Value="@((editContext as NmnquestionaireSectionTwo).AnswerId)" Enabled="true" ShowClearButton=true TItem="ANmnSectionTwoAnswer" TValue="int?" DataSource="@_NmnSectionTwoAnswerData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                            <DropDownListFieldSettings Value="@nameof(ANmnSectionTwoAnswer.AnswerId)" Text="@nameof(ANmnSectionTwoAnswer.AnswerDesc)"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    }
+                </EditTemplate>
+            </GridForeignColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+@code {
+    [Parameter]
+    public List<NmnquestionaireSectionTwo>? NmnquestionaireSectionTwoData { get; set; }
+    [Parameter]
+    public List<ANmnSectionTwoQuestion>? NmnSectionTwoQuestionData { get; set; }
+    [Parameter]
+    public List<ANmnSectionTwoAnswer>? NmnSectionTwoAnswerData { get; set; }
+    [Parameter]
+    public int Nmnid { get; set; }
+    [Parameter]
+    public EventCallback<List<NmnquestionaireSectionTwo>?> DetailToggle { get; set; }
+
+    List<NmnquestionaireSectionTwo>? DataSource { get; set; }
+    int? PreviousNmnid { get; set; }
+    public SfGrid<NmnquestionaireSectionTwo>? HeaderGrid;
+    int NmnsectionTwoId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (PreviousNmnid != Nmnid)
+            {
+                NmnsectionTwoId = -1;
+                if (NmnquestionaireSectionTwoData != null && NmnquestionaireSectionTwoData.Count > 0)
+                {
+                    if (NmnSectionTwoQuestionData != null && NmnSectionTwoQuestionData.Count > 0)
+                    {
+                        DataSource = new List<NmnquestionaireSectionTwo>();
+                        int CountId = -1;
+                        foreach (var item in NmnSectionTwoQuestionData)
+                        {
+                            var exists = NmnquestionaireSectionTwoData.FirstOrDefault(o => o.QuestionId == item.QuestionId);
+                            if (exists != null)
+                            {
+                                DataSource.Add(new NmnquestionaireSectionTwo()
+                                    {
+                                        Nmnid = exists.Nmnid,
+                                        NmnsectionTwoId = exists.NmnsectionTwoId,
+                                        QuestionId = item.QuestionId,
+                                        AnswerId = exists.AnswerId,
+                                    });
+                            }
+                            else
+                            {
+                                DataSource.Add(new NmnquestionaireSectionTwo()
+                                    {
+                                        NmnsectionTwoId = CountId,
+                                        Nmnid = Nmnid,
+                                        QuestionId = item.QuestionId,
+                                    });
+                            }
+                            CountId--;
+                        }
+                    }
+                }
+                else
+                {
+                    if (NmnSectionTwoQuestionData != null && NmnSectionTwoQuestionData.Count > 0)
+                    {
+                        DataSource = new List<NmnquestionaireSectionTwo>();
+                        int CountId = -1;
+                        foreach (var item in NmnSectionTwoQuestionData)
+                        {
+                            DataSource.Add(new NmnquestionaireSectionTwo()
+                                {
+                                    NmnsectionTwoId = CountId,
+                                    Nmnid = Nmnid,
+                                    QuestionId = item.QuestionId,
+                                });
+                            CountId--;
+                        }
+                    }
+                }
+                PreviousNmnid = Nmnid;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            //  throw;
+        }
+        base.OnInitialized();
+    }
+
+    private async Task DetailedCellSavedHandler(CellSaveArgs<NmnquestionaireSectionTwo> args)
+    {
+        try
+        {
+            if (HeaderGrid != null)
+            {
+                var index = await HeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.NmnsectionTwoId);
+                //await HeaderGrid.UpdateCellAsync(index, nameof(NmnquestionaireSectionTwo.ComplaintId), ComplaintId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            if (HeaderGrid != null)
+            {
+                await HeaderGrid.EndEditAsync();
+            }
+            if (DataSource != null)
+            {
+                await DetailToggle.InvokeAsync(DataSource);
+            }
+        }
+    }
+    private async Task DetailedCellSelectHandler(CellSelectEventArgs<NmnquestionaireSectionTwo> args)
+    {
+        if (HeaderGrid != null)
+        {
+            //get selected cell index
+            var CellIndexes = await HeaderGrid.GetSelectedRowCellIndexesAsync();
+
+            //get the row and cell index
+            var CurrentEditRowIndex = CellIndexes[0].Item1;
+            var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+            //get the available fields
+            var fields = await HeaderGrid.GetColumnFieldNamesAsync();
+            // edit the selected cell using the cell index and column name
+            await HeaderGrid.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+        }
+
+    }
+
+    private void onBatchAddEvent(BeforeBatchAddArgs<NmnquestionaireSectionTwo> args)
+    {
+        try
+        {
+            args.DefaultData.NmnsectionTwoId = NmnsectionTwoId;
+            NmnsectionTwoId--;
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+    }
+}
+
+

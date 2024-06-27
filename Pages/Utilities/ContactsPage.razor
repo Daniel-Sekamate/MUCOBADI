@@ -27,7 +27,7 @@
 </ol>
 
 <SfGrid @ref="ContactsGrid" TValue="AContacts"
-        Toolbar="@(new string[] {"Add","Edit","Delete","Update","Cancel","ColumnChooser"})" AllowGrouping="true" ShowColumnChooser="true" AllowTextWrap="true"
+        Toolbar="@(new string[] {"Add","Edit"})" AllowGrouping="true" ShowColumnChooser="true" AllowTextWrap="true"
         AllowPaging="true" AllowFiltering="true" GridLines="GridLine.Both" AllowSelection="true">
     <SfDataManager AdaptorInstance="@typeof(ContactsAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
     <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
@@ -94,7 +94,7 @@
 
                         <div class="form-group col-md-3">
                         <p><h7>Subcounty</h7></p>
-                            <SfMultiSelect @ref="@SubcountyDatasourceObj" Query="SubCountyQuery" TValue="int[]" TItem="ASubcounty" AllowFiltering="true" Enabled="@isSubcountyEnabled" Mode="@VisualMode.CheckBox" DataSource="@SubcountyData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Subcounty" FloatLabelType="FloatLabelType.Always"
+                            <SfMultiSelect @ref="@SubcountyDatasourceObj" TValue="int[]" TItem="ASubcounty" AllowFiltering="true" Enabled="@isSubcountyEnabled" Mode="@VisualMode.CheckBox" DataSource="@SubcountyData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Subcounty" FloatLabelType="FloatLabelType.Always"
                                                    FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" PopupHeight="350px">
                                             <MultiSelectFieldSettings Value="@nameof(ASubcounty.SubcountyId)" Text="@nameof(ASubcounty.SubcountyDescription)"></MultiSelectFieldSettings>
                                             <MultiSelectEvents TValue="int[]" TItem="ASubcounty" ValueChange="OnSubcountyDatasourceChange" DataBound="OnSubcountyDatasourceBound"></MultiSelectEvents>
@@ -115,7 +115,7 @@
                         </div>
 
                         <div class="form-group col-md-3">
-                        <p>Service Provider:<span style="color:red;">*</span></p>
+                        <p>Project:<span style="color:red;">*</span></p>
                             <SfDropDownList @bind-Value="@(ContactsData.ServiceProviderId)"
                                                 Enabled="true" TItem="AServiceProvider" TValue="int?"
                                                 DataSource="@ServiceProviderData" Placeholder="Please select"
@@ -126,8 +126,9 @@
                                         </DropDownListFieldSettings>
                             </SfDropDownList>
                         </div>
-                        @if(ContactsData.ServiceProviderId == 1)
-                        {
+               
+                       
+      
 
                             <div class="form-group col-md-3">
                                 <p>Position</p>
@@ -141,7 +142,7 @@
                                     </DropDownListFieldSettings>
                                 </SfDropDownList>
                             </div>
-                        }
+                  
                         
                     </div>
                 </div>
@@ -158,12 +159,21 @@
         <GridColumn Field=@nameof(AContacts.ContactLastName) HeaderText="Last Name" Width="80"></GridColumn>
         <GridForeignColumn Field=@nameof(AContacts.ServiceProviderId)
                            Visible="true"
-                           HeaderText="Service Provider"
+                           HeaderText="Project"
                            Width="80"
                            ForeignKeyField="@nameof(AServiceProvider.ServiceProviderId)"
                            ForeignKeyValue="@nameof(AServiceProvider.ServiceProviderDesc)"
                            ForeignDataSource="@ServiceProviderData"
                            AllowEditing="false">
+        </GridForeignColumn>
+            <GridForeignColumn Field=@nameof(AContacts.PositionId)
+                               Visible="true"
+                               HeaderText="Role"
+                               Width="80"
+                               ForeignKeyField="@nameof(APosition.PositionId)"
+                           ForeignKeyValue="@nameof(APosition.PositionDesc)"
+                           ForeignDataSource="@PositionData"
+                               AllowEditing="false">
         </GridForeignColumn>
     </GridColumns>
 </SfGrid>
@@ -305,7 +315,6 @@
                         cont.PositionId = val.PositionId;
                         cont.AddedBy = _userManagement.GetUserName();
                         cont.AddedDate = DateTime.Now;
-
                         dbContext.AContacts.Add(cont);
                         dbContext.SaveChanges();
                         toastService.ShowSuccess("Record saved successfully.");
@@ -456,7 +465,7 @@
                 using (var db = new MUCOBADIContext())
                 {
                     var exists = db.AContacts.FirstOrDefault(o => (o.ContactEmail.ToLower() == args.Data.ContactEmail.ToLower()));
-                    if (exists != null)
+                    if (exists != null && exists.ContactId != args.Data.ContactId)
                     {
                         toastService.ShowWarning("Person with a similar email has arleady been registered");
                         args.Cancel = true;

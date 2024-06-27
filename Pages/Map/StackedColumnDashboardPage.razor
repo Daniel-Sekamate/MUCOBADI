@@ -1,0 +1,66 @@
+﻿@page "/stackedColumn"
+@using Syncfusion.Blazor.Charts
+<div class="row">
+    <div class="col-md-6">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfChart Title="Trade values of different agricultural commodities within the EAC countries">
+                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"
+                                       Title="Partner State">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryXAxis>
+                    <ChartPrimaryYAxis Title="Trade Values(%)" LabelFormat="%{value}">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryYAxis>
+                    <ChartSeriesCollection>
+                        <ChartSeries DataSource="@MedalDetails" Name="Milk" XName="X" YName="YValue" Type="ChartSeriesType.StackingColumn100">
+                            <ChartMarker>
+                                <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Middle">
+                                    <ChartDataLabelFont Color="#ffffff" FontWeight="600"></ChartDataLabelFont>
+                                </ChartDataLabel>
+                            </ChartMarker>
+                        </ChartSeries>
+                        <ChartSeries DataSource="@MedalDetails" Name="Maize" XName="X" YName="YValue1" Type="ChartSeriesType.StackingColumn100">
+                            <ChartMarker>
+                                <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Middle">
+                                    <ChartDataLabelFont Color="#ffffff" FontWeight="600"></ChartDataLabelFont>
+                                </ChartDataLabel>
+                            </ChartMarker>
+                        </ChartSeries>
+                        <ChartSeries DataSource="@MedalDetails" Name="Cassava" XName="X" YName="YValue3" Type="ChartSeriesType.StackingColumn100">
+                            <ChartMarker>
+                                <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Middle">
+                                    <ChartDataLabelFont Color="#ffffff" FontWeight="600"></ChartDataLabelFont>
+                                </ChartDataLabel>
+                            </ChartMarker>
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                    <ChartLegendSettings Visible="true" />
+                </SfChart>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public class ChartData
+    {
+        public string X { get; set; }
+        public double YValue { get; set; }
+        public double YValue1 { get; set; }
+        public double YValue3 { get; set; }
+    }
+
+    public List<ChartData> MedalDetails = new List<ChartData>
+    {
+        new ChartData { X= "Uganda", YValue= 46, YValue1=56, YValue3 = 36},
+        new ChartData { X= "Tanzania", YValue= 27, YValue1=17, YValue3 = 37},
+        new ChartData { X= "Kenya", YValue= 26, YValue1=36, YValue3=46},
+        new ChartData { X= "Congo", YValue= 56,  YValue1=16 , YValue3=66},
+        new ChartData { X= "Rwanda", YValue= 12, YValue1=46, YValue3= 33 },
+        new ChartData { X= "Burundi", YValue= 26, YValue1=16 , YValue3 = 73},
+        new ChartData { X= "South Sudan", YValue= 26, YValue1=12 , YValue3 = 40},
+       
+    };
+}

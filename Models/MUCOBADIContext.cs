@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
-using System.IO;
 
 #nullable disable
 
@@ -25,7 +23,11 @@ namespace MUCOBADI.Models
         public virtual DbSet<AAdolescentHealthServiceReferred> AAdolescentHealthServiceReferred { get; set; }
         public virtual DbSet<AAdolescentIssueOfAbuse> AAdolescentIssueOfAbuse { get; set; }
         public virtual DbSet<AAgeCategory> AAgeCategory { get; set; }
+        public virtual DbSet<AAgreeDisagree> AAgreeDisagree { get; set; }
+        public virtual DbSet<AAssetIncome> AAssetIncome { get; set; }
         public virtual DbSet<AAttendency> AAttendency { get; set; }
+        public virtual DbSet<ABusinessPlanQuestion> ABusinessPlanQuestion { get; set; }
+        public virtual DbSet<ABusinessVentureCapitalInvestment> ABusinessVentureCapitalInvestment { get; set; }
         public virtual DbSet<ACandidentClassCompleted> ACandidentClassCompleted { get; set; }
         public virtual DbSet<ACareGiver> ACareGiver { get; set; }
         public virtual DbSet<ACaseCategory> ACaseCategory { get; set; }
@@ -33,14 +35,18 @@ namespace MUCOBADI.Models
         public virtual DbSet<ACaseNatureReported> ACaseNatureReported { get; set; }
         public virtual DbSet<ACasePlan> ACasePlan { get; set; }
         public virtual DbSet<ACasePlanStaus> ACasePlanStaus { get; set; }
+        public virtual DbSet<ACategoryofResidence> ACategoryofResidence { get; set; }
         public virtual DbSet<AChildAbuseOccurances> AChildAbuseOccurances { get; set; }
         public virtual DbSet<ACientClassification> ACientClassification { get; set; }
         public virtual DbSet<AClientCareModality> AClientCareModality { get; set; }
         public virtual DbSet<AClientMemberStatus> AClientMemberStatus { get; set; }
         public virtual DbSet<AContacts> AContacts { get; set; }
         public virtual DbSet<ACountry> ACountry { get; set; }
+        public virtual DbSet<ACurrenBusinessOpportunity> ACurrenBusinessOpportunity { get; set; }
+        public virtual DbSet<ACurrenBusinessRisk> ACurrenBusinessRisk { get; set; }
         public virtual DbSet<ACurrentClass> ACurrentClass { get; set; }
         public virtual DbSet<ADailyMeals> ADailyMeals { get; set; }
+        public virtual DbSet<ADeliveryMethod> ADeliveryMethod { get; set; }
         public virtual DbSet<ADistrict> ADistrict { get; set; }
         public virtual DbSet<ADrugDispensingModality> ADrugDispensingModality { get; set; }
         public virtual DbSet<ADrugDispensingModel> ADrugDispensingModel { get; set; }
@@ -50,6 +56,7 @@ namespace MUCOBADI.Models
         public virtual DbSet<AEnrolledHouseholdStatus> AEnrolledHouseholdStatus { get; set; }
         public virtual DbSet<AExpensePayment> AExpensePayment { get; set; }
         public virtual DbSet<AFacility> AFacility { get; set; }
+        public virtual DbSet<AFacilityMigrated> AFacilityMigrated { get; set; }
         public virtual DbSet<AFeedingStatus> AFeedingStatus { get; set; }
         public virtual DbSet<AFinancialYear> AFinancialYear { get; set; }
         public virtual DbSet<AFollowupMeans> AFollowupMeans { get; set; }
@@ -82,9 +89,12 @@ namespace MUCOBADI.Models
         public virtual DbSet<AHivstatus> AHivstatus { get; set; }
         public virtual DbSet<AHomeVisitReason> AHomeVisitReason { get; set; }
         public virtual DbSet<AHomeVisitServicesNeeded> AHomeVisitServicesNeeded { get; set; }
+        public virtual DbSet<AImplementationMethod> AImplementationMethod { get; set; }
         public virtual DbSet<AImplementingPartner> AImplementingPartner { get; set; }
         public virtual DbSet<AIndicators> AIndicators { get; set; }
         public virtual DbSet<AInfectionWays> AInfectionWays { get; set; }
+        public virtual DbSet<AInterventionAttendance> AInterventionAttendance { get; set; }
+        public virtual DbSet<AInterventionType> AInterventionType { get; set; }
         public virtual DbSet<AJobCausedHarm> AJobCausedHarm { get; set; }
         public virtual DbSet<AKnownRiskFactors> AKnownRiskFactors { get; set; }
         public virtual DbSet<AKnownRiskFactors2> AKnownRiskFactors2 { get; set; }
@@ -94,6 +104,11 @@ namespace MUCOBADI.Models
         public virtual DbSet<AMaritalStatus> AMaritalStatus { get; set; }
         public virtual DbSet<AMemberBenefits> AMemberBenefits { get; set; }
         public virtual DbSet<AMonth> AMonth { get; set; }
+        public virtual DbSet<ANatureofResidence> ANatureofResidence { get; set; }
+        public virtual DbSet<ANmnSampledFor> ANmnSampledFor { get; set; }
+        public virtual DbSet<ANmnSectionOneQuestion> ANmnSectionOneQuestion { get; set; }
+        public virtual DbSet<ANmnSectionTwoAnswer> ANmnSectionTwoAnswer { get; set; }
+        public virtual DbSet<ANmnSectionTwoQuestion> ANmnSectionTwoQuestion { get; set; }
         public virtual DbSet<ANonAdherence> ANonAdherence { get; set; }
         public virtual DbSet<ANotSuppressingReason> ANotSuppressingReason { get; set; }
         public virtual DbSet<AOvcVlrAndOvcVls> AOvcVlrAndOvcVls { get; set; }
@@ -109,6 +124,8 @@ namespace MUCOBADI.Models
         public virtual DbSet<AProgramParticipationStatus> AProgramParticipationStatus { get; set; }
         public virtual DbSet<AQuarter> AQuarter { get; set; }
         public virtual DbSet<AReasonForBorrowingLoan> AReasonForBorrowingLoan { get; set; }
+        public virtual DbSet<AReasonForTreatmentInterruption> AReasonForTreatmentInterruption { get; set; }
+        public virtual DbSet<AReasonsForNonOptimization> AReasonsForNonOptimization { get; set; }
         public virtual DbSet<AReferralServices> AReferralServices { get; set; }
         public virtual DbSet<AReferredDisability> AReferredDisability { get; set; }
         public virtual DbSet<ARegimen> ARegimen { get; set; }
@@ -118,6 +135,7 @@ namespace MUCOBADI.Models
         public virtual DbSet<ARelationship> ARelationship { get; set; }
         public virtual DbSet<ARequestedTestType> ARequestedTestType { get; set; }
         public virtual DbSet<AResults> AResults { get; set; }
+        public virtual DbSet<ARiskLevelRating> ARiskLevelRating { get; set; }
         public virtual DbSet<ASavingScheme> ASavingScheme { get; set; }
         public virtual DbSet<ASchoolEnrolment> ASchoolEnrolment { get; set; }
         public virtual DbSet<ASchoolNotProgressingReason> ASchoolNotProgressingReason { get; set; }
@@ -131,6 +149,8 @@ namespace MUCOBADI.Models
         public virtual DbSet<ASourceofIdentification> ASourceofIdentification { get; set; }
         public virtual DbSet<ASpecialAgeClassification> ASpecialAgeClassification { get; set; }
         public virtual DbSet<AStableShelter> AStableShelter { get; set; }
+        public virtual DbSet<AStartBusinessQuestion> AStartBusinessQuestion { get; set; }
+        public virtual DbSet<AStrategiesForImprovingTreatmentContinuity> AStrategiesForImprovingTreatmentContinuity { get; set; }
         public virtual DbSet<ASubResults> ASubResults { get; set; }
         public virtual DbSet<ASubcounty> ASubcounty { get; set; }
         public virtual DbSet<ATargets> ATargets { get; set; }
@@ -169,6 +189,11 @@ namespace MUCOBADI.Models
         public virtual DbSet<BeneficiaryLinkageTrackingToolDirectMember> BeneficiaryLinkageTrackingToolDirectMember { get; set; }
         public virtual DbSet<BeneficiaryLinkageTrackingToolIndirectMember> BeneficiaryLinkageTrackingToolIndirectMember { get; set; }
         public virtual DbSet<BeneficiaryLinkageTrackingToolNew> BeneficiaryLinkageTrackingToolNew { get; set; }
+        public virtual DbSet<BusinessPlanDetail> BusinessPlanDetail { get; set; }
+        public virtual DbSet<BusinessPlanHeader> BusinessPlanHeader { get; set; }
+        public virtual DbSet<BusinessTrackingLedger> BusinessTrackingLedger { get; set; }
+        public virtual DbSet<BusinessTrackingLedgerMoc> BusinessTrackingLedgerMoc { get; set; }
+        public virtual DbSet<BusinessTrackingLedgerSue> BusinessTrackingLedgerSue { get; set; }
         public virtual DbSet<CaseCare> CaseCare { get; set; }
         public virtual DbSet<CaseCareDetail> CaseCareDetail { get; set; }
         public virtual DbSet<CaseCareDetailPlan> CaseCareDetailPlan { get; set; }
@@ -183,6 +208,7 @@ namespace MUCOBADI.Models
         public virtual DbSet<EcdIndirectMemberAttendence> EcdIndirectMemberAttendence { get; set; }
         public virtual DbSet<EcdIndirectMemberDetail> EcdIndirectMemberDetail { get; set; }
         public virtual DbSet<Ecdgroups3> Ecdgroups3 { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLog { get; set; }
         public virtual DbSet<GraduationBenchMark> GraduationBenchMark { get; set; }
         public virtual DbSet<GraduationBenchMarkDetail> GraduationBenchMarkDetail { get; set; }
         public virtual DbSet<GraduationChecklistDetail> GraduationChecklistDetail { get; set; }
@@ -197,10 +223,25 @@ namespace MUCOBADI.Models
         public virtual DbSet<HouseHoldMembers1> HouseHoldMembers1 { get; set; }
         public virtual DbSet<HouseHoldMembersLog> HouseHoldMembersLog { get; set; }
         public virtual DbSet<Hvat> Hvat { get; set; }
+        public virtual DbSet<InterventionAttendanceForm> InterventionAttendanceForm { get; set; }
+        public virtual DbSet<InterventionAttendanceFormDetail> InterventionAttendanceFormDetail { get; set; }
+        public virtual DbSet<InterventionAttendanceFormInstructor> InterventionAttendanceFormInstructor { get; set; }
+        public virtual DbSet<IsvatcurrentBusinessOpportunity> IsvatcurrentBusinessOpportunity { get; set; }
+        public virtual DbSet<IsvatcurrentBusinessRisk> IsvatcurrentBusinessRisk { get; set; }
+        public virtual DbSet<IsvatgeneratedProfit> IsvatgeneratedProfit { get; set; }
+        public virtual DbSet<Isvatheader> Isvatheader { get; set; }
+        public virtual DbSet<IsvatincomeEarner> IsvatincomeEarner { get; set; }
+        public virtual DbSet<IsvatincomeOwnership> IsvatincomeOwnership { get; set; }
+        public virtual DbSet<Isvatloss> Isvatloss { get; set; }
+        public virtual DbSet<IsvatstartBusinessAnswer> IsvatstartBusinessAnswer { get; set; }
+        public virtual DbSet<IsvatworkingCapital> IsvatworkingCapital { get; set; }
         public virtual DbSet<JourneysGroups3> JourneysGroups3 { get; set; }
         public virtual DbSet<MonthlyCaseTrackingRegister> MonthlyCaseTrackingRegister { get; set; }
         public virtual DbSet<MonthlyCaseTrackingRegisterDetail> MonthlyCaseTrackingRegisterDetail { get; set; }
         public virtual DbSet<MonthlyHouseholdVisit> MonthlyHouseholdVisit { get; set; }
+        public virtual DbSet<Nmnquestionaire> Nmnquestionaire { get; set; }
+        public virtual DbSet<NmnquestionaireSectionOne> NmnquestionaireSectionOne { get; set; }
+        public virtual DbSet<NmnquestionaireSectionTwo> NmnquestionaireSectionTwo { get; set; }
         public virtual DbSet<NonSupressingCalhiv> NonSupressingCalhiv { get; set; }
         public virtual DbSet<OvcSchoolAttendencyDetails> OvcSchoolAttendencyDetails { get; set; }
         public virtual DbSet<OvcSchoolAttendencyHeader> OvcSchoolAttendencyHeader { get; set; }
@@ -213,10 +254,47 @@ namespace MUCOBADI.Models
         public virtual DbSet<SinoParentingIndirectMemberAttendence> SinoParentingIndirectMemberAttendence { get; set; }
         public virtual DbSet<SinoParentingIndirectMemberDetail> SinoParentingIndirectMemberDetail { get; set; }
         public virtual DbSet<SinovuyoGroups2> SinovuyoGroups2 { get; set; }
+        public virtual DbSet<SmuAgeGroup> SmuAgeGroup { get; set; }
+        public virtual DbSet<SmuAssessmentGuide> SmuAssessmentGuide { get; set; }
+        public virtual DbSet<SmuAssessmentGuidePh9Questions> SmuAssessmentGuidePh9Questions { get; set; }
+        public virtual DbSet<SmuAttendanceKey> SmuAttendanceKey { get; set; }
+        public virtual DbSet<SmuAttendenceFormDetail> SmuAttendenceFormDetail { get; set; }
+        public virtual DbSet<SmuAttendenceHeader> SmuAttendenceHeader { get; set; }
+        public virtual DbSet<SmuClientRegistrationForm> SmuClientRegistrationForm { get; set; }
+        public virtual DbSet<SmuCycle> SmuCycle { get; set; }
+        public virtual DbSet<SmuFacilitator> SmuFacilitator { get; set; }
+        public virtual DbSet<SmuFormType> SmuFormType { get; set; }
+        public virtual DbSet<SmuGroup> SmuGroup { get; set; }
+        public virtual DbSet<SmuKaguguScore> SmuKaguguScore { get; set; }
+        public virtual DbSet<SmuLevelOfDifficultyToCheckOffProblems> SmuLevelOfDifficultyToCheckOffProblems { get; set; }
+        public virtual DbSet<SmuOffice> SmuOffice { get; set; }
+        public virtual DbSet<SmuPh9Question> SmuPh9Question { get; set; }
+        public virtual DbSet<SmuPh9QuestionHeader> SmuPh9QuestionHeader { get; set; }
+        public virtual DbSet<SmuPreGroupGuide> SmuPreGroupGuide { get; set; }
+        public virtual DbSet<SmuPreGroupGuidePh9Questions> SmuPreGroupGuidePh9Questions { get; set; }
+        public virtual DbSet<SmuProgram> SmuProgram { get; set; }
+        public virtual DbSet<SmuReasonsForSessionAbsence> SmuReasonsForSessionAbsence { get; set; }
+        public virtual DbSet<SmuResidency> SmuResidency { get; set; }
+        public virtual DbSet<SmuSafetyPlanningForm> SmuSafetyPlanningForm { get; set; }
+        public virtual DbSet<SmuSafetyPlanningFormInternalCopingStrategies> SmuSafetyPlanningFormInternalCopingStrategies { get; set; }
+        public virtual DbSet<SmuSafetyPlanningFormPeopleProvideDistraction> SmuSafetyPlanningFormPeopleProvideDistraction { get; set; }
+        public virtual DbSet<SmuSafetyPlanningFormPeopleToAskForHelp> SmuSafetyPlanningFormPeopleToAskForHelp { get; set; }
+        public virtual DbSet<SmuSafetyPlanningFormProfessionsAgenciesToContact> SmuSafetyPlanningFormProfessionsAgenciesToContact { get; set; }
+        public virtual DbSet<SmuSafetyPlanningFormWarningSigns> SmuSafetyPlanningFormWarningSigns { get; set; }
+        public virtual DbSet<SmuSucideAssementFormHeader> SmuSucideAssementFormHeader { get; set; }
+        public virtual DbSet<SmuSucideAssementQuestion> SmuSucideAssementQuestion { get; set; }
+        public virtual DbSet<SmuSucideAssementResponse> SmuSucideAssementResponse { get; set; }
+        public virtual DbSet<SmuSucideAssementScore> SmuSucideAssementScore { get; set; }
+        public virtual DbSet<SmuTerminantionGuide> SmuTerminantionGuide { get; set; }
+        public virtual DbSet<SmuTerminantionGuidePh9Questions> SmuTerminantionGuidePh9Questions { get; set; }
+        public virtual DbSet<SmuViewAttendenceFormDetail> SmuViewAttendenceFormDetail { get; set; }
+        public virtual DbSet<SmuViewAttendenceHeader> SmuViewAttendenceHeader { get; set; }
+        public virtual DbSet<SmuViewClientRegistrationForm> SmuViewClientRegistrationForm { get; set; }
         public virtual DbSet<StakeHolderDataCapture> StakeHolderDataCapture { get; set; }
         public virtual DbSet<SubcountyCodes> SubcountyCodes { get; set; }
         public virtual DbSet<TableVillage> TableVillage { get; set; }
         public virtual DbSet<TblErrorLog> TblErrorLog { get; set; }
+        public virtual DbSet<UploadUpdateHouseholdData1> UploadUpdateHouseholdData1 { get; set; }
         public virtual DbSet<ViewAContacts> ViewAContacts { get; set; }
         public virtual DbSet<ViewADistrict> ViewADistrict { get; set; }
         public virtual DbSet<ViewAFacility> ViewAFacility { get; set; }
@@ -237,6 +315,7 @@ namespace MUCOBADI.Models
         public virtual DbSet<ViewDashboardBeneficiariesonIcarepivot> ViewDashboardBeneficiariesonIcarepivot { get; set; }
         public virtual DbSet<ViewDashboardBeneficiariesonIcarepivotNoFilter> ViewDashboardBeneficiariesonIcarepivotNoFilter { get; set; }
         public virtual DbSet<ViewDashboardBeneficiaryIdentificationRegister> ViewDashboardBeneficiaryIdentificationRegister { get; set; }
+        public virtual DbSet<ViewDashboardGraduationBenchMark> ViewDashboardGraduationBenchMark { get; set; }
         public virtual DbSet<ViewDashboardHhvisitedCurrentQuarter> ViewDashboardHhvisitedCurrentQuarter { get; set; }
         public virtual DbSet<ViewDashboardHivstatus> ViewDashboardHivstatus { get; set; }
         public virtual DbSet<ViewDashboardHivtbrisKassessmentTool> ViewDashboardHivtbrisKassessmentTool { get; set; }
@@ -266,10 +345,14 @@ namespace MUCOBADI.Models
         public virtual DbSet<ViewLastHouseholdCode> ViewLastHouseholdCode { get; set; }
         public virtual DbSet<ViewProjectIndicatorTargetsDatasource> ViewProjectIndicatorTargetsDatasource { get; set; }
         public virtual DbSet<ViewProjectIndicatorTargetsHeader> ViewProjectIndicatorTargetsHeader { get; set; }
+        public virtual DbSet<ViewReportProjectIndicatorTargetsDetails> ViewReportProjectIndicatorTargetsDetails { get; set; }
+        public virtual DbSet<ViewReportStakeHolderDataCapture> ViewReportStakeHolderDataCapture { get; set; }
         public virtual DbSet<ViewReportVslaTrackingToolDirectMember> ViewReportVslaTrackingToolDirectMember { get; set; }
         public virtual DbSet<ViewServiceRecieved> ViewServiceRecieved { get; set; }
         public virtual DbSet<ViewSlrGraduationCheckList> ViewSlrGraduationCheckList { get; set; }
         public virtual DbSet<ViewSlrHomeVisit> ViewSlrHomeVisit { get; set; }
+        public virtual DbSet<ViewSmuAssessmentGuide> ViewSmuAssessmentGuide { get; set; }
+        public virtual DbSet<ViewSplitDistrict> ViewSplitDistrict { get; set; }
         public virtual DbSet<ViewStakeHolderDataCapture> ViewStakeHolderDataCapture { get; set; }
         public virtual DbSet<ViewTbNonAdherence> ViewTbNonAdherence { get; set; }
         public virtual DbSet<ViewTreatmentInterruptions> ViewTreatmentInterruptions { get; set; }
@@ -279,6 +362,7 @@ namespace MUCOBADI.Models
         public virtual DbSet<ViewVslaGroupDirectMembers> ViewVslaGroupDirectMembers { get; set; }
         public virtual DbSet<ViewVslaGroupIndirectMember> ViewVslaGroupIndirectMember { get; set; }
         public virtual DbSet<ViewVslaTrackingToolDirectMember> ViewVslaTrackingToolDirectMember { get; set; }
+        public virtual DbSet<VillageMoved> VillageMoved { get; set; }
         public virtual DbSet<ViralLoadUpload1> ViralLoadUpload1 { get; set; }
         public virtual DbSet<ViralLoadUpload3> ViralLoadUpload3 { get; set; }
         public virtual DbSet<VslaGroupCommittee> VslaGroupCommittee { get; set; }
@@ -302,12 +386,8 @@ namespace MUCOBADI.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                IConfigurationRoot configuration = new ConfigurationBuilder()
-                                               .SetBasePath(Directory.GetCurrentDirectory())
-                                               .AddJsonFile("appsettings.json")
-                                               .Build();
-                var connectionString = configuration.GetConnectionString("DefaultConnection");
-                optionsBuilder.UseSqlServer(connectionString);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=DESKTOP-KOVCOUM\\DSOFT;Database=Ver1_MUCOBADI;User Id=sa;password=**Root@85;Trusted_Connection=False;MultipleActiveResultSets=true;");
             }
         }
 
@@ -383,6 +463,28 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.AgeCategoryDescription).HasMaxLength(3000);
             });
 
+            modelBuilder.Entity<AAgreeDisagree>(entity =>
+            {
+                entity.HasKey(e => e.AgreeDisagreeId);
+
+                entity.ToTable("A_AgreeDisagree");
+
+                entity.Property(e => e.AgreeDisagreeId).ValueGeneratedNever();
+
+                entity.Property(e => e.AgreeDisagreeDesc).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<AAssetIncome>(entity =>
+            {
+                entity.HasKey(e => e.AssetIncomeId);
+
+                entity.ToTable("A_AssetIncome");
+
+                entity.Property(e => e.AssetIncomeId).ValueGeneratedNever();
+
+                entity.Property(e => e.AssetIncomeDesc).HasMaxLength(2000);
+            });
+
             modelBuilder.Entity<AAttendency>(entity =>
             {
                 entity.HasKey(e => e.AttendencyId);
@@ -392,6 +494,30 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.AttendencyId).ValueGeneratedNever();
 
                 entity.Property(e => e.AttendencyDesc).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<ABusinessPlanQuestion>(entity =>
+            {
+                entity.HasKey(e => e.BusinessPlanQuestionId);
+
+                entity.ToTable("A_BusinessPlanQuestion");
+
+                entity.Property(e => e.BusinessPlanQuestionId).ValueGeneratedNever();
+
+                entity.Property(e => e.QuestionCategory).HasMaxLength(3000);
+
+                entity.Property(e => e.QuestionClassification).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<ABusinessVentureCapitalInvestment>(entity =>
+            {
+                entity.HasKey(e => e.BusinessVentureCapitalInvestmentId);
+
+                entity.ToTable("A_BusinessVentureCapitalInvestment");
+
+                entity.Property(e => e.BusinessVentureCapitalInvestmentId).ValueGeneratedNever();
+
+                entity.Property(e => e.BusinessVentureCapitalInvestmentDesc).HasMaxLength(3000);
             });
 
             modelBuilder.Entity<ACandidentClassCompleted>(entity =>
@@ -478,6 +604,17 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.CasePlanStausDesc)
                     .HasMaxLength(3000)
                     .HasColumnName("CasePLanStausDesc");
+            });
+
+            modelBuilder.Entity<ACategoryofResidence>(entity =>
+            {
+                entity.HasKey(e => e.CategoryofResidenceId);
+
+                entity.ToTable("A_CategoryofResidence");
+
+                entity.Property(e => e.CategoryofResidenceId).ValueGeneratedNever();
+
+                entity.Property(e => e.CategoryofResidenceDesc).HasMaxLength(2000);
             });
 
             modelBuilder.Entity<AChildAbuseOccurances>(entity =>
@@ -600,6 +737,28 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.DialCode).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<ACurrenBusinessOpportunity>(entity =>
+            {
+                entity.HasKey(e => e.CurrenBusinessOpportunityId);
+
+                entity.ToTable("A_CurrenBusinessOpportunity");
+
+                entity.Property(e => e.CurrenBusinessOpportunityId).ValueGeneratedNever();
+
+                entity.Property(e => e.CurrenBusinessOpportunityDesc).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<ACurrenBusinessRisk>(entity =>
+            {
+                entity.HasKey(e => e.CurrenBusinessRiskId);
+
+                entity.ToTable("A_CurrenBusinessRisk");
+
+                entity.Property(e => e.CurrenBusinessRiskId).ValueGeneratedNever();
+
+                entity.Property(e => e.CurrenBusinessRiskDesc).HasMaxLength(3000);
+            });
+
             modelBuilder.Entity<ACurrentClass>(entity =>
             {
                 entity.HasKey(e => e.CurrentClassId);
@@ -620,6 +779,17 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.MealId).ValueGeneratedNever();
 
                 entity.Property(e => e.MealDescription).HasMaxLength(1000);
+            });
+
+            modelBuilder.Entity<ADeliveryMethod>(entity =>
+            {
+                entity.HasKey(e => e.DeliveryMethodId);
+
+                entity.ToTable("A_DeliveryMethod");
+
+                entity.Property(e => e.DeliveryMethodId).ValueGeneratedNever();
+
+                entity.Property(e => e.DeliveryMethodDesc).HasMaxLength(3000);
             });
 
             modelBuilder.Entity<ADistrict>(entity =>
@@ -736,6 +906,17 @@ namespace MUCOBADI.Models
                     .WithMany(p => p.AFacility)
                     .HasForeignKey(d => d.DistrictId)
                     .HasConstraintName("FK_A_Facility_A_District");
+            });
+
+            modelBuilder.Entity<AFacilityMigrated>(entity =>
+            {
+                entity.HasKey(e => e.FacilityId);
+
+                entity.ToTable("A_Facility_Migrated");
+
+                entity.Property(e => e.FacilityId).ValueGeneratedNever();
+
+                entity.Property(e => e.FacilityName).HasMaxLength(1000);
             });
 
             modelBuilder.Entity<AFeedingStatus>(entity =>
@@ -1142,6 +1323,17 @@ namespace MUCOBADI.Models
                     .HasConstraintName("FK_A_Home_Visit_Services_Needed_A_ServiceCategory");
             });
 
+            modelBuilder.Entity<AImplementationMethod>(entity =>
+            {
+                entity.HasKey(e => e.ImplementationMethodId);
+
+                entity.ToTable("A_ImplementationMethod");
+
+                entity.Property(e => e.ImplementationMethodId).ValueGeneratedNever();
+
+                entity.Property(e => e.ImplementationMethodDesc).HasMaxLength(3000);
+            });
+
             modelBuilder.Entity<AImplementingPartner>(entity =>
             {
                 entity.HasKey(e => e.ImplementingPartnerId);
@@ -1187,6 +1379,28 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.InfectionWayId).ValueGeneratedNever();
 
                 entity.Property(e => e.InfectionWayDesc).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<AInterventionAttendance>(entity =>
+            {
+                entity.HasKey(e => e.InterventionAttendanceId);
+
+                entity.ToTable("A_InterventionAttendance");
+
+                entity.Property(e => e.InterventionAttendanceId).ValueGeneratedNever();
+
+                entity.Property(e => e.InterventionAttendanceDesc).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<AInterventionType>(entity =>
+            {
+                entity.HasKey(e => e.InterventionTypeId);
+
+                entity.ToTable("A_InterventionType");
+
+                entity.Property(e => e.InterventionTypeId).ValueGeneratedNever();
+
+                entity.Property(e => e.InterventionTypeDesc).HasMaxLength(3000);
             });
 
             modelBuilder.Entity<AJobCausedHarm>(entity =>
@@ -1286,6 +1500,66 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.MonthId).ValueGeneratedNever();
 
                 entity.Property(e => e.MonthDesc).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<ANatureofResidence>(entity =>
+            {
+                entity.HasKey(e => e.NatureofResidenceId);
+
+                entity.ToTable("A_NatureofResidence");
+
+                entity.Property(e => e.NatureofResidenceId).ValueGeneratedNever();
+
+                entity.Property(e => e.NatureofResidenceDesc).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<ANmnSampledFor>(entity =>
+            {
+                entity.HasKey(e => e.SampledForId);
+
+                entity.ToTable("A_NMN_SampledFor");
+
+                entity.Property(e => e.SampledForId).ValueGeneratedNever();
+
+                entity.Property(e => e.SampledForDesc).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<ANmnSectionOneQuestion>(entity =>
+            {
+                entity.HasKey(e => e.QuestionId);
+
+                entity.ToTable("A_NMN_Section_One_Question");
+
+                entity.Property(e => e.QuestionId).ValueGeneratedNever();
+
+                entity.Property(e => e.QuestionDesc).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<ANmnSectionTwoAnswer>(entity =>
+            {
+                entity.HasKey(e => e.AnswerId);
+
+                entity.ToTable("A_NMN_Section_Two_Answer");
+
+                entity.Property(e => e.AnswerId).ValueGeneratedNever();
+
+                entity.Property(e => e.AnswerDesc).HasMaxLength(3000);
+
+                entity.HasOne(d => d.Question)
+                    .WithMany(p => p.ANmnSectionTwoAnswer)
+                    .HasForeignKey(d => d.QuestionId)
+                    .HasConstraintName("FK_A_NMN_Section_Two_Answer_A_NMN_Section_Two_Question");
+            });
+
+            modelBuilder.Entity<ANmnSectionTwoQuestion>(entity =>
+            {
+                entity.HasKey(e => e.QuestionId);
+
+                entity.ToTable("A_NMN_Section_Two_Question");
+
+                entity.Property(e => e.QuestionId).ValueGeneratedNever();
+
+                entity.Property(e => e.QuestionDesc).HasMaxLength(3000);
             });
 
             modelBuilder.Entity<ANonAdherence>(entity =>
@@ -1499,6 +1773,36 @@ namespace MUCOBADI.Models
                     .HasColumnName("Reason_For_Borrowing_Desc");
             });
 
+            modelBuilder.Entity<AReasonForTreatmentInterruption>(entity =>
+            {
+                entity.HasKey(e => e.ReasonForTreatmentInterruptionId);
+
+                entity.ToTable("A_Reason_For_Treatment_Interruption");
+
+                entity.Property(e => e.ReasonForTreatmentInterruptionId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Reason_For_Treatment_InterruptionId");
+
+                entity.Property(e => e.ReasonForTreatmentInterruption)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Treatment_Interruption");
+            });
+
+            modelBuilder.Entity<AReasonsForNonOptimization>(entity =>
+            {
+                entity.HasKey(e => e.ReasonsForNonOptimizationId);
+
+                entity.ToTable("A_Reasons_For_Non_Optimization");
+
+                entity.Property(e => e.ReasonsForNonOptimizationId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Reasons_For_Non_OptimizationId");
+
+                entity.Property(e => e.ReasonsForNonOptimization)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reasons_For_Non_Optimization");
+            });
+
             modelBuilder.Entity<AReferralServices>(entity =>
             {
                 entity.HasKey(e => e.ReferralServiceId);
@@ -1596,6 +1900,17 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.ResultId).ValueGeneratedNever();
 
                 entity.Property(e => e.ResultDescription).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<ARiskLevelRating>(entity =>
+            {
+                entity.HasKey(e => e.RiskLevelRatingId);
+
+                entity.ToTable("A_RiskLevelRating");
+
+                entity.Property(e => e.RiskLevelRatingId).ValueGeneratedNever();
+
+                entity.Property(e => e.RiskLevelRatingDesc).HasMaxLength(3000);
             });
 
             modelBuilder.Entity<ASavingScheme>(entity =>
@@ -1763,6 +2078,32 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.ShelterId).ValueGeneratedNever();
 
                 entity.Property(e => e.ShelterDescription).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<AStartBusinessQuestion>(entity =>
+            {
+                entity.HasKey(e => e.StartBusinessQuestionId);
+
+                entity.ToTable("A_StartBusinessQuestion");
+
+                entity.Property(e => e.StartBusinessQuestionId).ValueGeneratedNever();
+
+                entity.Property(e => e.StartBusinessQuestionDesc).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<AStrategiesForImprovingTreatmentContinuity>(entity =>
+            {
+                entity.HasKey(e => e.StrategiesForImprovingTreatmentContinuityId);
+
+                entity.ToTable("A_Strategies_For_Improving_Treatment_Continuity");
+
+                entity.Property(e => e.StrategiesForImprovingTreatmentContinuityId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Strategies_For_Improving_Treatment_ContinuityId");
+
+                entity.Property(e => e.StrategiesForImprovingTreatmentContinuity)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Strategies_For_Improving_Treatment_Continuity");
             });
 
             modelBuilder.Entity<ASubResults>(entity =>
@@ -2323,9 +2664,9 @@ namespace MUCOBADI.Models
 
             modelBuilder.Entity<AspNetRoleClaims>(entity =>
             {
-                entity.Property(e => e.RoleId)
-                    .IsRequired()
-                    .HasMaxLength(450);
+                entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+                entity.Property(e => e.RoleId).IsRequired();
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.AspNetRoleClaims)
@@ -2334,6 +2675,10 @@ namespace MUCOBADI.Models
 
             modelBuilder.Entity<AspNetRoles>(entity =>
             {
+                entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedName] IS NOT NULL)");
+
                 entity.Property(e => e.Name).HasMaxLength(256);
 
                 entity.Property(e => e.NormalizedName).HasMaxLength(256);
@@ -2341,9 +2686,9 @@ namespace MUCOBADI.Models
 
             modelBuilder.Entity<AspNetUserClaims>(entity =>
             {
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasMaxLength(450);
+                entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+                entity.Property(e => e.UserId).IsRequired();
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.AspNetUserClaims)
@@ -2354,13 +2699,13 @@ namespace MUCOBADI.Models
             {
                 entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
 
+                entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
                 entity.Property(e => e.LoginProvider).HasMaxLength(128);
 
                 entity.Property(e => e.ProviderKey).HasMaxLength(128);
 
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasMaxLength(450);
+                entity.Property(e => e.UserId).IsRequired();
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.AspNetUserLogins)
@@ -2370,6 +2715,8 @@ namespace MUCOBADI.Models
             modelBuilder.Entity<AspNetUserRoles>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.RoleId });
+
+                entity.HasIndex(e => e.RoleId, "IX_AspNetUserRoles_RoleId");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.AspNetUserRoles)
@@ -2395,6 +2742,12 @@ namespace MUCOBADI.Models
 
             modelBuilder.Entity<AspNetUsers>(entity =>
             {
+                entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+                entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
                 entity.Property(e => e.AccountHolderName).HasMaxLength(3000);
 
                 entity.Property(e => e.DistrictId).HasMaxLength(2000);
@@ -2612,13 +2965,11 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.EnrolmentRegisterHeader)
                     .WithMany(p => p.BeneficiaryEnrolmentRegisterDetails)
                     .HasForeignKey(d => d.EnrolmentRegisterHeaderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_BeneficiaryEnrolmentRegisterDetails_BeneficiaryEnrolmentRegisterHeader");
 
                 entity.HasOne(d => d.HouseHoldMember)
                     .WithMany(p => p.BeneficiaryEnrolmentRegisterDetails)
                     .HasForeignKey(d => d.HouseHoldMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_BeneficiaryEnrolmentRegisterDetails_HouseHoldMembers");
 
                 entity.HasOne(d => d.NotAssessedNavigation)
@@ -2930,7 +3281,6 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.LinkageTrackingTool)
                     .WithMany(p => p.BeneficiaryLinkageTrackingToolDirectMember)
                     .HasForeignKey(d => d.LinkageTrackingToolId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_BeneficiaryLinkageTrackingToolDirectMember_BeneficiaryLinkageTrackingTool");
 
                 entity.HasOne(d => d.ServiceLinkedTo)
@@ -2946,7 +3296,6 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.VslaGroupDirectMember)
                     .WithMany(p => p.BeneficiaryLinkageTrackingToolDirectMember)
                     .HasForeignKey(d => d.VslaGroupDirectMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_BeneficiaryLinkageTrackingToolDirectMember_HouseHoldMembers");
             });
 
@@ -2964,7 +3313,6 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.LinkageTrackingTool)
                     .WithMany(p => p.BeneficiaryLinkageTrackingToolIndirectMember)
                     .HasForeignKey(d => d.LinkageTrackingToolId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Table_1_BeneficiaryLinkageTrackingTool");
 
                 entity.HasOne(d => d.ServiceLinkedTo)
@@ -3039,10 +3387,9 @@ namespace MUCOBADI.Models
                     .HasForeignKey(d => d.LinkageServiceCategoryId)
                     .HasConstraintName("FK_VSLA_Tracking_Tool_New_A_LinkageServiceCategory");
 
-                entity.HasOne(d => d.LinkageTrackingTool)
-                    .WithOne(p => p.BeneficiaryLinkageTrackingToolNew)
-                    .HasForeignKey<BeneficiaryLinkageTrackingToolNew>(d => d.LinkageTrackingToolId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                entity.HasOne(d => d.ServiceLinkedTo)
+                    .WithMany(p => p.BeneficiaryLinkageTrackingToolNew)
+                    .HasForeignKey(d => d.ServiceLinkedToId)
                     .HasConstraintName("FK_VSLA_Tracking_Tool_New_A_ServiceLinkedTo");
 
                 entity.HasOne(d => d.ServiceProvider)
@@ -3059,6 +3406,154 @@ namespace MUCOBADI.Models
                     .WithMany(p => p.BeneficiaryLinkageTrackingToolNew)
                     .HasForeignKey(d => d.SubcountyId)
                     .HasConstraintName("FK_VSLA_Tracking_Tool_New_A_Subcounty");
+            });
+
+            modelBuilder.Entity<BusinessPlanDetail>(entity =>
+            {
+                entity.Property(e => e.BusinessPlanDetailId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.BusinessPlanHeader)
+                    .WithMany(p => p.BusinessPlanDetail)
+                    .HasForeignKey(d => d.BusinessPlanHeaderId)
+                    .HasConstraintName("FK_BusinessPlanDetail_BusinessPlanHeader");
+
+                entity.HasOne(d => d.BusinessPlanQuestion)
+                    .WithMany(p => p.BusinessPlanDetail)
+                    .HasForeignKey(d => d.BusinessPlanQuestionId)
+                    .HasConstraintName("FK_BusinessPlanDetail_A_BusinessPlanQuestion");
+            });
+
+            modelBuilder.Entity<BusinessPlanHeader>(entity =>
+            {
+                entity.Property(e => e.BusinessPlanHeaderId).ValueGeneratedNever();
+
+                entity.Property(e => e.DataCollectionDate).HasColumnType("date");
+
+                entity.Property(e => e.DataCollectorName).HasMaxLength(3000);
+
+                entity.Property(e => e.DataCollectorTitle).HasMaxLength(2000);
+
+                entity.Property(e => e.DataReviewDate).HasColumnType("date");
+
+                entity.Property(e => e.DataReviewerName).HasMaxLength(3000);
+
+                entity.Property(e => e.DataReviewerTitle).HasMaxLength(2000);
+
+                entity.Property(e => e.Dob).HasColumnType("date");
+
+                entity.Property(e => e.GenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength(true);
+
+                entity.HasOne(d => d.CategoryofResidence)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.CategoryofResidenceId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_CategoryofResidence");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_District");
+
+                entity.HasOne(d => d.Gender)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.GenderId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_Gender");
+
+                entity.HasOne(d => d.Household)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.HouseholdId)
+                    .HasConstraintName("FK_BusinessPlanHeader_BeneficiaryIdentificationRegister");
+
+                entity.HasOne(d => d.HouseholdMember)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.HouseholdMemberId)
+                    .HasConstraintName("FK_BusinessPlanHeader_HouseHoldMembers");
+
+                entity.HasOne(d => d.MaritalStatus)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.MaritalStatusId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_MaritalStatus");
+
+                entity.HasOne(d => d.NatureofResidence)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.NatureofResidenceId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_NatureofResidence");
+
+                entity.HasOne(d => d.Parish)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.ParishId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_Parish");
+
+                entity.HasOne(d => d.Subcounty)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.SubcountyId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_Subcounty");
+
+                entity.HasOne(d => d.Village)
+                    .WithMany(p => p.BusinessPlanHeader)
+                    .HasForeignKey(d => d.VillageId)
+                    .HasConstraintName("FK_BusinessPlanHeader_A_Village");
+            });
+
+            modelBuilder.Entity<BusinessTrackingLedger>(entity =>
+            {
+                entity.Property(e => e.BusinessTrackingLedgerId).ValueGeneratedNever();
+
+                entity.Property(e => e.DataCollectionDate).HasColumnType("date");
+
+                entity.Property(e => e.DataCollectorName).HasMaxLength(3000);
+
+                entity.Property(e => e.DataCollectorTitle).HasMaxLength(2000);
+
+                entity.Property(e => e.DataReviewDate).HasColumnType("date");
+
+                entity.Property(e => e.DataReviewerName).HasMaxLength(3000);
+
+                entity.Property(e => e.DataReviewerTitle).HasMaxLength(2000);
+
+                entity.Property(e => e.ProposedBusinessName).HasMaxLength(3000);
+            });
+
+            modelBuilder.Entity<BusinessTrackingLedgerMoc>(entity =>
+            {
+                entity.HasKey(e => e.MonthlyOperationalCostsId);
+
+                entity.ToTable("BusinessTrackingLedgerMOC");
+
+                entity.Property(e => e.MonthlyOperationalCostsId).ValueGeneratedNever();
+
+                entity.Property(e => e.Item).HasMaxLength(3000);
+
+                entity.Property(e => e.UnitOfMeasure).HasMaxLength(3000);
+
+                entity.HasOne(d => d.BusinessTrackingLedger)
+                    .WithMany(p => p.BusinessTrackingLedgerMoc)
+                    .HasForeignKey(d => d.BusinessTrackingLedgerId)
+                    .HasConstraintName("FK_BusinessTrackingLedgerMOC_BusinessTrackingLedger");
+            });
+
+            modelBuilder.Entity<BusinessTrackingLedgerSue>(entity =>
+            {
+                entity.HasKey(e => e.StartUpExpensesId);
+
+                entity.ToTable("BusinessTrackingLedgerSUE");
+
+                entity.Property(e => e.StartUpExpensesId).ValueGeneratedNever();
+
+                entity.Property(e => e.AvailableResources).HasMaxLength(3000);
+
+                entity.Property(e => e.Item).HasMaxLength(3000);
+
+                entity.Property(e => e.SourceofResources).HasMaxLength(3000);
+
+                entity.Property(e => e.UnitOfMeasure).HasMaxLength(3000);
+
+                entity.HasOne(d => d.BusinessTrackingLedger)
+                    .WithMany(p => p.BusinessTrackingLedgerSue)
+                    .HasForeignKey(d => d.BusinessTrackingLedgerId)
+                    .HasConstraintName("FK_BusinessTrackingLedgerSUE_BusinessTrackingLedger");
             });
 
             modelBuilder.Entity<CaseCare>(entity =>
@@ -3139,19 +3634,16 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.CaseCare)
                     .WithMany(p => p.CaseCareDetail)
                     .HasForeignKey(d => d.CaseCareId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Case_Care_Detail_Case_Care");
 
                 entity.HasOne(d => d.CasePlan)
                     .WithMany(p => p.CaseCareDetail)
                     .HasForeignKey(d => d.CasePlanId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Case_Care_Detail_A_CasePlan");
 
                 entity.HasOne(d => d.HouseHoldMember)
                     .WithMany(p => p.CaseCareDetail)
                     .HasForeignKey(d => d.HouseHoldMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Case_Care_Detail_HouseHoldMembers");
             });
 
@@ -3178,7 +3670,6 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.CaseCareDetails)
                     .WithMany(p => p.CaseCareDetailPlan)
                     .HasForeignKey(d => d.CaseCareDetailsId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Case_Care_Detail_Plan_Case_Care_Detail");
 
                 entity.HasOne(d => d.CasePlanStaus)
@@ -3189,7 +3680,6 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.PriorityArea)
                     .WithMany(p => p.CaseCareDetailPlan)
                     .HasForeignKey(d => d.PriorityAreaId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Case_Care_Detail_Plan_A_Priority_Area");
             });
 
@@ -3210,13 +3700,11 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.CaseCare)
                     .WithMany(p => p.CaseCareSummary)
                     .HasForeignKey(d => d.CaseCareId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Case_Care_Summary_Case_Care");
 
                 entity.HasOne(d => d.HouseHoldMember)
                     .WithMany(p => p.CaseCareSummary)
                     .HasForeignKey(d => d.HouseHoldMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Case_Care_Summary_HouseHoldMembers");
             });
 
@@ -3374,7 +3862,6 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.GroupCompositionCodeNavigation)
                     .WithMany(p => p.CommunityTrainingRegister)
                     .HasForeignKey(d => d.GroupCompositionCode)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CommunityTrainingRegister_VSLA_Group_Composition");
 
                 entity.HasOne(d => d.GroupCycle)
@@ -3488,7 +3975,6 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.GroupCompositionCodeNavigation)
                     .WithMany(p => p.EcdAttendenceRegister)
                     .HasForeignKey(d => d.GroupCompositionCode)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ECD_Attendence_Register_VSLA_Group_Composition");
 
                 entity.HasOne(d => d.Group)
@@ -3609,6 +4095,11 @@ namespace MUCOBADI.Models
                     .HasForeignKey(d => d.RelationshipId)
                     .HasConstraintName("FK_ECD_IndirectMember_Attendence_A_Relationship");
 
+                entity.HasOne(d => d.SinoParenting)
+                    .WithMany(p => p.EcdIndirectMemberAttendence)
+                    .HasForeignKey(d => d.SinoParentingId)
+                    .HasConstraintName("FK_ECD_IndirectMember_Attendence_ECD_Attendence_Register");
+
                 entity.HasOne(d => d.VslaGroupIndirectMember)
                     .WithMany(p => p.EcdIndirectMemberAttendence)
                     .HasForeignKey(d => d.VslaGroupIndirectMemberId)
@@ -3701,6 +4192,11 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.Village)
                     .HasMaxLength(255)
                     .HasColumnName("Village ");
+            });
+
+            modelBuilder.Entity<ErrorLog>(entity =>
+            {
+                entity.Property(e => e.ErrorDateTime).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<GraduationBenchMark>(entity =>
@@ -3934,19 +4430,16 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.GraduationChecklist)
                     .WithMany(p => p.GraduationChecklistDetail)
                     .HasForeignKey(d => d.GraduationChecklistId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_GraduationChecklistDetail_GraduationChecklistHeader");
 
                 entity.HasOne(d => d.GraduationCriteria)
                     .WithMany(p => p.GraduationChecklistDetail)
                     .HasForeignKey(d => d.GraduationCriteriaId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_GraduationChecklistDetail_A_GraduationCriteria");
 
                 entity.HasOne(d => d.ResponseYesNo)
                     .WithMany(p => p.GraduationChecklistDetail)
                     .HasForeignKey(d => d.ResponseYesNoId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_GraduationChecklistDetail_A_YesNo");
             });
 
@@ -3973,13 +4466,11 @@ namespace MUCOBADI.Models
                 entity.HasOne(d => d.HouseHold)
                     .WithMany(p => p.GraduationChecklistHeader)
                     .HasForeignKey(d => d.HouseHoldId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_GraduationChecklistHeader_BeneficiaryIdentificationRegister");
 
                 entity.HasOne(d => d.HouseHoldMember)
                     .WithMany(p => p.GraduationChecklistHeader)
                     .HasForeignKey(d => d.HouseHoldMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_GraduationChecklistHeader_HouseHoldMembers");
             });
 
@@ -4264,6 +4755,14 @@ namespace MUCOBADI.Models
 
                 entity.Property(e => e.PhoneNumber).HasMaxLength(1000);
 
+                entity.Property(e => e.ReasonForTreatmentInterruptionId)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Reason_For_Treatment_InterruptionId");
+
+                entity.Property(e => e.ReasonsForNonOptimizationId)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Reasons_For_Non_OptimizationId");
+
                 entity.Property(e => e.ReviewDate).HasColumnType("date");
 
                 entity.Property(e => e.ReviewedBy).HasMaxLength(3000);
@@ -4281,6 +4780,12 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.SocialWorkerName).HasMaxLength(3000);
 
                 entity.Property(e => e.SocialWorkerTitle).HasMaxLength(3000);
+
+                entity.Property(e => e.StrategiesForImprovingTreatmentContinuityId)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Strategies_For_Improving_Treatment_ContinuityId");
+
+                entity.Property(e => e.SupportedToDiscloseHivStatusToFamilyYesNoId).HasColumnName("Supported_To_Disclose_HIV_Status_To_FamilyYesNoId");
 
                 entity.Property(e => e.TbtestResultId).HasColumnName("TBTestResultId");
 
@@ -4400,6 +4905,11 @@ namespace MUCOBADI.Models
                     .HasForeignKey(d => d.OnArt)
                     .HasConstraintName("FK_HIV_TB_TrackingForm_A_YesNo");
 
+                entity.HasOne(d => d.OptimizedYesNoNavigation)
+                    .WithMany(p => p.HivTbTrackingFormOptimizedYesNoNavigation)
+                    .HasForeignKey(d => d.OptimizedYesNo)
+                    .HasConstraintName("FK_HIV_TB_TrackingForm_A_YesNo7");
+
                 entity.HasOne(d => d.PersonContacted)
                     .WithMany(p => p.HivTbTrackingForm)
                     .HasForeignKey(d => d.PersonContactedId)
@@ -4419,6 +4929,11 @@ namespace MUCOBADI.Models
                     .WithMany(p => p.HivTbTrackingFormSubcounty)
                     .HasForeignKey(d => d.SubcountyId)
                     .HasConstraintName("FK_HIV_TB_TrackingForm_A_Subcounty1");
+
+                entity.HasOne(d => d.SupportedToDiscloseHivStatusToFamilyYesNo)
+                    .WithMany(p => p.HivTbTrackingFormSupportedToDiscloseHivStatusToFamilyYesNo)
+                    .HasForeignKey(d => d.SupportedToDiscloseHivStatusToFamilyYesNoId)
+                    .HasConstraintName("FK_HIV_TB_TrackingForm_A_YesNo11");
 
                 entity.HasOne(d => d.TbtestResult)
                     .WithMany(p => p.HivTbTrackingForm)
@@ -5050,6 +5565,454 @@ namespace MUCOBADI.Models
                     .HasConstraintName("FK_HVAT_A_TuberclosisTreatment");
             });
 
+            modelBuilder.Entity<InterventionAttendanceForm>(entity =>
+            {
+                entity.Property(e => e.InterventionAttendanceFormId).ValueGeneratedNever();
+
+                entity.Property(e => e.AttendenceEndDate).HasColumnType("date");
+
+                entity.Property(e => e.AttendenceStartDate).HasColumnType("date");
+
+                entity.Property(e => e.GroupName).HasMaxLength(3000);
+
+                entity.Property(e => e.ReviewdBy).HasMaxLength(3000);
+
+                entity.Property(e => e.SerialNo).HasMaxLength(3000);
+
+                entity.Property(e => e.Venue).HasMaxLength(3000);
+
+                entity.HasOne(d => d.DeliveryMethod)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.DeliveryMethodId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_DeliveryMethod");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_District");
+
+                entity.HasOne(d => d.ImplementingPartner)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.ImplementingPartnerId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_ImplementingPartner");
+
+                entity.HasOne(d => d.InterventionType)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.InterventionTypeId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_InterventionType");
+
+                entity.HasOne(d => d.Parish)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.ParishId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_Parish");
+
+                entity.HasOne(d => d.SampledFor)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.SampledForId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_NMN_SampledFor");
+
+                entity.HasOne(d => d.Subcounty)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.SubcountyId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_Subcounty");
+
+                entity.HasOne(d => d.Village)
+                    .WithMany(p => p.InterventionAttendanceForm)
+                    .HasForeignKey(d => d.VillageId)
+                    .HasConstraintName("FK_InterventionAttendanceForm_A_Village");
+            });
+
+            modelBuilder.Entity<InterventionAttendanceFormDetail>(entity =>
+            {
+                entity.Property(e => e.InterventionAttendanceFormDetailId).ValueGeneratedNever();
+
+                entity.Property(e => e.FirstName).HasMaxLength(3000);
+
+                entity.Property(e => e.LastName).HasMaxLength(3000);
+
+                entity.Property(e => e.ModuleEightDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleFiveDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleFourDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleNineDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleOneDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleSevenDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleSixDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleTenDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleThreeDate).HasColumnType("date");
+
+                entity.Property(e => e.ModuleTwoDate).HasColumnType("date");
+
+                entity.Property(e => e.UniqueId).HasMaxLength(3000);
+
+                entity.HasOne(d => d.GraduatedYesNo)
+                    .WithMany(p => p.InterventionAttendanceFormDetail)
+                    .HasForeignKey(d => d.GraduatedYesNoId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_YesNo");
+
+                entity.HasOne(d => d.InterventionAttendanceForm)
+                    .WithMany(p => p.InterventionAttendanceFormDetail)
+                    .HasForeignKey(d => d.InterventionAttendanceFormId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_InterventionAttendanceForm");
+
+                entity.HasOne(d => d.ModuleEightInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleEightInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleEightInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance7");
+
+                entity.HasOne(d => d.ModuleFiveInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleFiveInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleFiveInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance4");
+
+                entity.HasOne(d => d.ModuleFourInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleFourInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleFourInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance3");
+
+                entity.HasOne(d => d.ModuleNineInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleNineInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleNineInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance8");
+
+                entity.HasOne(d => d.ModuleOneInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleOneInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleOneInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance");
+
+                entity.HasOne(d => d.ModuleSevenInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleSevenInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleSevenInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance6");
+
+                entity.HasOne(d => d.ModuleSixInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleSixInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleSixInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance5");
+
+                entity.HasOne(d => d.ModuleTenInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleTenInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleTenInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance9");
+
+                entity.HasOne(d => d.ModuleThreeInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleThreeInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleThreeInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance2");
+
+                entity.HasOne(d => d.ModuleTwoInterventionAttendance)
+                    .WithMany(p => p.InterventionAttendanceFormDetailModuleTwoInterventionAttendance)
+                    .HasForeignKey(d => d.ModuleTwoInterventionAttendanceId)
+                    .HasConstraintName("FK_InterventionAttendanceFormDetail_A_InterventionAttendance1");
+            });
+
+            modelBuilder.Entity<InterventionAttendanceFormInstructor>(entity =>
+            {
+                entity.Property(e => e.InterventionAttendanceFormInstructorId).ValueGeneratedNever();
+
+                entity.Property(e => e.InstructorName).HasMaxLength(3000);
+
+                entity.HasOne(d => d.InterventionAttendanceForm)
+                    .WithMany(p => p.InterventionAttendanceFormInstructor)
+                    .HasForeignKey(d => d.InterventionAttendanceFormId)
+                    .HasConstraintName("FK_InterventionAttendanceFormInstructor_InterventionAttendanceForm");
+            });
+
+            modelBuilder.Entity<IsvatcurrentBusinessOpportunity>(entity =>
+            {
+                entity.ToTable("ISVATCurrentBusinessOpportunity");
+
+                entity.Property(e => e.IsvatcurrentBusinessOpportunityId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATCurrentBusinessOpportunityId");
+
+                entity.Property(e => e.IsvatheaderId).HasColumnName("ISVATHeaderId");
+
+                entity.Property(e => e.OtherCurrenBusinessOpportunity).HasMaxLength(3000);
+
+                entity.HasOne(d => d.CurrenBusinessOpportunity)
+                    .WithMany(p => p.IsvatcurrentBusinessOpportunity)
+                    .HasForeignKey(d => d.CurrenBusinessOpportunityId)
+                    .HasConstraintName("FK_ISVATCurrentBusinessOpportunity_A_CurrenBusinessOpportunity");
+
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.IsvatcurrentBusinessOpportunity)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_ISVATCurrentBusinessOpportunity_ISVATHeader");
+
+                entity.HasOne(d => d.YesNo)
+                    .WithMany(p => p.IsvatcurrentBusinessOpportunity)
+                    .HasForeignKey(d => d.YesNoId)
+                    .HasConstraintName("FK_ISVATCurrentBusinessOpportunity_A_YesNo");
+            });
+
+            modelBuilder.Entity<IsvatcurrentBusinessRisk>(entity =>
+            {
+                entity.ToTable("ISVATCurrentBusinessRisk");
+
+                entity.Property(e => e.IsvatcurrentBusinessRiskId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATCurrentBusinessRiskId");
+
+                entity.Property(e => e.IsvatheaderId).HasColumnName("ISVATHeaderId");
+
+                entity.Property(e => e.OtherCurrenBusinessRisk).HasMaxLength(3000);
+
+                entity.HasOne(d => d.CurrenBusinessRisk)
+                    .WithMany(p => p.IsvatcurrentBusinessRisk)
+                    .HasForeignKey(d => d.CurrenBusinessRiskId)
+                    .HasConstraintName("FK_ISVATCurrentBusinessRisk_A_CurrenBusinessRisk");
+
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.IsvatcurrentBusinessRisk)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_ISVATCurrentBusinessRisk_ISVATHeader");
+
+                entity.HasOne(d => d.RiskLevelRating)
+                    .WithMany(p => p.IsvatcurrentBusinessRisk)
+                    .HasForeignKey(d => d.RiskLevelRatingId)
+                    .HasConstraintName("FK_ISVATCurrentBusinessRisk_A_RiskLevelRating");
+            });
+
+            modelBuilder.Entity<IsvatgeneratedProfit>(entity =>
+            {
+                entity.ToTable("ISVATGeneratedProfit");
+
+                entity.Property(e => e.IsvatgeneratedProfitId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATGeneratedProfitId");
+
+                entity.Property(e => e.IsvatheaderId).HasColumnName("ISVATHeaderId");
+
+                entity.Property(e => e.OtherAssetIncome).HasMaxLength(3000);
+
+                entity.HasOne(d => d.AssetIncome)
+                    .WithMany(p => p.IsvatgeneratedProfit)
+                    .HasForeignKey(d => d.AssetIncomeId)
+                    .HasConstraintName("FK_ISVATGeneratedProfit_A_AssetIncome");
+
+                entity.HasOne(d => d.BusinessVentureCapitalInvestment)
+                    .WithMany(p => p.IsvatgeneratedProfit)
+                    .HasForeignKey(d => d.BusinessVentureCapitalInvestmentId)
+                    .HasConstraintName("FK_ISVATGeneratedProfit_A_BusinessVentureCapitalInvestment");
+
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.IsvatgeneratedProfit)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_ISVATGeneratedProfit_ISVATHeader");
+            });
+
+            modelBuilder.Entity<Isvatheader>(entity =>
+            {
+                entity.ToTable("ISVATHeader");
+
+                entity.Property(e => e.IsvatheaderId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATHeaderId");
+
+                entity.Property(e => e.DataCollectionDate).HasColumnType("date");
+
+                entity.Property(e => e.DataCollectorName).HasMaxLength(3000);
+
+                entity.Property(e => e.DataCollectorTitle).HasMaxLength(2000);
+
+                entity.Property(e => e.DataReviewDate).HasColumnType("date");
+
+                entity.Property(e => e.DataReviewerName).HasMaxLength(3000);
+
+                entity.Property(e => e.DataReviewerTitle).HasMaxLength(2000);
+
+                entity.Property(e => e.Dob).HasColumnType("date");
+
+                entity.Property(e => e.GenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength(true);
+
+                entity.HasOne(d => d.CategoryofResidence)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.CategoryofResidenceId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_A_CategoryofResidence");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_A_District");
+
+                entity.HasOne(d => d.Gender)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.GenderId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_A_Gender");
+
+                entity.HasOne(d => d.Household)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.HouseholdId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_BeneficiaryIdentificationRegister");
+
+                entity.HasOne(d => d.HouseholdMember)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.HouseholdMemberId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_HouseHoldMembers");
+
+                entity.HasOne(d => d.NatureofResidence)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.NatureofResidenceId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_A_NatureofResidence");
+
+                entity.HasOne(d => d.Parish)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.ParishId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_A_Parish");
+
+                entity.HasOne(d => d.Subcounty)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.SubcountyId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_A_Subcounty");
+
+                entity.HasOne(d => d.Village)
+                    .WithMany(p => p.Isvatheader)
+                    .HasForeignKey(d => d.VillageId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolHeader_A_Village");
+            });
+
+            modelBuilder.Entity<IsvatincomeEarner>(entity =>
+            {
+                entity.ToTable("ISVATIncomeEarner");
+
+                entity.Property(e => e.IsvatincomeEarnerId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATIncomeEarnerId");
+
+                entity.Property(e => e.IsvatheaderId).HasColumnName("ISVATHeaderId");
+
+                entity.HasOne(d => d.HouseHoldMember)
+                    .WithMany(p => p.IsvatincomeEarner)
+                    .HasForeignKey(d => d.HouseHoldMemberId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolIncomeEarner_HouseHoldMembers");
+
+                entity.HasOne(d => d.IncomeEarnerYesNo)
+                    .WithMany(p => p.IsvatincomeEarner)
+                    .HasForeignKey(d => d.IncomeEarnerYesNoId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolIncomeEarner_A_YesNo");
+
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.IsvatincomeEarner)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolIncomeEarner_IncomeSourceViabilityAssessmentToolHeader");
+            });
+
+            modelBuilder.Entity<IsvatincomeOwnership>(entity =>
+            {
+                entity.ToTable("ISVATIncomeOwnership");
+
+                entity.Property(e => e.IsvatincomeOwnershipId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATIncomeOwnershipId");
+
+                entity.Property(e => e.IsvatincomeEarnerId).HasColumnName("ISVATIncomeEarnerId");
+
+                entity.Property(e => e.OtherAssetIncome).HasMaxLength(3000);
+
+                entity.HasOne(d => d.AssetIncome)
+                    .WithMany(p => p.IsvatincomeOwnership)
+                    .HasForeignKey(d => d.AssetIncomeId)
+                    .HasConstraintName("FK_ISVATIncomeOwnership_A_AssetIncome");
+
+                entity.HasOne(d => d.AssetIncomeYesNo)
+                    .WithMany(p => p.IsvatincomeOwnership)
+                    .HasForeignKey(d => d.AssetIncomeYesNoId)
+                    .HasConstraintName("FK_ISVATIncomeOwnership_A_YesNo");
+
+                entity.HasOne(d => d.IsvatincomeEarner)
+                    .WithMany(p => p.IsvatincomeOwnership)
+                    .HasForeignKey(d => d.IsvatincomeEarnerId)
+                    .HasConstraintName("FK_IncomeSourceViabilityAssessmentToolIncomeOwnership_IncomeSourceViabilityAssessmentToolIncomeEarner");
+            });
+
+            modelBuilder.Entity<Isvatloss>(entity =>
+            {
+                entity.ToTable("ISVATLoss");
+
+                entity.Property(e => e.IsvatlossId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATLossId");
+
+                entity.Property(e => e.IsvatheaderId).HasColumnName("ISVATHeaderId");
+
+                entity.Property(e => e.OtherAssetIncome).HasMaxLength(3000);
+
+                entity.HasOne(d => d.AssetIncome)
+                    .WithMany(p => p.Isvatloss)
+                    .HasForeignKey(d => d.AssetIncomeId)
+                    .HasConstraintName("FK_ISVATLoss_A_AssetIncome");
+
+                entity.HasOne(d => d.BusinessVentureCapitalInvestment)
+                    .WithMany(p => p.Isvatloss)
+                    .HasForeignKey(d => d.BusinessVentureCapitalInvestmentId)
+                    .HasConstraintName("FK_ISVATLoss_A_BusinessVentureCapitalInvestment");
+
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.Isvatloss)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_ISVATLoss_ISVATHeader");
+            });
+
+            modelBuilder.Entity<IsvatstartBusinessAnswer>(entity =>
+            {
+                entity.ToTable("ISVATStartBusinessAnswer");
+
+                entity.Property(e => e.IsvatstartBusinessAnswerId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATStartBusinessAnswerId");
+
+                entity.Property(e => e.IsvatheaderId).HasColumnName("ISVATHeaderId");
+
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.IsvatstartBusinessAnswer)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_ISVATStartBusinessAnswer_ISVATHeader");
+
+                entity.HasOne(d => d.StartBusinessQuestion)
+                    .WithMany(p => p.IsvatstartBusinessAnswer)
+                    .HasForeignKey(d => d.StartBusinessQuestionId)
+                    .HasConstraintName("FK_ISVATStartBusinessAnswer_A_StartBusinessQuestion");
+            });
+
+            modelBuilder.Entity<IsvatworkingCapital>(entity =>
+            {
+                entity.ToTable("ISVATWorkingCapital");
+
+                entity.Property(e => e.IsvatworkingCapitalId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ISVATWorkingCapitalId");
+
+                entity.Property(e => e.IsvatheaderId).HasColumnName("ISVATHeaderId");
+
+                entity.Property(e => e.OtherAssetIncome).HasMaxLength(3000);
+
+                entity.HasOne(d => d.AssetIncome)
+                    .WithMany(p => p.IsvatworkingCapital)
+                    .HasForeignKey(d => d.AssetIncomeId)
+                    .HasConstraintName("FK_ISVATWorkingCapital_A_AssetIncome");
+
+                entity.HasOne(d => d.BusinessVentureCapitalInvestment)
+                    .WithMany(p => p.IsvatworkingCapital)
+                    .HasForeignKey(d => d.BusinessVentureCapitalInvestmentId)
+                    .HasConstraintName("FK_ISVATWorkingCapital_A_BusinessVentureCapitalInvestment");
+
+                entity.HasOne(d => d.Isvatheader)
+                    .WithMany(p => p.IsvatworkingCapital)
+                    .HasForeignKey(d => d.IsvatheaderId)
+                    .HasConstraintName("FK_ISVATWorkingCapital_ISVATHeader");
+            });
+
             modelBuilder.Entity<JourneysGroups3>(entity =>
             {
                 entity.HasNoKey();
@@ -5235,6 +6198,123 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.MemberName)
                     .IsRequired()
                     .HasMaxLength(4000);
+            });
+
+            modelBuilder.Entity<Nmnquestionaire>(entity =>
+            {
+                entity.HasKey(e => e.Nmnid);
+
+                entity.ToTable("NMNQuestionaire");
+
+                entity.Property(e => e.Nmnid)
+                    .ValueGeneratedNever()
+                    .HasColumnName("NMNId");
+
+                entity.Property(e => e.GroupName).HasMaxLength(3000);
+
+                entity.Property(e => e.InstructorNames).HasMaxLength(3000);
+
+                entity.Property(e => e.QuestionairDate).HasColumnType("date");
+
+                entity.Property(e => e.SampledForId).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.SerialNo).HasMaxLength(3000);
+
+                entity.HasOne(d => d.DeliveryMethod)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.DeliveryMethodId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_DeliveryMethod");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_District");
+
+                entity.HasOne(d => d.ImplementationMethod)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.ImplementationMethodId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_ImplementationMethod");
+
+                entity.HasOne(d => d.ImplementingPartner)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.ImplementingPartnerId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_ImplementingPartner");
+
+                entity.HasOne(d => d.Parish)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.ParishId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_Parish");
+
+                entity.HasOne(d => d.SampledFor)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.SampledForId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_NMN_SampledFor");
+
+                entity.HasOne(d => d.Subcounty)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.SubcountyId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_Subcounty");
+
+                entity.HasOne(d => d.Village)
+                    .WithMany(p => p.Nmnquestionaire)
+                    .HasForeignKey(d => d.VillageId)
+                    .HasConstraintName("FK_NMNQuestionaire_A_Village");
+            });
+
+            modelBuilder.Entity<NmnquestionaireSectionOne>(entity =>
+            {
+                entity.HasKey(e => e.NmnsectionOneId);
+
+                entity.ToTable("NMNQuestionaireSectionOne");
+
+                entity.Property(e => e.NmnsectionOneId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("NMNSectionOneId");
+
+                entity.Property(e => e.Nmnid).HasColumnName("NMNId");
+
+                entity.HasOne(d => d.AgreeDisagree)
+                    .WithMany(p => p.NmnquestionaireSectionOne)
+                    .HasForeignKey(d => d.AgreeDisagreeId)
+                    .HasConstraintName("FK_NMNQuestionaireSectionOne_A_AgreeDisagree");
+
+                entity.HasOne(d => d.Nmn)
+                    .WithMany(p => p.NmnquestionaireSectionOne)
+                    .HasForeignKey(d => d.Nmnid)
+                    .HasConstraintName("FK_NMNQuestionaireSectionOne_NMNQuestionaire");
+
+                entity.HasOne(d => d.Question)
+                    .WithMany(p => p.NmnquestionaireSectionOne)
+                    .HasForeignKey(d => d.QuestionId)
+                    .HasConstraintName("FK_NMNQuestionaireSectionOne_A_NMN_Section_One_Question");
+            });
+
+            modelBuilder.Entity<NmnquestionaireSectionTwo>(entity =>
+            {
+                entity.HasKey(e => e.NmnsectionTwoId);
+
+                entity.ToTable("NMNQuestionaireSectionTwo");
+
+                entity.Property(e => e.NmnsectionTwoId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("NMNSectionTwoId");
+
+                entity.Property(e => e.Nmnid).HasColumnName("NMNId");
+
+                entity.HasOne(d => d.Answer)
+                    .WithMany(p => p.NmnquestionaireSectionTwo)
+                    .HasForeignKey(d => d.AnswerId)
+                    .HasConstraintName("FK_NMNQuestionaireSectionTwo_A_NMN_Section_Two_Answer");
+
+                entity.HasOne(d => d.Nmn)
+                    .WithMany(p => p.NmnquestionaireSectionTwo)
+                    .HasForeignKey(d => d.Nmnid)
+                    .HasConstraintName("FK_NMNQuestionaireSectionTwo_NMNQuestionaire");
+
+                entity.HasOne(d => d.Question)
+                    .WithMany(p => p.NmnquestionaireSectionTwo)
+                    .HasForeignKey(d => d.QuestionId)
+                    .HasConstraintName("FK_NMNQuestionaireSectionTwo_A_NMN_Section_Two_Question");
             });
 
             modelBuilder.Entity<NonSupressingCalhiv>(entity =>
@@ -5792,6 +6872,1455 @@ namespace MUCOBADI.Models
                     .HasColumnName("Village ");
             });
 
+            modelBuilder.Entity<SmuAgeGroup>(entity =>
+            {
+                entity.HasKey(e => e.AgeGroupId);
+
+                entity.ToTable("SMU_Age_Group");
+
+                entity.Property(e => e.AgeGroupId).ValueGeneratedNever();
+
+                entity.Property(e => e.AgeGroup).HasMaxLength(1000);
+            });
+
+            modelBuilder.Entity<SmuAssessmentGuide>(entity =>
+            {
+                entity.HasKey(e => e.AssementGuideId);
+
+                entity.ToTable("SMU_Assessment_Guide");
+
+                entity.Property(e => e.AssementGuideId).HasColumnName("Assement_Guide_Id");
+
+                entity.Property(e => e.ClientRegistrationId).HasColumnName("Client_RegistrationId");
+
+                entity.Property(e => e.ConsentObtainedYesNo).HasColumnName("ConsentObtained_YesNo");
+
+                entity.Property(e => e.DateOfAssessment)
+                    .HasColumnType("date")
+                    .HasColumnName("Date_of_Assessment");
+
+                entity.Property(e => e.ExperiencedGenderBasedViolence).HasColumnName("Experienced_Gender_Based_Violence");
+
+                entity.Property(e => e.ExperiencedThoughtsOffDeadHurting).HasColumnName("Experienced_Thoughts_Off_Dead_Hurting");
+
+                entity.Property(e => e.Ph9QuestionScore).HasColumnName("PH9_QuestionScore");
+
+                entity.Property(e => e.RespondantAge).HasColumnName("Respondant_Age");
+
+                entity.Property(e => e.RespondantGenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("Respondant_GenderId")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.SchoolNameOrPrisonName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("School_Name_OR_Prison_Name");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("SMU_OfficeId");
+
+                entity.Property(e => e.SmuProgramId).HasColumnName("SMU_ProgramId");
+
+                entity.Property(e => e.StaffVolunteerName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Staff_Volunteer_Name");
+
+                entity.Property(e => e.StressfulEventId).HasColumnName("Stressful_EventId");
+
+                entity.Property(e => e.SuicideAssementQuestionEightResponse).HasColumnName("Suicide_Assement_Question_Eight_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionEightScore).HasColumnName("Suicide_Assement_Question_Eight_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionFiveResponse).HasColumnName("Suicide_Assement_Question_Five_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionFiveScore).HasColumnName("Suicide_Assement_Question_Five_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionFourResponse).HasColumnName("Suicide_Assement_Question_Four_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionFourScore).HasColumnName("Suicide_Assement_Question_Four_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionNineResponse).HasColumnName("Suicide_Assement_Question_Nine_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionNineScore).HasColumnName("Suicide_Assement_Question_Nine_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionOneResponse).HasColumnName("Suicide_Assement_Question_One_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionOneScore).HasColumnName("Suicide_Assement_Question_One_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionSevenResponse).HasColumnName("Suicide_Assement_Question_Seven_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionSevenScore).HasColumnName("Suicide_Assement_Question_Seven_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionSixResponse).HasColumnName("Suicide_Assement_Question_Six_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionSixScore).HasColumnName("Suicide_Assement_Question_Six_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionTenResponse).HasColumnName("Suicide_Assement_Question_Ten_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionTenScore).HasColumnName("Suicide_Assement_Question_Ten_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionThreeResponse).HasColumnName("Suicide_Assement_Question_Three_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionThreeScore).HasColumnName("Suicide_Assement_Question_Three_Score");
+
+                entity.Property(e => e.SuicideAssementQuestionTwoResponse).HasColumnName("Suicide_Assement_Question_Two_Response");
+
+                entity.Property(e => e.SuicideAssementQuestionTwoScore).HasColumnName("Suicide_Assement_Question_Two_Score");
+
+                entity.Property(e => e.SuicideAssementTotalScore).HasColumnName("Suicide_Assement_Total_Score");
+
+                entity.Property(e => e.SuicideAssessmentScore).HasColumnName("Suicide_Assessment_Score");
+
+                entity.HasOne(d => d.ClientRegistration)
+                    .WithMany(p => p.SmuAssessmentGuide)
+                    .HasForeignKey(d => d.ClientRegistrationId)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_SMU_Client_Registration_Form");
+
+                entity.HasOne(d => d.ConsentObtainedYesNoNavigation)
+                    .WithMany(p => p.SmuAssessmentGuideConsentObtainedYesNoNavigation)
+                    .HasForeignKey(d => d.ConsentObtainedYesNo)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_A_YesNo");
+
+                entity.HasOne(d => d.ExperiencedGenderBasedViolenceNavigation)
+                    .WithMany(p => p.SmuAssessmentGuideExperiencedGenderBasedViolenceNavigation)
+                    .HasForeignKey(d => d.ExperiencedGenderBasedViolence)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_A_YesNo1");
+
+                entity.HasOne(d => d.ExperiencedThoughtsOffDeadHurtingNavigation)
+                    .WithMany(p => p.SmuAssessmentGuideExperiencedThoughtsOffDeadHurtingNavigation)
+                    .HasForeignKey(d => d.ExperiencedThoughtsOffDeadHurting)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_A_YesNo2");
+
+                entity.HasOne(d => d.SmuGroup)
+                    .WithMany(p => p.SmuAssessmentGuide)
+                    .HasForeignKey(d => d.SmuGroupId)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_SMU_Group");
+
+                entity.HasOne(d => d.SmuProgram)
+                    .WithMany(p => p.SmuAssessmentGuide)
+                    .HasForeignKey(d => d.SmuProgramId)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_SMU_Program");
+
+                entity.HasOne(d => d.StressfulEvent)
+                    .WithMany(p => p.SmuAssessmentGuideStressfulEvent)
+                    .HasForeignKey(d => d.StressfulEventId)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_A_YesNo3");
+            });
+
+            modelBuilder.Entity<SmuAssessmentGuidePh9Questions>(entity =>
+            {
+                entity.ToTable("SMU_Assessment_Guide_PH9_Questions");
+
+                entity.Property(e => e.SmuAssessmentGuidePh9QuestionsId).HasColumnName("SMU_Assessment_Guide_PH9_QuestionsId");
+
+                entity.Property(e => e.Ph9QuestionHeaderId).HasColumnName("PH9_Question_HeaderId");
+
+                entity.Property(e => e.Ph9QuestionsId).HasColumnName("PH9_QuestionsId");
+
+                entity.Property(e => e.SmuAssessmentGuideId).HasColumnName("SMU_Assessment_GuideId");
+
+                entity.Property(e => e.SmuAssessmentGuidePh9QuestionsSored).HasColumnName("SMU_Assessment_Guide_PH9_Questions_Sored");
+
+                entity.HasOne(d => d.Ph9Questions)
+                    .WithMany(p => p.SmuAssessmentGuidePh9Questions)
+                    .HasForeignKey(d => d.Ph9QuestionsId)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_PH9_Questions_SMU_PH9_Question");
+
+                entity.HasOne(d => d.SmuAssessmentGuide)
+                    .WithMany(p => p.SmuAssessmentGuidePh9Questions)
+                    .HasForeignKey(d => d.SmuAssessmentGuideId)
+                    .HasConstraintName("FK_SMU_Assessment_Guide_PH9_Questions_SMU_Assessment_Guide");
+            });
+
+            modelBuilder.Entity<SmuAttendanceKey>(entity =>
+            {
+                entity.HasKey(e => e.AttendenceKeyId);
+
+                entity.ToTable("SMU_Attendance_Key");
+
+                entity.Property(e => e.AttendenceKeyId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Attendence_Key_Id");
+
+                entity.Property(e => e.AttendenceKey)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Attendence_Key");
+            });
+
+            modelBuilder.Entity<SmuAttendenceFormDetail>(entity =>
+            {
+                entity.HasKey(e => e.AttendenceFormDetailId);
+
+                entity.ToTable("SMU_Attendence_Form_Detail");
+
+                entity.Property(e => e.AttendenceFormDetailId).HasColumnName("Attendence_Form_DetailId");
+
+                entity.Property(e => e.AttendedIdSessionFive).HasColumnName("AttendedId_Session_Five");
+
+                entity.Property(e => e.AttendedIdSessionFour).HasColumnName("AttendedId_Session_Four");
+
+                entity.Property(e => e.AttendedIdSessionOne).HasColumnName("AttendedId_Session_One");
+
+                entity.Property(e => e.AttendedIdSessionSix).HasColumnName("AttendedId_Session_Six");
+
+                entity.Property(e => e.AttendedIdSessionThree).HasColumnName("AttendedId_Session_Three");
+
+                entity.Property(e => e.AttendedIdSessionTwo).HasColumnName("AttendedId_Session_Two");
+
+                entity.Property(e => e.AttendenceFormHeaderId).HasColumnName("Attendence_Form_HeaderId");
+
+                entity.Property(e => e.ClientAttendenceId).HasColumnName("Client_AttendenceId");
+
+                entity.Property(e => e.ClientCode)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Client_Code");
+
+                entity.Property(e => e.ClientPhoneContact)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Client_Phone_Contact");
+
+                entity.Property(e => e.CreatedBy).HasMaxLength(1000);
+
+                entity.Property(e => e.DateCreated).HasColumnType("date");
+
+                entity.Property(e => e.KaguguIdSessionFive).HasColumnName("KaguguId_Session_Five");
+
+                entity.Property(e => e.KaguguIdSessionFour).HasColumnName("KaguguId_Session_Four");
+
+                entity.Property(e => e.KaguguIdSessionOne).HasColumnName("KaguguId_Session_One");
+
+                entity.Property(e => e.KaguguIdSessionSix).HasColumnName("KaguguId_Session_Six");
+
+                entity.Property(e => e.KaguguIdSessionThree).HasColumnName("KaguguId_Session_Three");
+
+                entity.Property(e => e.KaguguIdSessionTwo).HasColumnName("KaguguId_Session_Two");
+
+                entity.Property(e => e.OtherReasoneSessionFive)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Five");
+
+                entity.Property(e => e.OtherReasoneSessionFour)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Four");
+
+                entity.Property(e => e.OtherReasoneSessionOne)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_One");
+
+                entity.Property(e => e.OtherReasoneSessionSix)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Six");
+
+                entity.Property(e => e.OtherReasoneSessionThree)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Three");
+
+                entity.Property(e => e.OtherReasoneSessionTwo)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Two");
+
+                entity.Property(e => e.ReasonSessionFive).HasColumnName("Reason_Session_Five");
+
+                entity.Property(e => e.ReasonSessionFour).HasColumnName("Reason_Session_Four");
+
+                entity.Property(e => e.ReasonSessionOne).HasColumnName("Reason_Session_One");
+
+                entity.Property(e => e.ReasonSessionSix).HasColumnName("Reason_Session_Six");
+
+                entity.Property(e => e.ReasonSessionThree).HasColumnName("Reason_Session_Three");
+
+                entity.Property(e => e.ReasonSessionTwo).HasColumnName("Reason_Session_Two");
+
+                entity.Property(e => e.SessionFiveDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Five_Date");
+
+                entity.Property(e => e.SessionFourDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Four_Date");
+
+                entity.Property(e => e.SessionOneDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_One_Date");
+
+                entity.Property(e => e.SessionSixDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Six_Date");
+
+                entity.Property(e => e.SessionThreeDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Three_Date");
+
+                entity.Property(e => e.SessionTwoDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Two_Date");
+
+                entity.HasOne(d => d.AttendedIdSessionFiveNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailAttendedIdSessionFiveNavigation)
+                    .HasForeignKey(d => d.AttendedIdSessionFive)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Attendance_Key");
+
+                entity.HasOne(d => d.AttendedIdSessionFourNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailAttendedIdSessionFourNavigation)
+                    .HasForeignKey(d => d.AttendedIdSessionFour)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Attendance_Key1");
+
+                entity.HasOne(d => d.AttendedIdSessionOneNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailAttendedIdSessionOneNavigation)
+                    .HasForeignKey(d => d.AttendedIdSessionOne)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Attendance_Key2");
+
+                entity.HasOne(d => d.AttendedIdSessionSixNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailAttendedIdSessionSixNavigation)
+                    .HasForeignKey(d => d.AttendedIdSessionSix)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Attendance_Key3");
+
+                entity.HasOne(d => d.AttendedIdSessionThreeNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailAttendedIdSessionThreeNavigation)
+                    .HasForeignKey(d => d.AttendedIdSessionThree)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Attendance_Key4");
+
+                entity.HasOne(d => d.AttendedIdSessionTwoNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailAttendedIdSessionTwoNavigation)
+                    .HasForeignKey(d => d.AttendedIdSessionTwo)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Attendance_Key5");
+
+                entity.HasOne(d => d.AttendenceFormHeader)
+                    .WithMany(p => p.SmuAttendenceFormDetail)
+                    .HasForeignKey(d => d.AttendenceFormHeaderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Attendence_Header");
+
+                entity.HasOne(d => d.KaguguIdSessionFiveNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailKaguguIdSessionFiveNavigation)
+                    .HasForeignKey(d => d.KaguguIdSessionFive)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Kagugu_Score");
+
+                entity.HasOne(d => d.KaguguIdSessionFourNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailKaguguIdSessionFourNavigation)
+                    .HasForeignKey(d => d.KaguguIdSessionFour)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Kagugu_Score1");
+
+                entity.HasOne(d => d.KaguguIdSessionOneNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailKaguguIdSessionOneNavigation)
+                    .HasForeignKey(d => d.KaguguIdSessionOne)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Kagugu_Score2");
+
+                entity.HasOne(d => d.KaguguIdSessionSixNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailKaguguIdSessionSixNavigation)
+                    .HasForeignKey(d => d.KaguguIdSessionSix)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Kagugu_Score3");
+
+                entity.HasOne(d => d.KaguguIdSessionThreeNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailKaguguIdSessionThreeNavigation)
+                    .HasForeignKey(d => d.KaguguIdSessionThree)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Kagugu_Score4");
+
+                entity.HasOne(d => d.KaguguIdSessionTwoNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailKaguguIdSessionTwoNavigation)
+                    .HasForeignKey(d => d.KaguguIdSessionTwo)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Kagugu_Score5");
+
+                entity.HasOne(d => d.ReasonSessionFiveNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailReasonSessionFiveNavigation)
+                    .HasForeignKey(d => d.ReasonSessionFive)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Absence");
+
+                entity.HasOne(d => d.ReasonSessionFourNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailReasonSessionFourNavigation)
+                    .HasForeignKey(d => d.ReasonSessionFour)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Absence1");
+
+                entity.HasOne(d => d.ReasonSessionOneNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailReasonSessionOneNavigation)
+                    .HasForeignKey(d => d.ReasonSessionOne)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Absence2");
+
+                entity.HasOne(d => d.ReasonSessionSixNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailReasonSessionSixNavigation)
+                    .HasForeignKey(d => d.ReasonSessionSix)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Absence3");
+
+                entity.HasOne(d => d.ReasonSessionThreeNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailReasonSessionThreeNavigation)
+                    .HasForeignKey(d => d.ReasonSessionThree)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Absence4");
+
+                entity.HasOne(d => d.ReasonSessionTwoNavigation)
+                    .WithMany(p => p.SmuAttendenceFormDetailReasonSessionTwoNavigation)
+                    .HasForeignKey(d => d.ReasonSessionTwo)
+                    .HasConstraintName("FK_SMU_Attendence_Form_Detail_SMU_Absence5");
+            });
+
+            modelBuilder.Entity<SmuAttendenceHeader>(entity =>
+            {
+                entity.HasKey(e => e.AttendenceFormHeaderId)
+                    .HasName("PK_SMU_Attendence");
+
+                entity.ToTable("SMU_Attendence_Header");
+
+                entity.Property(e => e.AttendenceFormHeaderId).HasColumnName("Attendence_Form_HeaderId");
+
+                entity.Property(e => e.AttendenceCycleId).HasColumnName("Attendence_CycleId");
+
+                entity.Property(e => e.AttendenceYearId).HasColumnName("Attendence_YearId");
+
+                entity.Property(e => e.CapturedBy).HasMaxLength(1000);
+
+                entity.Property(e => e.DateCreated).HasColumnType("date");
+
+                entity.Property(e => e.SessionFiveDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Five_Date");
+
+                entity.Property(e => e.SessionFourDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Four_Date");
+
+                entity.Property(e => e.SessionOneDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_One_Date");
+
+                entity.Property(e => e.SessionSixDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Six_Date");
+
+                entity.Property(e => e.SessionThreeDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Three_Date");
+
+                entity.Property(e => e.SessionTwoDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Two_Date");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.HasOne(d => d.AttendenceCycle)
+                    .WithMany(p => p.SmuAttendenceHeader)
+                    .HasForeignKey(d => d.AttendenceCycleId)
+                    .HasConstraintName("FK_SMU_Attendence_Header_SMU_Cycle");
+
+                entity.HasOne(d => d.AttendenceYear)
+                    .WithMany(p => p.SmuAttendenceHeader)
+                    .HasForeignKey(d => d.AttendenceYearId)
+                    .HasConstraintName("FK_SMU_Attendence_Header_A_FinancialYear");
+
+                entity.HasOne(d => d.SmuGroup)
+                    .WithMany(p => p.SmuAttendenceHeader)
+                    .HasForeignKey(d => d.SmuGroupId)
+                    .HasConstraintName("FK_SMU_Attendence_Header_SMU_Group");
+            });
+
+            modelBuilder.Entity<SmuClientRegistrationForm>(entity =>
+            {
+                entity.HasKey(e => e.ClientRegistrationFormId);
+
+                entity.ToTable("SMU_Client_Registration_Form");
+
+                entity.Property(e => e.ClientRegistrationFormId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Client_Registration_FormId");
+
+                entity.Property(e => e.CapturedBy).HasMaxLength(1000);
+
+                entity.Property(e => e.ClientAgeRangeId).HasColumnName("Client_Age_RangeId");
+
+                entity.Property(e => e.ClientContact)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Client_Contact");
+
+                entity.Property(e => e.ClientGenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("Client_GenderId")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.DateCreated).HasColumnType("date");
+
+                entity.Property(e => e.RegistrationDate).HasColumnType("date");
+
+                entity.Property(e => e.SerialNumber)
+                    .HasMaxLength(500)
+                    .HasColumnName("Serial_Number");
+
+                entity.Property(e => e.SmuClientName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Client_Name");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("SMU_OfficeId");
+
+                entity.HasOne(d => d.ClientAgeRange)
+                    .WithMany(p => p.SmuClientRegistrationForm)
+                    .HasForeignKey(d => d.ClientAgeRangeId)
+                    .HasConstraintName("FK_SMU_Client_Registration_Form_SMU_Age_Group");
+
+                entity.HasOne(d => d.ClientGender)
+                    .WithMany(p => p.SmuClientRegistrationForm)
+                    .HasForeignKey(d => d.ClientGenderId)
+                    .HasConstraintName("FK_SMU_Client_Registration_Form_A_Gender");
+
+                entity.HasOne(d => d.SmuGroup)
+                    .WithMany(p => p.SmuClientRegistrationForm)
+                    .HasForeignKey(d => d.SmuGroupId)
+                    .HasConstraintName("FK_SMU_Client_Registration_Form_SMU_Group");
+
+                entity.HasOne(d => d.SubCounty)
+                    .WithMany(p => p.SmuClientRegistrationForm)
+                    .HasForeignKey(d => d.SubCountyId)
+                    .HasConstraintName("FK_SMU_Client_Registration_Form_A_Subcounty");
+            });
+
+            modelBuilder.Entity<SmuCycle>(entity =>
+            {
+                entity.HasKey(e => e.CycleId);
+
+                entity.ToTable("SMU_Cycle");
+
+                entity.Property(e => e.CycleId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Cycle_Id");
+
+                entity.Property(e => e.CycleDescription)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Cycle_Description");
+            });
+
+            modelBuilder.Entity<SmuFacilitator>(entity =>
+            {
+                entity.ToTable("SMU_Facilitator");
+
+                entity.Property(e => e.SmuFacilitatorId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("SMU_FacilitatorId");
+
+                entity.Property(e => e.CapturedBy).HasMaxLength(1000);
+
+                entity.Property(e => e.DateCreated).HasColumnType("date");
+
+                entity.Property(e => e.SmuFacilitatorEmail)
+                    .HasMaxLength(500)
+                    .HasColumnName("SMU_Facilitator_Email");
+
+                entity.Property(e => e.SmuFacilitatorName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Facilitator_Name");
+
+                entity.Property(e => e.SmuFacilitatorPhoneNumber)
+                    .HasMaxLength(500)
+                    .HasColumnName("SMU_Facilitator_PhoneNumber");
+            });
+
+            modelBuilder.Entity<SmuFormType>(entity =>
+            {
+                entity.HasKey(e => e.FormTypeId);
+
+                entity.ToTable("SMU_Form_Type");
+
+                entity.Property(e => e.FormTypeId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Form_TypeId");
+
+                entity.Property(e => e.FormTypeDescription)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Form_TypeDescription");
+            });
+
+            modelBuilder.Entity<SmuGroup>(entity =>
+            {
+                entity.ToTable("SMU_Group");
+
+                entity.Property(e => e.SmuGroupId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.CapturedBy).HasMaxLength(1000);
+
+                entity.Property(e => e.DateCreated).HasColumnType("date");
+
+                entity.Property(e => e.RegistartionDate).HasColumnType("date");
+
+                entity.Property(e => e.SmuFacilitatorId).HasColumnName("SMU_FacilitatorId");
+
+                entity.Property(e => e.SmuGroupName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Group_Name");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("SMU_OfficeId");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.SmuGroup)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_SMU_Group_A_District");
+
+                entity.HasOne(d => d.Region)
+                    .WithMany(p => p.SmuGroup)
+                    .HasForeignKey(d => d.RegionId)
+                    .HasConstraintName("FK_SMU_Group_A_Region");
+
+                entity.HasOne(d => d.SmuFacilitator)
+                    .WithMany(p => p.SmuGroup)
+                    .HasForeignKey(d => d.SmuFacilitatorId)
+                    .HasConstraintName("FK_SMU_Group_SMU_Facilitator");
+
+                entity.HasOne(d => d.SmuOffice)
+                    .WithMany(p => p.SmuGroup)
+                    .HasForeignKey(d => d.SmuOfficeId)
+                    .HasConstraintName("FK_SMU_Group_SMU_Office");
+
+                entity.HasOne(d => d.Subcounty)
+                    .WithMany(p => p.SmuGroup)
+                    .HasForeignKey(d => d.SubcountyId)
+                    .HasConstraintName("FK_SMU_Group_A_Subcounty");
+            });
+
+            modelBuilder.Entity<SmuKaguguScore>(entity =>
+            {
+                entity.HasKey(e => e.KaguguScoreId);
+
+                entity.ToTable("SMU_Kagugu_Score");
+
+                entity.Property(e => e.KaguguScoreId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Kagugu_ScoreId");
+
+                entity.Property(e => e.KaguguScore)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Kagugu_Score");
+            });
+
+            modelBuilder.Entity<SmuLevelOfDifficultyToCheckOffProblems>(entity =>
+            {
+                entity.HasKey(e => e.LevelOfDifficultyId);
+
+                entity.ToTable("SMU_Level_of_Difficulty_To_Check_Off_Problems");
+
+                entity.Property(e => e.LevelOfDifficultyId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Level_of_DifficultyId");
+
+                entity.Property(e => e.LevelOfDifficulty)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Level_of_Difficulty");
+            });
+
+            modelBuilder.Entity<SmuOffice>(entity =>
+            {
+                entity.HasKey(e => e.OfficeId)
+                    .HasName("PK_SMU_Offfice");
+
+                entity.ToTable("SMU_Office");
+
+                entity.Property(e => e.OfficeId).ValueGeneratedNever();
+
+                entity.Property(e => e.OfficeName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Office_Name");
+            });
+
+            modelBuilder.Entity<SmuPh9Question>(entity =>
+            {
+                entity.HasKey(e => e.Ph9QuestionId);
+
+                entity.ToTable("SMU_PH9_Question");
+
+                entity.Property(e => e.Ph9QuestionId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("PH9_QuestionId");
+
+                entity.Property(e => e.FormTypeId)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Form_TypeId");
+
+                entity.Property(e => e.IsPh9QuestionVisible).HasColumnName("IsPH9_Question_Visible");
+
+                entity.Property(e => e.Ph9Question)
+                    .HasMaxLength(1000)
+                    .HasColumnName("PH9_Question");
+
+                entity.Property(e => e.SmuFormId).HasColumnName("SMU_FormId");
+            });
+
+            modelBuilder.Entity<SmuPh9QuestionHeader>(entity =>
+            {
+                entity.HasKey(e => e.Ph9QuestionHeaderId);
+
+                entity.ToTable("SMU_PH9_Question_Header");
+
+                entity.Property(e => e.Ph9QuestionHeaderId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("PH9_Question_HeaderId");
+
+                entity.Property(e => e.Ph9QuestionDescription)
+                    .HasMaxLength(1000)
+                    .HasColumnName("PH9_Question_Description");
+
+                entity.Property(e => e.Ph9QuestionDescriptionIsVisible).HasColumnName("PH9_Question_Description_IsVisible");
+
+                entity.Property(e => e.Ph9QuestionScore).HasColumnName("PH9_Question_Score");
+            });
+
+            modelBuilder.Entity<SmuPreGroupGuide>(entity =>
+            {
+                entity.ToTable("SMU_Pre_Group_Guide");
+
+                entity.Property(e => e.SmuPreGroupGuideId).HasColumnName("SMU_Pre_Group_GuideId");
+
+                entity.Property(e => e.ClientRegistrationId).HasColumnName("Client_RegistrationId");
+
+                entity.Property(e => e.DateOfAssessment)
+                    .HasColumnType("date")
+                    .HasColumnName("Date_Of_Assessment");
+
+                entity.Property(e => e.LevelOfDifficultyId).HasColumnName("Level_of_DifficultyId");
+
+                entity.Property(e => e.MaritalStatusId).HasColumnName("Marital_StatusId");
+
+                entity.Property(e => e.NameOfVolunter)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Name_Of_Volunter");
+
+                entity.Property(e => e.OverallPh9Score).HasColumnName("Overall_PH9_Score");
+
+                entity.Property(e => e.PrisionName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Prision_Name");
+
+                entity.Property(e => e.ResidencyStatusId).HasColumnName("Residency_StatusId");
+
+                entity.Property(e => e.RespondantAge).HasColumnName("Respondant_Age");
+
+                entity.Property(e => e.RespondantGenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("Respondant_GenderId")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.SchoolClassId).HasColumnName("School_ClassId");
+
+                entity.Property(e => e.SchoolName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("School_Name");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("SMU_OfficeId");
+
+                entity.Property(e => e.SmuProgramId).HasColumnName("SMU_ProgramId");
+
+                entity.HasOne(d => d.MaritalStatus)
+                    .WithMany(p => p.SmuPreGroupGuide)
+                    .HasForeignKey(d => d.MaritalStatusId)
+                    .HasConstraintName("FK_SMU_Pre_Group_Guide_A_MaritalStatus");
+
+                entity.HasOne(d => d.ResidencyStatus)
+                    .WithMany(p => p.SmuPreGroupGuide)
+                    .HasForeignKey(d => d.ResidencyStatusId)
+                    .HasConstraintName("FK_SMU_Pre_Group_Guide_SMU_Residency");
+
+                entity.HasOne(d => d.SmuGroup)
+                    .WithMany(p => p.SmuPreGroupGuide)
+                    .HasForeignKey(d => d.SmuGroupId)
+                    .HasConstraintName("FK_SMU_Pre_Group_Guide_SMU_Group");
+            });
+
+            modelBuilder.Entity<SmuPreGroupGuidePh9Questions>(entity =>
+            {
+                entity.ToTable("SMU_Pre_Group_Guide_PH9_Questions");
+
+                entity.Property(e => e.SmuPreGroupGuidePh9QuestionsId).HasColumnName("SMU_Pre_Group_Guide_PH9_QuestionsId");
+
+                entity.Property(e => e.Ph9QuestionHeaderId).HasColumnName("PH9_Question_HeaderId");
+
+                entity.Property(e => e.Ph9QuestionsId).HasColumnName("PH9_QuestionsId");
+
+                entity.Property(e => e.SmuPreGroupGuideId).HasColumnName("SMU_Pre_Group_GuideId");
+
+                entity.Property(e => e.SmuPreGroupGuidePh9QuestionsSored).HasColumnName("SMU_Pre_Group_Guide_PH9_Questions_Sored");
+
+                entity.HasOne(d => d.SmuPreGroupGuide)
+                    .WithMany(p => p.SmuPreGroupGuidePh9Questions)
+                    .HasForeignKey(d => d.SmuPreGroupGuideId)
+                    .HasConstraintName("FK_SMU_Pre_Group_Guide_PH9_Questions_SMU_Pre_Group_Guide");
+            });
+
+            modelBuilder.Entity<SmuProgram>(entity =>
+            {
+                entity.ToTable("SMU_Program");
+
+                entity.Property(e => e.SmuProgramId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("SMU_ProgramId");
+
+                entity.Property(e => e.SmuProgramDescription)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Program_Description");
+            });
+
+            modelBuilder.Entity<SmuReasonsForSessionAbsence>(entity =>
+            {
+                entity.HasKey(e => e.ReasonForAbsenceId)
+                    .HasName("PK_SMU_Absence");
+
+                entity.ToTable("SMU_Reasons_For_Session_Absence");
+
+                entity.Property(e => e.ReasonForAbsenceId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Reason_For_AbsenceId");
+
+                entity.Property(e => e.ReasonForAbsenceDescription)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Absence_Description");
+            });
+
+            modelBuilder.Entity<SmuResidency>(entity =>
+            {
+                entity.HasKey(e => e.ResidencyId);
+
+                entity.ToTable("SMU_Residency");
+
+                entity.Property(e => e.ResidencyId).ValueGeneratedNever();
+
+                entity.Property(e => e.ResidencyDescription)
+                    .HasMaxLength(500)
+                    .HasColumnName("Residency_Description");
+            });
+
+            modelBuilder.Entity<SmuSafetyPlanningForm>(entity =>
+            {
+                entity.HasKey(e => e.SafetyPlanningFormId);
+
+                entity.ToTable("SMU_Safety_Planning_Form");
+
+                entity.Property(e => e.InterviewDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Interview_Date");
+
+                entity.Property(e => e.SmuAssementGuideId).HasColumnName("SMU_Assement_GuideId");
+
+                entity.Property(e => e.StaffVolunteerName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Staff_Volunteer_Name");
+
+                entity.HasOne(d => d.SmuAssementGuide)
+                    .WithMany(p => p.SmuSafetyPlanningForm)
+                    .HasForeignKey(d => d.SmuAssementGuideId)
+                    .HasConstraintName("FK_SMU_Safety_Planning_Form_SMU_Assessment_Guide");
+
+                entity.HasOne(d => d.SmuGroup)
+                    .WithMany(p => p.SmuSafetyPlanningForm)
+                    .HasForeignKey(d => d.SmuGroupId)
+                    .HasConstraintName("FK_SMU_Safety_Planning_Form_SMU_Group");
+            });
+
+            modelBuilder.Entity<SmuSafetyPlanningFormInternalCopingStrategies>(entity =>
+            {
+                entity.HasKey(e => e.InternalCopingStrategiesId);
+
+                entity.ToTable("SMU_Safety_Planning_Form_Internal_Coping_Strategies");
+
+                entity.Property(e => e.InternalCopingStrategiesId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Internal_Coping_StrategiesId");
+
+                entity.Property(e => e.InternalCopingStrategies)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Internal_Coping_Strategies");
+
+                entity.Property(e => e.InternalCopingStrategiesNo)
+                    .HasMaxLength(500)
+                    .HasColumnName("Internal_Coping_Strategies_No");
+
+                entity.Property(e => e.IsPlaceholder).HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.SafetyPlanningForm)
+                    .WithMany(p => p.SmuSafetyPlanningFormInternalCopingStrategies)
+                    .HasForeignKey(d => d.SafetyPlanningFormId)
+                    .HasConstraintName("FK_SMU_Safety_Planning_Form_Internal_Coping_Strategies_SMU_Safety_Planning_Form");
+            });
+
+            modelBuilder.Entity<SmuSafetyPlanningFormPeopleProvideDistraction>(entity =>
+            {
+                entity.HasKey(e => e.PeopleProvideDistractionId);
+
+                entity.ToTable("SMU_Safety_Planning_Form_People_Provide_Distraction");
+
+                entity.Property(e => e.PeopleProvideDistractionId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("People_Provide_DistractionId");
+
+                entity.Property(e => e.PeopleProvideDistractionName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("People_Provide_Distraction_Name");
+
+                entity.Property(e => e.PeopleProvideDistractionNo)
+                    .HasMaxLength(500)
+                    .HasColumnName("People_Provide_Distraction_No");
+
+                entity.Property(e => e.PeopleProvideDistractionPhone)
+                    .HasMaxLength(1000)
+                    .HasColumnName("People_Provide_Distraction_Phone");
+
+                entity.Property(e => e.PeopleProvideDistractionPlace)
+                    .HasMaxLength(1000)
+                    .HasColumnName("People_Provide_Distraction_Place");
+
+                entity.HasOne(d => d.SafetyPlanningForm)
+                    .WithMany(p => p.SmuSafetyPlanningFormPeopleProvideDistraction)
+                    .HasForeignKey(d => d.SafetyPlanningFormId)
+                    .HasConstraintName("FK_SMU_Safety_Planning_Form_People_Provide_Distraction_SMU_Safety_Planning_Form");
+            });
+
+            modelBuilder.Entity<SmuSafetyPlanningFormPeopleToAskForHelp>(entity =>
+            {
+                entity.HasKey(e => e.PeopleToAskForHelpId);
+
+                entity.ToTable("SMU_Safety_Planning_Form_People_To_Ask_For_Help");
+
+                entity.Property(e => e.PeopleToAskForHelpId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("People_To_Ask_For_Help_Id");
+
+                entity.Property(e => e.PeopleToAskForHelpName)
+                    .IsRequired()
+                    .HasMaxLength(1000)
+                    .HasColumnName("People_To_Ask_For_Help_Name");
+
+                entity.Property(e => e.PeopleToAskForHelpNo)
+                    .HasMaxLength(500)
+                    .HasColumnName("People_To_Ask_For_Help_No");
+
+                entity.Property(e => e.PeopleToAskForHelpPhone)
+                    .IsRequired()
+                    .HasMaxLength(1000)
+                    .HasColumnName("People_To_Ask_For_Help_Phone");
+
+                entity.HasOne(d => d.SafetyPlanningForm)
+                    .WithMany(p => p.SmuSafetyPlanningFormPeopleToAskForHelp)
+                    .HasForeignKey(d => d.SafetyPlanningFormId)
+                    .HasConstraintName("FK_SMU_Safety_Planning_Form_People_To_Ask_For_Help_SMU_Safety_Planning_Form");
+            });
+
+            modelBuilder.Entity<SmuSafetyPlanningFormProfessionsAgenciesToContact>(entity =>
+            {
+                entity.HasKey(e => e.ProfessionalsAgenciesToContactDuringCrisisId);
+
+                entity.ToTable("SMU_Safety_Planning_Form_Professions_Agencies_To_Contact");
+
+                entity.Property(e => e.ProfessionalsAgenciesToContactDuringCrisisId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Professionals_Agencies_To_Contact_During_CrisisId");
+
+                entity.Property(e => e.ClinicianName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Clinician_Name");
+
+                entity.Property(e => e.ClinicianPhoneNumber)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Clinician_Phone_Number");
+
+                entity.Property(e => e.LocalUrgentCareServices)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Local_Urgent_Care_Services");
+
+                entity.Property(e => e.NameOfClinic)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Name_of_Clinic");
+
+                entity.Property(e => e.ProfessionalsAgenciesToContactDuringCrisisNo)
+                    .HasMaxLength(500)
+                    .HasColumnName("Professionals_Agencies_To_Contact_During_Crisis_No");
+
+                entity.Property(e => e.UrgentCareServicesAddress)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Urgent_Care_Services_Address");
+
+                entity.Property(e => e.UrgentCareServicesPhone)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Urgent_Care_Services_Phone");
+
+                entity.HasOne(d => d.SafetyPlanningForm)
+                    .WithMany(p => p.SmuSafetyPlanningFormProfessionsAgenciesToContact)
+                    .HasForeignKey(d => d.SafetyPlanningFormId)
+                    .HasConstraintName("FK_SMU_Safety_Planning_Form_Professions_Agencies_To_Contact_SMU_Safety_Planning_Form");
+            });
+
+            modelBuilder.Entity<SmuSafetyPlanningFormWarningSigns>(entity =>
+            {
+                entity.HasKey(e => e.WarningSignsId);
+
+                entity.ToTable("SMU_Safety_Planning_Form_Warning_Signs");
+
+                entity.Property(e => e.WarningSignsId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Warning_SignsId");
+
+                entity.Property(e => e.WarningSignsDescription)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Warning_Signs_Description");
+
+                entity.Property(e => e.WarningSignsNo)
+                    .HasMaxLength(500)
+                    .HasColumnName("Warning_Signs_No");
+
+                entity.HasOne(d => d.SafetyPlanningForm)
+                    .WithMany(p => p.SmuSafetyPlanningFormWarningSigns)
+                    .HasForeignKey(d => d.SafetyPlanningFormId)
+                    .HasConstraintName("FK_SMU_Safety_Planning_Form_Warning_Signs_SMU_Safety_Planning_Form");
+            });
+
+            modelBuilder.Entity<SmuSucideAssementFormHeader>(entity =>
+            {
+                entity.HasKey(e => e.SucideAssessmentFormHeaderId)
+                    .HasName("PK_Sucide_Assement_Form_Header");
+
+                entity.ToTable("SMU_Sucide_Assement_Form_Header");
+
+                entity.Property(e => e.SucideAssessmentFormHeaderId).HasColumnName("Sucide_Assessment_Form_HeaderId");
+
+                entity.Property(e => e.AssementGuideId).HasColumnName("Assement_Guide_Id");
+
+                entity.Property(e => e.ClientRegistrationId).HasColumnName("Client_RegistrationId");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("Smu_OfficeId");
+
+                entity.Property(e => e.SucideAssementQuestionId).HasColumnName("Sucide_Assement_QuestionId");
+
+                entity.Property(e => e.SucideAssementResponseId).HasColumnName("Sucide_Assement_ResponseId");
+
+                entity.Property(e => e.SuicideAssesmentScore).HasColumnName("Suicide_Assesment_Score");
+
+                entity.HasOne(d => d.AssementGuide)
+                    .WithMany(p => p.SmuSucideAssementFormHeader)
+                    .HasForeignKey(d => d.AssementGuideId)
+                    .HasConstraintName("FK_SMU_Sucide_Assement_Form_Header_SMU_Assessment_Guide");
+
+                entity.HasOne(d => d.SucideAssementQuestion)
+                    .WithMany(p => p.SmuSucideAssementFormHeader)
+                    .HasForeignKey(d => d.SucideAssementQuestionId)
+                    .HasConstraintName("FK_SMU_Sucide_Assement_Form_Header_SMU_Sucide_Assement_Question");
+
+                entity.HasOne(d => d.SucideAssementResponse)
+                    .WithMany(p => p.SmuSucideAssementFormHeader)
+                    .HasForeignKey(d => d.SucideAssementResponseId)
+                    .HasConstraintName("FK_SMU_Sucide_Assement_Form_Header_SMU_Sucide_Assement_Response");
+            });
+
+            modelBuilder.Entity<SmuSucideAssementQuestion>(entity =>
+            {
+                entity.HasKey(e => e.SucideAssementQuestionId);
+
+                entity.ToTable("SMU_Sucide_Assement_Question");
+
+                entity.Property(e => e.SucideAssementQuestionId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Sucide_Assement_QuestionId");
+
+                entity.Property(e => e.SucideAssementQuestion).HasColumnName("Sucide_Assement_Question");
+            });
+
+            modelBuilder.Entity<SmuSucideAssementResponse>(entity =>
+            {
+                entity.HasKey(e => e.SucideAssementResponseId);
+
+                entity.ToTable("SMU_Sucide_Assement_Response");
+
+                entity.Property(e => e.SucideAssementResponseId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Sucide_Assement_ResponseId");
+
+                entity.Property(e => e.SucideAssementResponse)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Sucide_Assement_Response");
+            });
+
+            modelBuilder.Entity<SmuSucideAssementScore>(entity =>
+            {
+                entity.HasKey(e => e.SucideAssementScoreId);
+
+                entity.ToTable("SMU_Sucide_Assement_Score");
+
+                entity.Property(e => e.SucideAssementScoreId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("Sucide_Assement_ScoreId");
+
+                entity.Property(e => e.SucideAssementQuestionId).HasColumnName("Sucide_Assement_QuestionId");
+
+                entity.Property(e => e.SucideAssementResponseId).HasColumnName("Sucide_Assement_ResponseId");
+
+                entity.Property(e => e.SucideAssementScore).HasColumnName("Sucide_Assement_Score");
+
+                entity.HasOne(d => d.SucideAssementQuestion)
+                    .WithMany(p => p.SmuSucideAssementScore)
+                    .HasForeignKey(d => d.SucideAssementQuestionId)
+                    .HasConstraintName("FK_SMU_Sucide_Assement_Score_SMU_Sucide_Assement_Question");
+            });
+
+            modelBuilder.Entity<SmuTerminantionGuide>(entity =>
+            {
+                entity.ToTable("SMU_Terminantion_Guide");
+
+                entity.Property(e => e.SmuTerminantionGuideId).HasColumnName("SMU_Terminantion_GuideId");
+
+                entity.Property(e => e.ClientRegistrationId).HasColumnName("Client_RegistrationId");
+
+                entity.Property(e => e.DateOfAssessment)
+                    .HasColumnType("date")
+                    .HasColumnName("Date_Of_Assessment");
+
+                entity.Property(e => e.EncourageFriendsFamily).HasColumnName("Encourage_Friends_Family");
+
+                entity.Property(e => e.LevelOfDifficultyId).HasColumnName("Level_of_DifficultyId");
+
+                entity.Property(e => e.NameOfVolunter)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Name_Of_Volunter");
+
+                entity.Property(e => e.OverallPh9Score).HasColumnName("Overall_PH9_Score");
+
+                entity.Property(e => e.RespondantAge).HasColumnName("Respondant_Age");
+
+                entity.Property(e => e.RespondantGenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("Respondant_GenderId")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("SMU_OfficeId");
+
+                entity.Property(e => e.SmuProgramId).HasColumnName("SMU_ProgramId");
+
+                entity.HasOne(d => d.LevelOfDifficulty)
+                    .WithMany(p => p.SmuTerminantionGuide)
+                    .HasForeignKey(d => d.LevelOfDifficultyId)
+                    .HasConstraintName("FK_SMU_Terminantion_Guide_SMU_Level_of_Difficulty_To_Check_Off_Problems");
+
+                entity.HasOne(d => d.SmuGroup)
+                    .WithMany(p => p.SmuTerminantionGuide)
+                    .HasForeignKey(d => d.SmuGroupId)
+                    .HasConstraintName("FK_SMU_Terminantion_Guide_SMU_Group");
+            });
+
+            modelBuilder.Entity<SmuTerminantionGuidePh9Questions>(entity =>
+            {
+                entity.ToTable("SMU_Terminantion_Guide_PH9_Questions");
+
+                entity.Property(e => e.SmuTerminantionGuidePh9QuestionsId).HasColumnName("SMU_Terminantion_Guide_PH9_QuestionsId");
+
+                entity.Property(e => e.Ph9QuestionHeaderId).HasColumnName("PH9_Question_HeaderId");
+
+                entity.Property(e => e.Ph9QuestionsId).HasColumnName("PH9_QuestionsId");
+
+                entity.Property(e => e.SmuTerminantionGuideId).HasColumnName("SMU_Terminantion_GuideId");
+
+                entity.Property(e => e.SmuTerminantionGuidePh9QuestionsSored).HasColumnName("SMU_Terminantion_Guide_PH9_Questions_Sored");
+
+                entity.HasOne(d => d.Ph9QuestionHeader)
+                    .WithMany(p => p.SmuTerminantionGuidePh9Questions)
+                    .HasForeignKey(d => d.Ph9QuestionHeaderId)
+                    .HasConstraintName("FK_SMU_Terminantion_Guide_PH9_Questions_SMU_PH9_Question_Header");
+
+                entity.HasOne(d => d.Ph9Questions)
+                    .WithMany(p => p.SmuTerminantionGuidePh9Questions)
+                    .HasForeignKey(d => d.Ph9QuestionsId)
+                    .HasConstraintName("FK_SMU_Terminantion_Guide_PH9_Questions_SMU_PH9_Question");
+
+                entity.HasOne(d => d.SmuTerminantionGuide)
+                    .WithMany(p => p.SmuTerminantionGuidePh9Questions)
+                    .HasForeignKey(d => d.SmuTerminantionGuideId)
+                    .HasConstraintName("FK_SMU_Terminantion_Guide_PH9_Questions_SMU_Terminantion_Guide");
+            });
+
+            modelBuilder.Entity<SmuViewAttendenceFormDetail>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("Smu_View_Attendence_Form_Detail");
+
+                entity.Property(e => e.AttendedIdSessionFive).HasColumnName("AttendedId_Session_Five");
+
+                entity.Property(e => e.AttendedIdSessionFour).HasColumnName("AttendedId_Session_Four");
+
+                entity.Property(e => e.AttendedIdSessionOne).HasColumnName("AttendedId_Session_One");
+
+                entity.Property(e => e.AttendedIdSessionSix).HasColumnName("AttendedId_Session_Six");
+
+                entity.Property(e => e.AttendedIdSessionThree).HasColumnName("AttendedId_Session_Three");
+
+                entity.Property(e => e.AttendedIdSessionTwo).HasColumnName("AttendedId_Session_Two");
+
+                entity.Property(e => e.AttendenceFormDetailId).HasColumnName("Attendence_Form_DetailId");
+
+                entity.Property(e => e.AttendenceFormHeaderId).HasColumnName("Attendence_Form_HeaderId");
+
+                entity.Property(e => e.AttendenceKeyFive)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Attendence_Key_Five");
+
+                entity.Property(e => e.AttendenceKeyFour)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Attendence_Key_Four");
+
+                entity.Property(e => e.AttendenceKeyOne)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Attendence_Key_One");
+
+                entity.Property(e => e.AttendenceKeySix)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Attendence_Key_Six");
+
+                entity.Property(e => e.AttendenceKeyThree)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Attendence_Key_Three");
+
+                entity.Property(e => e.AttendenceKeyTwo)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Attendence_Key_Two");
+
+                entity.Property(e => e.ClientAttendenceId).HasColumnName("Client_AttendenceId");
+
+                entity.Property(e => e.ClientCode)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Client_Code");
+
+                entity.Property(e => e.ClientPhoneContact)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Client_Phone_Contact");
+
+                entity.Property(e => e.KaguguIdSessionFive).HasColumnName("KaguguId_Session_Five");
+
+                entity.Property(e => e.KaguguIdSessionFour).HasColumnName("KaguguId_Session_Four");
+
+                entity.Property(e => e.KaguguIdSessionOne).HasColumnName("KaguguId_Session_One");
+
+                entity.Property(e => e.KaguguIdSessionSix).HasColumnName("KaguguId_Session_Six");
+
+                entity.Property(e => e.KaguguIdSessionThree).HasColumnName("KaguguId_Session_Three");
+
+                entity.Property(e => e.KaguguIdSessionTwo).HasColumnName("KaguguId_Session_Two");
+
+                entity.Property(e => e.KaguguScoreFive)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Kagugu_Score_Five");
+
+                entity.Property(e => e.KaguguScoreFour)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Kagugu_Score_Four");
+
+                entity.Property(e => e.KaguguScoreOne)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Kagugu_Score_One");
+
+                entity.Property(e => e.KaguguScoreSix)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Kagugu_Score_Six");
+
+                entity.Property(e => e.KaguguScoreThree)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Kagugu_Score_Three");
+
+                entity.Property(e => e.KaguguScoreTwo)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Kagugu_Score_Two");
+
+                entity.Property(e => e.OtherReasoneSessionFive)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Five");
+
+                entity.Property(e => e.OtherReasoneSessionFour)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Four");
+
+                entity.Property(e => e.OtherReasoneSessionOne)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_One");
+
+                entity.Property(e => e.OtherReasoneSessionSix)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Six");
+
+                entity.Property(e => e.OtherReasoneSessionThree)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Three");
+
+                entity.Property(e => e.OtherReasoneSessionTwo)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Other_Reasone_Session_Two");
+
+                entity.Property(e => e.ReasonForAbsenceDescriptionFive)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Absence_Description_Five");
+
+                entity.Property(e => e.ReasonForAbsenceDescriptionFour)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Absence_Description_Four");
+
+                entity.Property(e => e.ReasonForAbsenceDescriptionOne)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Absence_Description_One");
+
+                entity.Property(e => e.ReasonForAbsenceDescriptionSix)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Absence_Description_Six");
+
+                entity.Property(e => e.ReasonForAbsenceDescriptionThree)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Absence_Description_Three");
+
+                entity.Property(e => e.ReasonForAbsenceDescriptionTwo)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Reason_For_Absence_Description_Two");
+
+                entity.Property(e => e.ReasonSessionFive).HasColumnName("Reason_Session_Five");
+
+                entity.Property(e => e.ReasonSessionFour).HasColumnName("Reason_Session_Four");
+
+                entity.Property(e => e.ReasonSessionOne).HasColumnName("Reason_Session_One");
+
+                entity.Property(e => e.ReasonSessionSix).HasColumnName("Reason_Session_Six");
+
+                entity.Property(e => e.ReasonSessionThree).HasColumnName("Reason_Session_Three");
+
+                entity.Property(e => e.ReasonSessionTwo).HasColumnName("Reason_Session_Two");
+
+                entity.Property(e => e.SmuClientName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Client_Name");
+            });
+
+            modelBuilder.Entity<SmuViewAttendenceHeader>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("Smu_View_Attendence_Header");
+
+                entity.Property(e => e.AttendenceCycleId).HasColumnName("Attendence_CycleId");
+
+                entity.Property(e => e.AttendenceFormHeaderId).HasColumnName("Attendence_Form_HeaderId");
+
+                entity.Property(e => e.AttendenceYearId).HasColumnName("Attendence_YearId");
+
+                entity.Property(e => e.CycleDescription)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Cycle_Description");
+
+                entity.Property(e => e.DistrictDescription).HasMaxLength(2000);
+
+                entity.Property(e => e.FinancialYearDesc).HasMaxLength(3000);
+
+                entity.Property(e => e.OfficeName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Office_Name");
+
+                entity.Property(e => e.RegionDescription).HasMaxLength(100);
+
+                entity.Property(e => e.SessionFiveDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Five_Date");
+
+                entity.Property(e => e.SessionFourDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Four_Date");
+
+                entity.Property(e => e.SessionOneDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_One_Date");
+
+                entity.Property(e => e.SessionSixDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Six_Date");
+
+                entity.Property(e => e.SessionThreeDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Three_Date");
+
+                entity.Property(e => e.SessionTwoDate)
+                    .HasColumnType("date")
+                    .HasColumnName("Session_Two_Date");
+
+                entity.Property(e => e.SmuFacilitatorId).HasColumnName("SMU_FacilitatorId");
+
+                entity.Property(e => e.SmuFacilitatorName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Facilitator_Name");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SmuGroupName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Group_Name");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("SMU_OfficeId");
+
+                entity.Property(e => e.SubcountyDescription).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<SmuViewClientRegistrationForm>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("Smu_View_Client_Registration_Form");
+
+                entity.Property(e => e.AgeGroup).HasMaxLength(1000);
+
+                entity.Property(e => e.ClientAgeRangeId).HasColumnName("Client_Age_RangeId");
+
+                entity.Property(e => e.ClientContact)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Client_Contact");
+
+                entity.Property(e => e.ClientGenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("Client_GenderId")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.ClientRegistrationFormId).HasColumnName("Client_Registration_FormId");
+
+                entity.Property(e => e.DateCreated).HasColumnType("date");
+
+                entity.Property(e => e.DistrictDescription).HasMaxLength(2000);
+
+                entity.Property(e => e.OfficeName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Office_Name");
+
+                entity.Property(e => e.RegionDescription).HasMaxLength(100);
+
+                entity.Property(e => e.RegistrationDate).HasColumnType("date");
+
+                entity.Property(e => e.SerialNumber)
+                    .HasMaxLength(500)
+                    .HasColumnName("Serial_Number");
+
+                entity.Property(e => e.SmuClientName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Client_Name");
+
+                entity.Property(e => e.SmuFacilitatorId).HasColumnName("SMU_FacilitatorId");
+
+                entity.Property(e => e.SmuFacilitatorName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Facilitator_Name");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SmuGroupName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Group_Name");
+
+                entity.Property(e => e.SmuOfficeId).HasColumnName("SMU_OfficeId");
+
+                entity.Property(e => e.SubcountyDescription).HasMaxLength(2000);
+            });
+
             modelBuilder.Entity<StakeHolderDataCapture>(entity =>
             {
                 entity.HasKey(e => e.StakeHolderValueId);
@@ -5902,6 +8431,63 @@ namespace MUCOBADI.Models
                     .IsRequired()
                     .HasMaxLength(100)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UploadUpdateHouseholdData1>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("UploadUpdateHouseholdData_1");
+
+                entity.Property(e => e.AdjustedHivStatus)
+                    .HasMaxLength(255)
+                    .HasColumnName("Adjusted HIV Status");
+
+                entity.Property(e => e.AdjustedRiskFactorQ3Final)
+                    .HasMaxLength(255)
+                    .HasColumnName("Adjusted Risk Factor_Q3_Final");
+
+                entity.Property(e => e.AgeCategory)
+                    .HasMaxLength(255)
+                    .HasColumnName("Age Category");
+
+                entity.Property(e => e.District).HasMaxLength(255);
+
+                entity.Property(e => e.Givenname).HasMaxLength(128);
+
+                entity.Property(e => e.HibridSubcounty)
+                    .HasMaxLength(255)
+                    .HasColumnName("HIBRID Subcounty");
+
+                entity.Property(e => e.HouseholdCode)
+                    .HasMaxLength(255)
+                    .HasColumnName("Household Code");
+
+                entity.Property(e => e.HouseholdMemberCode)
+                    .HasMaxLength(255)
+                    .HasColumnName("Household Member Code");
+
+                entity.Property(e => e.HouseholdMemberName)
+                    .HasMaxLength(255)
+                    .HasColumnName("Household Member Name");
+
+                entity.Property(e => e.Iscaregiver)
+                    .HasMaxLength(255)
+                    .HasColumnName("ISCAREGIVER");
+
+                entity.Property(e => e.Parish).HasMaxLength(255);
+
+                entity.Property(e => e.ProgramParticipationStatus)
+                    .HasMaxLength(255)
+                    .HasColumnName("Program Participation Status");
+
+                entity.Property(e => e.Sex)
+                    .HasMaxLength(255)
+                    .HasColumnName("Sex ");
+
+                entity.Property(e => e.Surname).HasMaxLength(128);
+
+                entity.Property(e => e.Village).HasMaxLength(255);
             });
 
             modelBuilder.Entity<ViewAContacts>(entity =>
@@ -6385,6 +8971,15 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.SubcountyDescription).HasMaxLength(2000);
             });
 
+            modelBuilder.Entity<ViewDashboardGraduationBenchMark>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_DashboardGraduationBenchMark");
+
+                entity.Property(e => e.AssessmentDate).HasColumnType("date");
+            });
+
             modelBuilder.Entity<ViewDashboardHhvisitedCurrentQuarter>(entity =>
             {
                 entity.HasNoKey();
@@ -6741,7 +9336,9 @@ namespace MUCOBADI.Models
 
                 entity.Property(e => e.TelephoneContact).HasMaxLength(1000);
 
-                entity.Property(e => e.ViralLoadSuppressedDescription).HasMaxLength(50);
+                entity.Property(e => e.ViralLoadSuppressedDescription)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.VirallaodDate).HasColumnType("date");
 
@@ -7012,6 +9609,8 @@ namespace MUCOBADI.Models
                     .IsRequired()
                     .HasMaxLength(11)
                     .IsUnicode(false);
+
+                entity.Property(e => e.AssessmentDate).HasColumnType("date");
 
                 entity.Property(e => e.DistrictDescription).HasMaxLength(2000);
 
@@ -7367,6 +9966,54 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.ServiceProviderId).HasColumnName("Service_Provider_Id");
             });
 
+            modelBuilder.Entity<ViewReportProjectIndicatorTargetsDetails>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_ReportProjectIndicatorTargetsDetails");
+
+                entity.Property(e => e.DistrictDescription).HasMaxLength(2000);
+
+                entity.Property(e => e.FinancialYearDesc).HasMaxLength(3000);
+
+                entity.Property(e => e.IndicatorDescription).HasMaxLength(3000);
+
+                entity.Property(e => e.ServiceProviderDesc)
+                    .HasMaxLength(3000)
+                    .HasColumnName("Service_Provider_Desc");
+
+                entity.Property(e => e.ServiceProviderId).HasColumnName("Service_Provider_Id");
+            });
+
+            modelBuilder.Entity<ViewReportStakeHolderDataCapture>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_ReportStakeHolderDataCapture");
+
+                entity.Property(e => e.CapturedBy).HasMaxLength(3000);
+
+                entity.Property(e => e.DateCaptured).HasColumnType("datetime");
+
+                entity.Property(e => e.Denominator).HasMaxLength(3000);
+
+                entity.Property(e => e.DistrictDescription).HasMaxLength(2000);
+
+                entity.Property(e => e.FinancialYearDesc).HasMaxLength(3000);
+
+                entity.Property(e => e.IndicatorDescription).HasMaxLength(3000);
+
+                entity.Property(e => e.Numerator).HasMaxLength(3000);
+
+                entity.Property(e => e.QuarterName).HasMaxLength(2000);
+
+                entity.Property(e => e.ServiceProviderDesc)
+                    .HasMaxLength(3000)
+                    .HasColumnName("Service_Provider_Desc");
+
+                entity.Property(e => e.ServiceProviderId).HasColumnName("Service_Provider_Id");
+            });
+
             modelBuilder.Entity<ViewReportVslaTrackingToolDirectMember>(entity =>
             {
                 entity.HasNoKey();
@@ -7425,6 +10072,58 @@ namespace MUCOBADI.Models
                 entity.ToView("View_SLR_HomeVisit");
 
                 entity.Property(e => e.VisitationDate).HasColumnType("date");
+            });
+
+            modelBuilder.Entity<ViewSmuAssessmentGuide>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_SMU_Assessment_Guide");
+
+                entity.Property(e => e.AgeGroup).HasMaxLength(1000);
+
+                entity.Property(e => e.AssementGuideId).HasColumnName("Assement_Guide_Id");
+
+                entity.Property(e => e.ClientContact)
+                    .HasMaxLength(1000)
+                    .HasColumnName("Client_Contact");
+
+                entity.Property(e => e.ClientRegistrationId).HasColumnName("Client_RegistrationId");
+
+                entity.Property(e => e.DistrictDescription).HasMaxLength(2000);
+
+                entity.Property(e => e.GenderDescription).HasMaxLength(1000);
+
+                entity.Property(e => e.RegionDescription).HasMaxLength(100);
+
+                entity.Property(e => e.RespondantAge).HasColumnName("Respondant_Age");
+
+                entity.Property(e => e.RespondantGenderId)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("Respondant_GenderId")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.SmuClientName)
+                    .HasMaxLength(1000)
+                    .HasColumnName("SMU_Client_Name");
+
+                entity.Property(e => e.SmuGroupId).HasColumnName("SMU_GroupId");
+
+                entity.Property(e => e.SubcountyDescription).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<ViewSplitDistrict>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Split_District");
+
+                entity.Property(e => e.ServiceProviderId).HasColumnName("Service_Provider_Id");
+
+                entity.Property(e => e.SplitDistricts)
+                    .HasMaxLength(3000)
+                    .HasColumnName("Split_Districts");
             });
 
             modelBuilder.Entity<ViewStakeHolderDataCapture>(entity =>
@@ -7650,11 +10349,19 @@ namespace MUCOBADI.Models
                     .HasMaxLength(11)
                     .IsUnicode(false);
 
+                entity.Property(e => e.DistrictDescription).HasMaxLength(2000);
+
                 entity.Property(e => e.DoB).HasColumnType("date");
 
                 entity.Property(e => e.FollowUpDate).HasColumnType("date");
 
                 entity.Property(e => e.HivTbTrackingFormId).HasColumnName("HIV_TB_TrackingFormId");
+
+                entity.Property(e => e.Qtr)
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SubcountyDescription).HasMaxLength(2000);
 
                 entity.Property(e => e.ViralLoadDescription).HasMaxLength(50);
 
@@ -7776,6 +10483,17 @@ namespace MUCOBADI.Models
                 entity.Property(e => e.VslatrackingToolDirectMemberId).HasColumnName("VSLATrackingToolDirectMemberId");
 
                 entity.Property(e => e.WfReasonForBorrowingId).HasColumnName("WF_Reason_For_Borrowing_Id");
+            });
+
+            modelBuilder.Entity<VillageMoved>(entity =>
+            {
+                entity.HasKey(e => e.VillageId);
+
+                entity.ToTable("Village_Moved");
+
+                entity.Property(e => e.VillageId).ValueGeneratedNever();
+
+                entity.Property(e => e.VillageDescription).HasMaxLength(2000);
             });
 
             modelBuilder.Entity<ViralLoadUpload1>(entity =>

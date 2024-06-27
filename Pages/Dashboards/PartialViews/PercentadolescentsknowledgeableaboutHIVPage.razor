@@ -1,0 +1,547 @@
+﻿@using MUCOBADI.DTOs.Dashboard;
+@using MUCOBADI.Data;
+
+<style>
+	/* Apply custom styles to adjust column widths */
+	.sf-grid .e-gridheader th,
+	.sf-grid .e-gridcontent tr td {
+		white-space: nowrap; /* Prevent text wrapping */
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+</style>
+@if(stakeholdersDatas != null && stakeholdersDatas.Count > 0){
+<SfGrid DataSource="@stakeholdersDatas" AllowExcelExport="true" AllowPdfExport="true" AllowFiltering="false"
+		AllowSorting="true" GridLines="GridLine.Both" AllowTextWrap="true" Width="100%">
+
+	<GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+	<GridEvents QueryCellInfo="QueryCellInfoHandler1" TValue="StakeholdersData"></GridEvents>
+		<GridAggregates>
+			<GridAggregate>
+				<GridAggregateColumns>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Project)" Type="AggregateType.Sum" Format="N0">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p><b>Total</b></p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_Under_One_Year)" Type="AggregateType.Sum" Format="N0">
+						<FooterTemplate>
+							@{
+								var aggregate1 = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate1.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Male_Under_One_Year)" Type="AggregateType.Sum" Format="N0">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_1_4)" Type="AggregateType.Sum" Format="N0">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Male_1_4)" Type="AggregateType.Sum" Format="N0">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_5_9)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Male_5_9)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_10_14)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Male_10_14)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_15_17)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Male_15_17)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_18_24)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_18_24)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Female_25_Plus)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+					<GridAggregateColumn Field="@nameof(StakeholdersData.Male_25_Plus)" Type="AggregateType.Sum" Format="N1">
+						<FooterTemplate>
+							@{
+								var aggregate = (context as AggregateTemplateContext);
+								<div>
+									<p>@aggregate.Sum</p>
+								</div>
+							}
+						</FooterTemplate>
+					</GridAggregateColumn>
+				</GridAggregateColumns>
+			</GridAggregate>
+		</GridAggregates>
+	<GridColumns>
+			<GridColumn Field=@nameof(StakeholdersData.Project) Width="27" Visible="true"
+						HeaderText="Project" Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="30"></GridColumn>
+		<GridColumn HeaderText="<1 Yr" HeaderTextAlign="TextAlign.Center">
+			<GridColumns>
+				<GridColumn Field=@nameof(StakeholdersData.Female_Under_One_Year) Width="20" Visible="true"
+							HeaderText="F" Format="N1" AllowEditing="false" TextAlign="TextAlign.Center"
+							MinWidth="15"></GridColumn>
+				<GridColumn Field=@nameof(StakeholdersData.Male_Under_One_Year) Width="15"
+							HeaderText="M" AllowEditing="true" TextAlign="TextAlign.Center" MinWidth="15"
+							AllowResizing="false"></GridColumn>
+			</GridColumns>
+		</GridColumn>
+			<GridColumn HeaderText="1-4 Yrs" HeaderTextAlign="TextAlign.Center" Width="45">
+			<GridColumns>
+				<GridColumn Field=@nameof(StakeholdersData.Female_1_4) Width="15" Visible="true"
+							HeaderText="F" Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="20"></GridColumn>
+				<GridColumn Field=@nameof(StakeholdersData.Male_1_4) Width="15"
+							HeaderText="M" AllowEditing="true" TextAlign="TextAlign.Center" MinWidth="15" AllowResizing=false></GridColumn>
+			</GridColumns>
+		</GridColumn>
+			<GridColumn HeaderText="5-9 Yrs" HeaderTextAlign="TextAlign.Center" Width="45">
+			<GridColumns>
+				<GridColumn Field=@nameof(StakeholdersData.Female_5_9) Width="15" Visible="true"
+							HeaderText="F" Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="20"></GridColumn>
+				<GridColumn Field=@nameof(StakeholdersData.Male_5_9) Width="15" HeaderText="M"
+							AllowEditing="true" TextAlign="TextAlign.Center" MinWidth="15" AllowResizing=false></GridColumn>
+			</GridColumns>
+		</GridColumn>
+			<GridColumn HeaderText="10-14 Yrs" HeaderTextAlign="TextAlign.Center" Width="45">
+			<GridColumns>
+				<GridColumn Field=@nameof(StakeholdersData.Female_10_14) Width="15" Visible="true"
+							HeaderText="F" Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="20"></GridColumn>
+				<GridColumn Field=@nameof(StakeholdersData.Male_10_14) Width="15" HeaderText="M"
+							AllowEditing="true" TextAlign="TextAlign.Center" MinWidth="15" AllowResizing=false></GridColumn>
+			</GridColumns>
+		</GridColumn>
+			<GridColumn HeaderText="15-17 Yrs" HeaderTextAlign="TextAlign.Center" Width="45">
+			<GridColumns>
+				<GridColumn Field=@nameof(StakeholdersData.Female_15_17) Width="15" Visible="true"
+							HeaderText="F" Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="20"></GridColumn>
+				<GridColumn Field=@nameof(StakeholdersData.Female_15_17) Width="15" HeaderText="M"
+							AllowEditing="true" TextAlign="TextAlign.Center" MinWidth="15" AllowResizing=false></GridColumn>
+			</GridColumns>
+		</GridColumn>
+			<GridColumn HeaderText="18-24 Yrs" HeaderTextAlign="TextAlign.Center" Width="45">
+			<GridColumns>
+				<GridColumn Field=@nameof(StakeholdersData.Female_18_24) Width="15" Visible="true"
+							HeaderText="F" Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="20"></GridColumn>
+				<GridColumn Field=@nameof(StakeholdersData.Male_18_24) Width="15" HeaderText="M"
+							AllowEditing="true" TextAlign="TextAlign.Center" MinWidth="15" AllowResizing=false></GridColumn>
+			</GridColumns>
+		</GridColumn>
+			<GridColumn HeaderText="25+ Yrs" HeaderTextAlign="TextAlign.Center" Width="45">
+			<GridColumns>
+				<GridColumn Field=@nameof(StakeholdersData.Female_25_Plus) Width="20" Visible="true" HeaderText="F"
+							Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="15"></GridColumn>
+				<GridColumn Field=@nameof(StakeholdersData.Male_25_Plus) Width="15" HeaderText="M" AllowEditing="true"
+							TextAlign="TextAlign.Center" MinWidth="15" AllowResizing=false></GridColumn>
+			</GridColumns>
+		</GridColumn>
+			<GridColumn HeaderText="Total" HeaderTextAlign="TextAlign.Center" Visible="false">
+				<GridColumns>
+					<GridColumn Field=@nameof(StakeholdersData.FemaleSum) Width="15" Visible="false" HeaderText="F" 
+								Format="N1" AllowEditing="false" TextAlign="TextAlign.Center" MinWidth="15"></GridColumn>
+					<GridColumn Field=@nameof(StakeholdersData.MaleSum) Width="15" HeaderText="M" AllowEditing="true"
+								TextAlign="TextAlign.Center" MinWidth="15" AllowResizing=false></GridColumn Visible="false">
+				</GridColumns>
+			</GridColumn>
+		<GridColumn Field=@nameof(StakeholdersData.TotalReached) Width="30" HeaderText="Total Reached" Visible="false" AllowEditing="true" TextAlign="TextAlign.Center" MinWidth="10" AllowResizing=false></GridColumn>
+		<GridColumn Field=@nameof(StakeholdersData.Target) Width="30" HeaderText="Target" AllowEditing="true" Visible="false" TextAlign="TextAlign.Center" MinWidth="10" AllowResizing=false></GridColumn>
+		<GridColumn Field=@nameof(StakeholdersData.PercentageAchived) Width="30" HeaderText="% Achieved" AllowEditing="true" Visible="false" TextAlign="TextAlign.Center" MinWidth="10" AllowResizing=false></GridColumn>
+
+	</GridColumns>
+</SfGrid>
+}
+@code {
+	[Parameter]
+	public int IndicatorId { get; set; }
+	//[Parameter]
+	List<StakeholdersData> stakeholdersDatas { get; set; }
+	[Parameter]
+	public SearchPanel SearchModel { get; set; }
+	public void QueryCellInfoHandler1(QueryCellInfoEventArgs<StakeholdersData> Args)
+	{
+		if (Args.Column.Field == nameof(StakeholdersData.PercentageAchived))
+		{
+			Args.Cell.AddStyle(new string[] { "background-color:#fdcb6e", "color:#2c3e50", "font-weight:bold" });
+		}
+
+	}
+	List<spInstitution_IndicatorsResult> IndicatorsResultData { get; set; }
+	//	SearchPanel SearchModel { get; set; } = new();
+	string QuarterNo { get; set; }
+	string Qtr = null;
+	string PreviousQtr = null;
+	string Yr = null;
+	string ProjectId = null;
+	public int IndicatorIdd = 7;
+
+	private async Task LoadDashboards()
+	{
+		try
+		{
+			using (var _dbcontext = new SPToCoreContext())
+			{
+				stakeholdersDatas = new();
+				var currentMonth = DateTime.Now.Month;
+				var currentYear = DateTime.Now.Year;
+				string ProjectId = null;
+				var _financialYear = _dbcontext.AFinancialYear.FirstOrDefault(o => o.FinancialYearDesc.Trim() == currentYear.ToString());
+				string startDate = null;
+				string endDate = null;
+				if (!SearchModel.Startdate.HasValue)
+				{
+					SearchModel.Startdate = new DateTime(DateTime.Now.Year, 1, 1);
+				}
+				if (!SearchModel.Enddate.HasValue)
+				{
+					SearchModel.Enddate = new DateTime(DateTime.Now.Year, 12, 31);
+				}
+				int StartMonth = 1;
+				int EndMonth = 12;
+
+				if (currentMonth >= 1 && currentMonth <= 3)
+				{
+					QuarterNo = "TWO (JAN-MAR)";
+					startDate = currentYear + "-01-01";
+					endDate = currentYear + "-03-31";
+					Qtr = "2";
+					PreviousQtr = "1";
+					StartMonth = 1;
+					EndMonth = 3;
+				}
+				else if (currentMonth >= 4 && currentMonth <= 6)
+				{
+					QuarterNo = "THREE (APR-JUN)";
+					startDate = currentYear + "-04-01";
+					endDate = currentYear + "-06-30";
+					Qtr = "3";
+					PreviousQtr = "2";
+					StartMonth = 4;
+					EndMonth = 6;
+				}
+				else if (currentMonth >= 7 && currentMonth <= 9)
+				{
+					QuarterNo = "FOUR (JUL-SEP)";
+					startDate = currentYear + "-07-01";
+					endDate = currentYear + "-09-30";
+					Qtr = "4";
+					PreviousQtr = "3";
+					StartMonth = 7;
+					EndMonth = 9;
+				}
+				else if (currentMonth >= 10 && currentMonth <= 12)
+				{
+					QuarterNo = "ONE (OCT-DEC)";
+					startDate = currentYear + "-10-01";
+					endDate = currentYear + "-12-31";
+					Qtr = "1";
+					PreviousQtr = "4";
+					StartMonth = 10;
+					EndMonth = 12;
+				}
+				if (IndicatorId == 1)
+				{
+					ProjectId = "1,2";
+
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 2)
+				{
+					ProjectId = "1,2";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 3)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 4)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 5)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 6)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 7)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 8)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 9)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 10)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 11)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 12)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 13)
+				{
+					ProjectId = "1,3";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 14)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 15)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 16)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 17)
+				{
+					ProjectId = "1,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 18)
+				{
+					ProjectId = "1,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 19)
+				{
+					ProjectId = "4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 20)
+				{
+					ProjectId = "2";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 21)
+				{
+					ProjectId = "1,2";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 22)
+				{
+					ProjectId = "4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 23)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 24)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 25)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				else if (IndicatorId == 26)
+				{
+					ProjectId = "1,2,3,4";
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr, _financialYear.FinancialYearId.ToString());
+				}
+				var _data = IndicatorsResultData.Select(o => new
+				{
+					o.Total,
+					o.Female_Under_One_Year,
+					o.Male_Under_One_Year,
+					o.Female_1_4,
+					o.Male_1_4,
+					o.Female_5_9,
+					o.Male_5_9,
+					o.Female_10_14,
+					o.Male_10_14,
+					o.Female_15_17,
+					o.Male_15_17,
+					o.Female_18_24,
+					o.Male_18_24,
+					o.Female_25_Plus,
+					o.Male_25_Plus,
+					o.FemaleSum,
+					o.MaleSum
+				}).Distinct().ToList();
+				foreach (var item in _data)
+				{
+					//int totalMaleByProject = 0;
+					//int totalFemaleByProject = 0;
+					int totalReached = 0;
+					//int totalFemale = 0;
+					if (IndicatorsResultData != null && IndicatorsResultData.Count > 0)
+					{
+						//var ovcservefilter = IndicatorsResultData.Where(o => o.Total == item.Total).ToList();
+						//if (ovcservefilter != null)
+						//{
+						//	totalFemale = ovcservefilter.Count();
+						//}
+						StakeholdersData mm = new StakeholdersData();
+						mm.Project = item.Total;
+						mm.Female_Under_One_Year = item.Female_Under_One_Year;
+						mm.Male_Under_One_Year = item.Male_Under_One_Year;
+						mm.Female_1_4 = item.Female_1_4;
+						mm.Male_1_4 = item.Male_1_4;
+						mm.Female_5_9 = item.Female_5_9;
+						mm.Male_5_9 = item.Male_5_9;
+						mm.Female_10_14 = item.Female_10_14;
+						mm.Male_10_14 = item.Male_10_14;
+						mm.Female_15_17 = item.Female_15_17;
+						mm.Male_15_17 = item.Male_15_17;
+						mm.Female_18_24 = item.Female_18_24;
+						mm.Male_18_24 = item.Male_18_24;
+						mm.Female_25_Plus = item.Female_25_Plus;
+						mm.Male_25_Plus = item.Male_25_Plus;
+						mm.FemaleSum = item.FemaleSum;
+						mm.MaleSum = item.MaleSum;
+						mm.TotalReached = item.MaleSum + item.FemaleSum;
+						//mm.Target = item.t
+						if(mm.Target != null)
+						{
+							mm.PercentageAchived = Math.Round((((double)mm.TotalReached / (double)mm.Target) * 100), 1);
+						}
+						//mm.PercentageAchived 
+						stakeholdersDatas.Add(mm);
+
+					}
+
+				}
+			}
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+
+	}
+	protected override async Task OnParametersSetAsync()
+	{
+		await LoadDashboards();
+		await base.OnParametersSetAsync();
+	}
+}

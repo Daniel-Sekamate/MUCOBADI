@@ -1,0 +1,121 @@
+﻿<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+@*SmuSafetyPlanningFormProfessionsAgenciesToContact*@
+@if (SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource != null)
+{
+    <SfGrid @ref=@SmuSafetyPlanningFormProfessionsAgenciesToContactGrid TValue="SmuSafetyPlanningFormProfessionsAgenciesToContact"
+            DataSource="SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource" RowHeight="30"
+            AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+            AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridEvents TValue="SmuSafetyPlanningFormProfessionsAgenciesToContact" CellSaved="OnCellSaved"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+
+        <GridColumns>
+            <GridColumn HeaderText="Step 5: Professionals or agencies I can contact during a crisis" TextAlign="TextAlign.Left">
+                <GridColumns>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormProfessionsAgenciesToContact.ProfessionalsAgenciesToContactDuringCrisisId) HeaderText="ProfessionalsAgenciesToContactDuringCrisisId" AllowEditing="false" Visible=false IsPrimaryKey="true" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormProfessionsAgenciesToContact.ProfessionalsAgenciesToContactDuringCrisisNo) HeaderText="S/N" AllowEditing="true" Visible="true" Width="30"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormProfessionsAgenciesToContact.ClinicianName) HeaderText="Clinician Name" AllowEditing="true" Visible="true" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormProfessionsAgenciesToContact.NameOfClinic) HeaderText="Health Centre / Clinic Name" AllowEditing="true" Visible="true" Width="150"></GridColumn>
+                    <GridColumn HeaderText="Local Urgent Care Agency" TextAlign="TextAlign.Center">
+                        <GridColumns>
+                            <GridColumn Field=@nameof(SmuSafetyPlanningFormProfessionsAgenciesToContact.LocalUrgentCareServices) HeaderText="Name" AllowEditing="true" Visible="true" Width="150"></GridColumn>
+                            <GridColumn Field=@nameof(SmuSafetyPlanningFormProfessionsAgenciesToContact.UrgentCareServicesAddress) HeaderText="Address" AllowEditing="true" Visible="true" Width="70"></GridColumn>
+                            <GridColumn Field=@nameof(SmuSafetyPlanningFormProfessionsAgenciesToContact.UrgentCareServicesPhone) HeaderText="Phone" AllowEditing="true" Visible="true" Width="70"></GridColumn>
+                        </GridColumns>
+                    </GridColumn>
+                </GridColumns>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    [Parameter]
+    public int? SafetyPlanningFormId { get; set; }
+    [Parameter]
+    public EventCallback<List<SmuSafetyPlanningFormProfessionsAgenciesToContact>?> SmuSafetyPlanningFormProfessionsAgenciesToContactCallBack { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormProfessionsAgenciesToContact>? SmuSafetyPlanningFormProfessionsAgenciesToContactData { get; set; }
+    int? PreviousSafetyPlanningFormId { get; set; }
+    private SfGrid<SmuSafetyPlanningFormProfessionsAgenciesToContact>? SmuSafetyPlanningFormProfessionsAgenciesToContactGrid;
+    List<SmuSafetyPlanningFormProfessionsAgenciesToContact>? SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource { get; set; }
+    public async Task OnCellSaved(CellSaveArgs<SmuSafetyPlanningFormProfessionsAgenciesToContact> args)
+    {
+        if (args.Data.NameOfClinic != null
+            && args.Data.ClinicianName != null
+            && args.Data.LocalUrgentCareServices != null)
+        {
+            await this.SmuSafetyPlanningFormProfessionsAgenciesToContactGrid?.EndEditAsync();
+            await SmuSafetyPlanningFormProfessionsAgenciesToContactCallBack.InvokeAsync(SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource);
+        }
+    }
+    public async Task<List<SmuSafetyPlanningFormProfessionsAgenciesToContact>?> returnData()
+    {
+        if (SmuSafetyPlanningFormProfessionsAgenciesToContactGrid != null)
+        {
+            await SmuSafetyPlanningFormProfessionsAgenciesToContactGrid.EndEditAsync();
+        }
+        return SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource = new List<SmuSafetyPlanningFormProfessionsAgenciesToContact>();
+            if (SmuSafetyPlanningFormProfessionsAgenciesToContactData != null && SmuSafetyPlanningFormProfessionsAgenciesToContactData.Count > 0)
+            {
+                SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource.AddRange(SmuSafetyPlanningFormProfessionsAgenciesToContactData.OrderBy(o => o.ProfessionalsAgenciesToContactDuringCrisisId).ToList());
+                int count = -100;
+                for (int i = 1; i <= 3; i++)
+                {
+                    SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource.Add(new SmuSafetyPlanningFormProfessionsAgenciesToContact()
+                        {
+                            ProfessionalsAgenciesToContactDuringCrisisId = count,
+                            SafetyPlanningFormId = SafetyPlanningFormId,
+                        });
+                    count++;
+                }
+            }
+            else
+            {
+                int count = -100;
+                for (int i = 1; i <= 3; i++)
+                {
+                    SmuSafetyPlanningFormProfessionsAgenciesToContactDataSource.Add(new SmuSafetyPlanningFormProfessionsAgenciesToContact()
+                        {
+                            ProfessionalsAgenciesToContactDuringCrisisId = count,
+                            SafetyPlanningFormId = SafetyPlanningFormId,
+                        });
+                    count++;
+                }
+            }
+            PreviousSafetyPlanningFormId = SafetyPlanningFormId;
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+}

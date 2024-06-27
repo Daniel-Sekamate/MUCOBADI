@@ -74,13 +74,12 @@
     </div>
 }
 <SfDialog @ref=@ChartDialog Target=".page" Width="98%" Height="90vh" CloseOnEscape=true
-EnableResize=true Visible=false ShowCloseIcon=true IsModal=true AllowPrerender=false>
+   EnableResize=true Visible=false ShowCloseIcon=true IsModal=true AllowPrerender=false>
     <DialogTemplates>
         <Content>
             @if (SeriesDataSource != null && SeriesDataSource.Count > 0 && loadDialog==true)
             {
                 <SfChart Title="@SeriesTitle" Background="#caf0f8" Width="@Width" Height="auto" Theme="@theme" EnableAutoIntervalOnBothAxis=true>
-                @*<ChartEvents OnDataLabelRender="labelRender"></ChartEvents>*@
                 <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
                 <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1" LabelPosition="AxisPosition.Outside">
                     <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>

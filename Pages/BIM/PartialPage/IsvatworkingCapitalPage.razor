@@ -1,0 +1,165 @@
+﻿@* <h3>IsvatworkingCapitalPage</h3> *@
+@using MUCOBADI.Models
+@inject IToastService toastService;
+
+@if (DataSource != null && DataSource.Count > 0)
+{
+    <SfGrid @ref=@HeaderGrid TValue="IsvatworkingCapital" DataSource="@DataSource"
+            AllowFiltering=false AllowGrouping=false AllowPaging=false AllowTextWrap=true ShowColumnChooser=true
+            GridLines="GridLine.Both" AllowSelection="true" Toolbar="@(new string[] {"Edit","Update","Cancel","ColumnChooser" })"
+            EnableStickyHeader=true ClipMode="ClipMode.EllipsisWithTooltip" EnableAltRow=true>
+        <GridGroupSettings Columns="@Initial"></GridGroupSettings>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridEvents CellSaved="DetailedCellSavedHandler" CellSelected="DetailedCellSelectHandler" TValue="IsvatworkingCapital"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field="@(nameof(IsvatworkingCapital.IsvatworkingCapitalId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridForeignColumn Field="@(nameof(IsvatworkingCapital.AssetIncomeId))" HeaderText="Business Venture / Working Capital Investment " Width="130" AllowEditing=false ForeignKeyField="@(nameof(AAssetIncome.AssetIncomeId))" ForeignKeyValue="@(nameof(AAssetIncome.AssetIncomeDesc))" ForeignDataSource="@AssetIncomeData"></GridForeignColumn>
+            <GridColumn Field=@nameof(IsvatworkingCapital.OtherAssetIncome) Visible="true" AllowFiltering="true" HeaderText="Other Business Venture / Working Capital Investment" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="140"></GridColumn>
+            <GridForeignColumn Field="@(nameof(IsvatworkingCapital.BusinessVentureCapitalInvestmentId))" HeaderText="Estimated Capital so far Invested in the Business Venture (shs)" Width="130" ForeignKeyField="@(nameof(ABusinessVentureCapitalInvestment.BusinessVentureCapitalInvestmentId))" ForeignKeyValue="@(nameof(ABusinessVentureCapitalInvestment.BusinessVentureCapitalInvestmentDesc))" ForeignDataSource="@BusinessVentureCapitalInvestmentData"></GridForeignColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+
+@code {
+    [Parameter]
+    public List<AAssetIncome>? AssetIncomeData { get; set; }
+    [Parameter]
+    public List<ABusinessVentureCapitalInvestment>? BusinessVentureCapitalInvestmentData { get; set; }
+    [Parameter]
+    public List<IsvatworkingCapital>? IsvatworkingCapitalData { get; set; }
+    [Parameter]
+    public int IsvatheaderId { get; set; }
+    [Parameter]
+    public EventCallback<List<IsvatworkingCapital>?> DetailToggle { get; set; }
+
+    public string[] Initial = (new string[] { "BusinessVentureCapitalInvestmentIdCategory", "BusinessVentureCapitalInvestmentIdClassification" });
+
+    List<IsvatworkingCapital>? DataSource { get; set; }
+    int? PreviousIsvatheaderId { get; set; }
+    public SfGrid<IsvatworkingCapital>? HeaderGrid;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (PreviousIsvatheaderId != IsvatheaderId)
+            {
+
+                if (IsvatworkingCapitalData != null && IsvatworkingCapitalData.Count > 0)
+                {
+                    if (AssetIncomeData != null && AssetIncomeData.Count > 0)
+                    {
+                        DataSource = new List<IsvatworkingCapital>();
+                        int CountId = -1;
+                        foreach (var item in AssetIncomeData)
+                        {
+                            var exists = IsvatworkingCapitalData.FirstOrDefault(o => o.AssetIncomeId == item.AssetIncomeId);
+                            if (exists != null)
+                            {
+                                DataSource.Add(new IsvatworkingCapital()
+                                    {
+                                        IsvatworkingCapitalId = exists.IsvatworkingCapitalId,
+                                        IsvatheaderId = exists.IsvatheaderId,
+                                        AssetIncomeId = item.AssetIncomeId,
+                                        OtherAssetIncome = exists.OtherAssetIncome,
+                                        BusinessVentureCapitalInvestmentId = exists.BusinessVentureCapitalInvestmentId,
+                                    });
+                            }
+                            else
+                            {
+                                DataSource.Add(new IsvatworkingCapital()
+                                    {
+                                        IsvatworkingCapitalId = CountId,
+                                        IsvatheaderId = IsvatheaderId,
+                                        AssetIncomeId = item.AssetIncomeId,
+                                    });
+                            }
+                            CountId--;
+                        }
+                    }
+                }
+                else
+                {
+                    if (AssetIncomeData != null && AssetIncomeData.Count > 0)
+                    {
+                        DataSource = new List<IsvatworkingCapital>();
+                        int CountId = -1;
+                        foreach (var item in AssetIncomeData)
+                        {
+                            DataSource.Add(new IsvatworkingCapital()
+                                {
+                                    IsvatworkingCapitalId = CountId,
+                                    IsvatheaderId = IsvatheaderId,
+                                    AssetIncomeId = item.AssetIncomeId,
+                                });
+                            CountId--;
+                        }
+                    }
+                }
+                PreviousIsvatheaderId = IsvatheaderId;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            //  throw;
+        }
+        base.OnInitialized();
+    }
+
+    private async Task DetailedCellSavedHandler(CellSaveArgs<IsvatworkingCapital> args)
+    {
+        try
+        {
+            if (HeaderGrid != null)
+            {
+                var index = await HeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.IsvatworkingCapitalId);
+                //await HeaderGrid.UpdateCellAsync(index, nameof(IsvatworkingCapital.ComplaintId), ComplaintId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            if (HeaderGrid != null)
+            {
+                await HeaderGrid.EndEditAsync();
+            }
+            if (DataSource != null)
+            {
+                await DetailToggle.InvokeAsync(DataSource);
+            }
+        }
+    }
+    private async Task DetailedCellSelectHandler(CellSelectEventArgs<IsvatworkingCapital> args)
+    {
+        if (HeaderGrid != null)
+        {
+            //get selected cell index
+            var CellIndexes = await HeaderGrid.GetSelectedRowCellIndexesAsync();
+
+            //get the row and cell index
+            var CurrentEditRowIndex = CellIndexes[0].Item1;
+            var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+            //get the available fields
+            var fields = await HeaderGrid.GetColumnFieldNamesAsync();
+            // edit the selected cell using the cell index and column name
+            await HeaderGrid.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+        }
+
+    }
+}
+
+

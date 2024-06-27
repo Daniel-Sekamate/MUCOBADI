@@ -1,0 +1,276 @@
+﻿@using MUCOBADI.Data
+@* <h3>MyNavMenu</h3> *@
+@inject NavigationManager Navigation;
+<MudDrawerHeader Style="margin-top:2px;margin-bottom:5px;">
+    <img src="login/images/mucobadilogo2.png"  style="margin-left: auto; margin-right: auto; width: 80%; height: 10vh;" />
+</MudDrawerHeader>
+@if (Credentials != null && !string.IsNullOrEmpty(Credentials.RoleName))
+{
+    <MudNavMenu>
+        @if (SuperAdministrator == true || Administrator == true ||
+       MonitoringandEvaluationOfficer == true || CaseCareWorker == true ||
+       Cdo == true || FieldAssistant == true || BusinessIncubationAssistant == true ||
+       Cfpu == true || Counsellor == true || ArtIncharge == true || Supervisor == true
+       || DataEntrant == true || MELDirector == true || MELManager == true || ClusterManager == true
+       || ProgramSpecialist == true || DatabaseOfficer == true)
+        {
+            <MudNavLink Href="/ICAREDashboardPage" Icon="fa fa-pie-chart" Match="NavLinkMatch.All">ICARE DASHBOARD</MudNavLink>
+            <MudNavLink Href="/StakeHoldersDashboardPage" Icon="fa fa-pie-chart">MUCOBADI DASHBOARD</MudNavLink>
+            <MudNavLink Href="/StakeholderDataCapture" Icon="fa fa-bullseye">PROJECT DATA ENTRY</MudNavLink>
+            <MudNavLink Href="/NewIdentificationRegisterPage" Icon="fa fa-home" Match="NavLinkMatch.Prefix">BENEFICIARY IDENTIFICATION REGISTER</MudNavLink>
+            <MudNavLink Href="/BeneficiaryEnrolmentRegisterPage" Icon="fa fa-address-book" Match="NavLinkMatch.Prefix">BENEFICIARY ENROLMENT REGISTER</MudNavLink>
+            <MudNavLink Href="/MapsPage" Icon="fa fa-map-pin" Match="NavLinkMatch.Prefix">MAP</MudNavLink>
+
+            <MudNavGroup Title="ASSESSMENT TOOLS" Icon="fa fa-check-circle-o" Expanded="false">
+                <MudNavLink Href="/HvatPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">HVAT</MudNavLink>
+                <MudNavLink Href="/AvatPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">AVAT</MudNavLink>
+                <MudNavLink Href="/HIVTBRiskAssessmentToolPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">HIV AND TB RISK ASSESSMENT TOOL</MudNavLink>
+                <MudNavLink Href="/GraduationCheckListPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">OVC HOUSEHOLD GRADUATION CHECKLIST</MudNavLink>
+                <MudNavLink Href="/TBSensitizationPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">COMMUNITY TB SENSITIZATION AND SCREENING FORM</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="GENERAL SERVICE DELIVERY TOOL" Icon="fa fa-outdent" Expanded="false">
+                <MudNavLink Href="/HomeVisitServiceReportingToolPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">HOME VISIT</MudNavLink>
+                <MudNavLink Href="/HIV_TB_TrackingAndMonitoringToolPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">VIRALLOAD TRACKER</MudNavLink>
+                <MudNavLink Href="/LinkageTrackingToolPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">LINKAGE’S TOOL</MudNavLink>
+                <MudNavLink Href="/ReferralFormPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">REFERRAL FORM</MudNavLink>
+                <MudNavLink Href="/SchoolAttendencyPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">OVC SCHOOL ATTANDACE & TRANSITION MONITORING TOOL</MudNavLink>
+                <MudNavLink Href="/CaseCarePage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">CASE PLANNING TOOL</MudNavLink>
+                <MudNavLink Href="/CaseTrackingRegisterPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">MONTHLY CASE TRACKING REGISTER</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="PREVENTIVE CURRICULUM" Icon="fa fa-file-text-o" Expanded="false">
+                <MudNavLink Href="/GroupCompositionPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">GROUP/ASSOCIATION COMPOSITION</MudNavLink>
+                <MudNavLink Href="/SinoParentingRegisterPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">SINOVUYO-PARENTING REGISTERS</MudNavLink>
+                <MudNavLink Href="/ECDRegisterPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">ECD REGISTERS</MudNavLink>
+                <MudNavLink Href="/CommunityTraingRegisterPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">COMMUNITY TRAINING REGISTER</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="ECONOMIC EMPOWERMENT (VSLA TOOLS)" Icon="fa fa-money" Expanded="false">
+                <MudNavLink Href="/GroupCompositionPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">VSLA+ GROUP/ASSOCIATION COMPOSITION</MudNavLink>
+                <MudNavLink Href="/VSLATrackingToolPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">VSLA TRACKING TOOL</MudNavLink>
+                <MudNavLink Href="/VSLAShareOutPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">VSLA GROUP SHARE-OUT TOOL</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="BIM" Icon="fa fa-money" Expanded="false">
+                <MudNavLink Href="/BusinessPlanHeaderPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">Business Plan</MudNavLink>
+                <MudNavLink Href="/BusinessTrackingLedgerPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">Project Financing Plan</MudNavLink>
+                <MudNavLink Href="/IsvatheaderPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">HOUSEHOLD INCOME SOURCE VIABILITY ASSESSMENT</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="NMN" Icon="fa fa-file-text-o" Expanded="false">
+                <MudNavLink Href="/InterventionAttendanceFormPage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">Intervention Attendance Form</MudNavLink>
+                <MudNavLink Href="/NmnquestionairePage" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">No Means No Boys & Young Men Questionnaire</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Href="/SMUGroup" Icon="fa fa-file-text-o" Match="NavLinkMatch.Prefix">SMU Group</MudNavLink>
+            <MudNavGroup Title="REPORTS" Icon="fa fa-cloud-download" Expanded="false">
+                <MudNavLink Href="/LayeringReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">SERVICE LAYERING REPORT</MudNavLink>
+                <MudNavLink Href="/BeneficiaryIdentificationRegisterReport" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">BENEFICIARY IDENTIFICATION REGISTER</MudNavLink>
+                <MudNavLink Href="/ProjectIndicatorReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">INDICATOR</MudNavLink>
+                <MudNavLink Href="/ProjectTargetsReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">TARGET</MudNavLink>
+                <MudNavLink Href="/HVATReport" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">HVAT</MudNavLink>
+                <MudNavLink Href="/AvatReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">AVAT</MudNavLink>
+                <MudNavLink Href="/TBSensitizationReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">COMMUNITY TB SENSITIZATION</MudNavLink>
+                <MudNavLink Href="/HIVTBRiskAssessmentToolReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">HIV AND TB RISK ASSESSMENT TOOL</MudNavLink>
+                <MudNavLink Href="/BenchMarkReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">OVC HOUSEHOLD GRADUATION CHECKLIST</MudNavLink>
+
+                <MudNavLink Href="/BeneficiaryEnrolmentRegisterReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">BENEFICIARY ENROLMENT REGISTER</MudNavLink>
+                <MudNavLink Href="/HomeVisitServiceReportingToolReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">HOME VISIT SERVICE REPORTING</MudNavLink>
+                <MudNavLink Href="/HIV_TB_TrackingAndMonitoringToolReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">TRACKING FORM FOR MONITORING HIV, TB CARE AND EID</MudNavLink>
+                <MudNavLink Href="/LinkageTrackingToolReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">LINKAGE’S TOOL</MudNavLink>
+                <MudNavLink Href="/ReferralFormReport" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">REFERRAL FORM</MudNavLink>
+                <MudNavLink Href="/SchoolAttendencyReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">OVC SCHOOL ATTANDACE & TRANSITION MONITORING TOOL</MudNavLink>
+                <MudNavLink Href="/CaseCareReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">CASE PLANNING TOOL</MudNavLink>
+                <MudNavLink Href="/MonthlyCaseTrackingRegisterReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">MONTHLY CASE TRACKING REGISTER</MudNavLink>
+                <MudNavLink Href="/GroupCompositionReportPageReport" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">VSLA+ GROUP/ASSOCIATION COMPOSITION</MudNavLink>
+
+                <MudNavLink Href="/SINOParentingAttendenceRegisterReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">SINOVUYO-PARENTING REGISTERS</MudNavLink>
+                <MudNavLink Href="/ECDAttendenceRegisterReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">ECD REGISTERS</MudNavLink>
+                <MudNavLink Href="/CTRFinancialLiteracyReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">FINANCIAL LITERACY</MudNavLink>
+                <MudNavLink Href="/JourneysPlusReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">JOURNEY'S PLUS</MudNavLink>
+                <MudNavLink Href="/VSLAMethodologyReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">VSLA METHODOLOGY SESSION GUIDE</MudNavLink>
+                <MudNavLink Href="/SelectionPlanningReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">SELECTION, PLANNING AND MGT SESSION GUIDE</MudNavLink>
+                <MudNavLink Href="/VSLATrackingToolReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">VSLA TRACKING TOOL</MudNavLink>
+                <MudNavLink Href="/VSLAGroupShareOutReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">VSLA GROUP SHARE-OUT TOOL</MudNavLink>
+            </MudNavGroup>
+            @if (SuperAdministrator == true || Administrator == true)
+            {
+                <MudNavGroup Title="DOWNLOAD TEMPLATES" Icon="fa fa-download" Expanded="false">
+                    <MudNavLink Href="/ExcelDownload/APIUploadSheet.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">IP GRANULAR DATA DOWNLOAD TEMPLATE</MudNavLink>
+                    <MudNavLink Href="/ExcelDownload/ViralLoadTrackerTool.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">VIRALLOAD TRACKER TOOL TEMPLATE</MudNavLink>
+                    <MudNavLink Href="/ExcelDownload/EIDTool.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">EID TEMPLATE</MudNavLink>
+                    <MudNavLink Href="/ExcelDownload/ECDTool.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">ECD TEMPLATE</MudNavLink>
+                    <MudNavLink Href="/ExcelDownload/Home-Visit.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">HOME VISIT TOOL TEMPLATE</MudNavLink>
+                    <MudNavLink Href="/ExcelDownload/JourneysPlus.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">JOURNEYS PLUS TEMPLATE</MudNavLink>
+                    <MudNavLink Href="/ExcelDownload/ReferralForm.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">REFERRAL FORM TEMPLATE</MudNavLink>
+                    <MudNavLink Href="/ExcelDownload/GRoupCompositionUpload.xlsx" Icon="fa fa-download" Match="NavLinkMatch.Prefix">GROUP COMPOSITION TEMPLATE</MudNavLink>
+                </MudNavGroup>
+                <MudNavGroup Title="EXCEL UPLOAD" Icon="fa fa-cloud-upload" Expanded="false">
+                    <MudNavLink Href="/APIUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">IP GRANULAR DATA</MudNavLink>
+                    <MudNavLink Href="/GroupCompositionUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">GROUP COMPOSITION</MudNavLink>
+                    <MudNavLink Href="/HomeVisitUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">HOME VISIT</MudNavLink>
+                    <MudNavLink Href="/HIVTBTrackingFormUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">TRACKING FORM FOR MONITORING HIV, TB CARE AND EID UPLOAD</MudNavLink>
+                    <MudNavLink Href="/ReferralUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">REFERRAL FORM</MudNavLink>
+
+                    <MudNavLink Href="/SinovuyoUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">SINOVUYO-PARENTING REGISTERSA</MudNavLink>
+                    <MudNavLink Href="/ECDUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">ECD REGISTERS</MudNavLink>
+                    <MudNavLink Href="/VSLATrackerUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">VSLA TRACKING TOOL UPLOAD</MudNavLink>
+                    <MudNavLink Href="/JourneysPlusDataUploadPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">JOURNEYS PLUS UPLOAD</MudNavLink>
+                </MudNavGroup>
+                <MudNavGroup Title="UTILITIES" Icon="fa fa-cogs" Expanded="false">
+                    <MudNavLink Href="/PrimaryDataPage" Icon="fa fa-cog" Match="NavLinkMatch.Prefix">PRIMARY DATA</MudNavLink>
+                    <MudNavGroup Title="MANAGE USERS" Icon="fa fa-users" Expanded="false">
+                        <MudNavLink Href="/Account/RegisterUserPage" Icon="fa fa-user-plus" Match="NavLinkMatch.Prefix">REGISTER SYSTEM USER</MudNavLink>
+                        <MudNavLink Href="/Account/ChangeUserPasswordPage" Icon="fa fa-key" Match="NavLinkMatch.Prefix">MANAGE USER PASSWORDS</MudNavLink>
+                        <MudNavLink Href="/Account/UserManagementPage" Icon="fa fa-list" Match="NavLinkMatch.Prefix">ACCOUNT MANAGEMENT</MudNavLink>
+                    </MudNavGroup>
+                </MudNavGroup>
+            }
+            
+        }
+        else if (Sheleads == true || Globalfund == true || Yaw == true)
+        {
+            <MudNavLink Href="/StakeHoldersDashboardPage" Icon="fa fa-pie-chart">MUCOBADI DASHBOARD</MudNavLink>
+            <MudNavLink Href="/ProjectsTargetsPage" Icon="fa fa-bullseye">PROJECT TARGET</MudNavLink>
+            <MudNavLink Href="/StakeholderDataCapture" Icon="fa fa-list">PROJECT DATA ENTRY</MudNavLink>
+            <MudNavGroup Title="REPORTS" Icon="fa fa-file-excel-o" Expanded="false">
+                <MudNavLink Href="/ProjectIndicatorReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">PROJECT INDICATOR</MudNavLink>
+                <MudNavLink Href="/ProjectTargetsReportPage" Icon="fa fa-file-excel-o" Match="NavLinkMatch.Prefix">TARGET REPORT</MudNavLink>
+            </MudNavGroup>
+        }
+
+        <MudNavGroup Title="@Credentials.AccountHolderName" Expanded="false" Icon="fa fa-user">
+            <MudText Style="font-family: cursive; width: 100%; text-align: center; color: rgb(89, 24, 35,0.6); font-weight: bolder;">@Credentials?.RoleName</MudText>
+            <MudNavLink Href="/Account/ChangePasswordPage" Match="NavLinkMatch.Prefix" Icon="fa fa-key">Change Password</MudNavLink>
+            <MudButton Color="MudBlazor.Color.Primary" OnClick="@OnLogoutClick" IconClass="fa fa-sign-out" Style="width:95%; margin:5px;background-color: rgb(89, 24, 35);color: ghostwhite;">Log Out</MudButton>
+        </MudNavGroup>
+
+    </MudNavMenu>
+}
+else
+{
+        <MudButton Color="MudBlazor.Color.Primary" OnClick="@OnLogoutClick" IconClass="fa fa-sign-out" Style="width:95%; margin:5px;background-color: rgb(89, 24, 35);color: ghostwhite;">Log Out</MudButton>
+}
+@code {
+    [Parameter]
+    public ViewUserManagement? Credentials { get; set; }
+
+    bool SuperAdministrator { get; set; } = false;
+    bool Administrator { get; set; } = false;
+    bool MonitoringandEvaluationOfficer { get; set; } = false;
+    bool CaseCareWorker { get; set; } = false;
+    bool Cdo { get; set; } = false;
+    bool FieldAssistant { get; set; } = false;
+    bool BusinessIncubationAssistant { get; set; } = false;
+    bool Cfpu { get; set; } = false;
+    bool Counsellor { get; set; } = false;
+    bool ArtIncharge { get; set; } = false;
+    bool Supervisor { get; set; } = false;
+    bool DataEntrant { get; set; } = false;
+    bool MELDirector { get; set; } = false;
+    bool MELManager { get; set; } = false;
+    bool ClusterManager { get; set; } = false;
+    bool ProgramSpecialist { get; set; } = false;
+    bool DatabaseOfficer { get; set; } = false;
+    bool Sheleads { get; set; } = false;
+    bool Globalfund { get; set; } = false;
+    bool Yaw { get; set; } = false;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Credentials != null && !string.IsNullOrEmpty(Credentials.RoleName))
+        {
+            if (Credentials.RoleName.Contains("Super Administrator"))
+            {
+                SuperAdministrator = true;
+            }
+            else if (Credentials.RoleName.Contains("Administrator"))
+            {
+                Administrator = true;
+            }
+            else if (Credentials.RoleName.Contains("Monitoring & Evaluation Officer"))
+            {
+                MonitoringandEvaluationOfficer = true;
+            }
+            else if (Credentials.RoleName.Contains("Case Care Worker"))
+            {
+                CaseCareWorker = true;
+            }
+            else if (Credentials.RoleName.Contains("Cdo"))
+            {
+                Cdo = true;
+            }
+            else if (Credentials.RoleName.Contains("Field Assistant"))
+            {
+                FieldAssistant = true;
+            }
+            else if (Credentials.RoleName.Contains("Business Incubation Assistant"))
+            {
+                BusinessIncubationAssistant = true;
+            }
+            else if (Credentials.RoleName.Contains("Cfpu"))
+            {
+                Cfpu = true;
+            }
+            else if (Credentials.RoleName.Contains("Counsellor"))
+            {
+                Counsellor = true;
+            }
+            else if (Credentials.RoleName.Contains("Art Incharge"))
+            {
+                ArtIncharge = true;
+            }
+            else if (Credentials.RoleName.Contains("Supervisor"))
+            {
+                Supervisor = true;
+            }
+            else if (Credentials.RoleName.Contains("DataEntrant"))
+            {
+                DataEntrant = true;
+            }
+            else if (Credentials.RoleName.Contains("MEL Director"))
+            {
+                MELDirector = true;
+            }
+            else if (Credentials.RoleName.Contains("MEL Manager"))
+            {
+                MELManager = true;
+            }
+            else if (Credentials.RoleName.Contains("Cluster Manager"))
+            {
+                ClusterManager = true;
+            }
+            else if (Credentials.RoleName.Contains("Program Specialist"))
+            {
+                ProgramSpecialist = true;
+            }
+            else if (Credentials.RoleName.Contains("Database Officer"))
+            {
+                DatabaseOfficer = true;
+            }
+            else if (Credentials.ServiceProviderId == 2)
+            {
+                Sheleads = true;
+            }
+            else if (Credentials.ServiceProviderId == 3)
+            {
+                Globalfund = true;
+            }
+            else if (Credentials.ServiceProviderId == 4)
+            {
+                Yaw = true;
+            }
+        }
+
+    }
+
+    private async Task OnLogoutClick()
+    {
+        try
+        {
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}
+

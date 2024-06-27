@@ -1,0 +1,186 @@
+﻿
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+<marquee direction="up" width="100%" height="450vh" scrollamount="2" ONMOUSEOVER="this.stop()" ONMOUSEOUT="this.start()">
+    <div class="row">
+        <div class="control-section card-control-section tile_layout">
+            <div class="e-card-layout">
+                @if (this.CardDatas.Count == 0)
+                {
+                    <div class="e-error">
+                        <div class="e-error-content">No results found. Please try a different search.</div>
+                    </div>
+                }
+                else
+                {
+                    if (CardDatas != null && CardDatas.Count > 0)
+                    {
+                        @foreach (CardDataModel card in CardDatas)
+                        {
+                            <div class="col-md-12 col-sm-12">
+                                <div id="card_sample_1" class="card_sample">
+                                    <SfCard>
+                                        <CardImage Image="@card.ImageUrl" />
+                                        <CardHeader Title="@card.Title" />
+                                        <CardContent Content="@card.Content" />
+                                        <CardFooter>
+                                            <CardFooterContent>
+                                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateToUrlAsync(@card.NavUrl))">Read More</SfButton>
+                                            </CardFooterContent>
+                                        </CardFooter>
+                                    </SfCard>
+                                </div>
+                            </div>
+                        }
+                    }
+                  
+                }
+            </div>
+        </div>
+    </div>
+</marquee>
+
+<style>
+    .property-panel-section .property-panel-content td {
+        padding: 0 0 15px 0;
+    }
+
+    .tile_layout.card-control-section .e-error {
+        height: 100px;
+        width: 100%;
+    }
+
+        .tile_layout.card-control-section .e-error .e-error-content {
+            color: red;
+            line-height: 100px;
+            text-align: center;
+        }
+
+    .tile_layout.card-control-section .e-card .e-card-image {
+        height: 180px;
+        width: inherit;
+    }
+
+    .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-header-title {
+        font-size: 20px;
+        font-family: Helvetica, 'Segoe UI';
+        font-weight: bold;
+    }
+
+    .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-sub-title {
+        padding-top: 5px;
+    }
+
+    .tile_layout.card-control-section .e-card .e-card-content {
+        padding-top: 0px;
+        height: 110px;
+    }
+
+    #source_link {
+        float: right;
+        margin-right: 10px;
+    }
+</style>
+@code {
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public IJSRuntime JsRuntime { get; set; }
+    public string SearchValue { get; set; }
+    public string SortingValue { get; set; }
+    public string[] FilteringValue { get; set; }
+    protected override void OnInitialized()
+    {
+        _cardDatas = this.GetCardDatas();
+        base.OnInitialized();
+    }
+    public class CardDataModel
+    {
+        public string ImageUrl { get; set; }
+        public string Title { get; set; }
+        public string SubTitle { get; set; }
+        public string Content { get; set; }
+        public string NavUrl { get; set; }
+        public string Tag { get; set; }
+    }
+    public List<CardDataModel> GetCardDatas()
+    {
+        List<CardDataModel> CardData = new List<CardDataModel>();
+        CardData.Add(new CardDataModel { ImageUrl = "https://mucobadi.org/wp-content/uploads/2022/06/timmukooza_A_17-year-old_African_teenager_standing_on_a_weather_a521e15f-8254-4901-96f6-4670178fc1d7.png", Title = "Health", SubTitle = "Nick Harrison", Content = "One key focus of MUCOBADI’s work is HIV prevention and treatment. We provide HIV and violence prevention education to of HIV-negative children, with the goal of promoting positive behavior outcomes.", NavUrl = "https://mucobadi.org/works/health-programs/", Tag = "Server-side" });
+        CardData.Add(new CardDataModel { ImageUrl = "https://mucobadi.org/wp-content/uploads/2023/07/nutrition-1110x550.jpg", Title = "Livelihoods", SubTitle = "Emanuele DelBono", Content = "Over the years, MUCOBADI has worked to promote household economic stability for several households in the communities we serve.", NavUrl = "https://mucobadi.org/works/livelihoods/", Tag = "Client-side" });
+        CardData.Add(new CardDataModel { ImageUrl = "https://mucobadi.org/wp-content/uploads/2023/07/1500x500-1110x500.jpeg", Title = "Rights & Accountability", SubTitle = "Dmitri Nesteruk", Content = "In Uganda, where socio-economic challenges persist, organizations such as MUCOBADI play a pivotal role in promoting human rights and fostering accountability within communities.", NavUrl = "https://mucobadi.org/works/rights-and-accountability/", Tag = "Client-side" });
+        CardData.Add(new CardDataModel { ImageUrl = "https://mucobadi.org/wp-content/uploads/2023/07/DSC_2158-1536x1024.jpg", Title = "WASH", SubTitle = "Dmitri Nesteruk", Content = "In 2015, 2.4 billion lacked proper sanitation, and 663 million used unsafe drinking water. This harms health, especially children, and hinders development..", NavUrl = "https://www.syncfusion.com/ebooks/reactjs_succinctly", Tag = "Client-side" });
+        return CardData;
+    }
+    private List<CardDataModel> _cardDatas;
+    public List<CardDataModel> CardDatas
+    {
+        get { return _cardDatas; }
+        set { _cardDatas = value; }
+    }
+    public List<string> SortingType = new List<string>() { "Ascending", "Descending" };
+    public List<string> FilteringType = new List<string>() { "Client-side", "Server-side", "Front-end" };
+    public async Task NavigateToUrlAsync(string url)
+    {
+        await JsRuntime.InvokeAsync<object>("open", url, "_blank");
+    }
+    public List<CardDataModel> GetCardDatas(string[] values)
+    {
+        var cardDatas = GetCardDatas();
+        if (values == null)
+        {
+            return this.GetSortedCardDatas(cardDatas);
+        }
+        var filterCards = new List<CardDataModel>();
+        foreach (string value in values)
+        {
+            var cards = cardDatas.Where(e => e.Tag == value);
+            foreach (var card in cards)
+            {
+                filterCards.Add(card);
+            }
+        }
+        return this.GetSortedCardDatas(filterCards);
+    }
+    public List<CardDataModel> GetSortedCardDatas(List<CardDataModel> sortingCards)
+    {
+        if (this.SortingValue != null)
+        {
+            sortingCards.Sort((x, y) => x.Title.CompareTo(y.Title));
+            if (this.SortingValue == "Descending")
+            {
+                sortingCards.Reverse();
+            }
+        }
+        return sortingCards;
+    }
+    public void OnSearch(ChangedEventArgs args)
+    {
+        if (args.Value != null)
+        {
+            this.CardDatas = this.CardDatas.FindAll(e => (e.Title.Contains(args.Value) || e.SubTitle.Contains(args.Value) || e.Content.Contains(args.Value) || e.Title.ToLower().Contains(args.Value) || e.SubTitle.ToLower().Contains(args.Value) || e.Content.ToLower().Contains(args.Value)));
+        }
+        else
+        {
+            this.CardDatas = this.GetCardDatas(this.FilteringValue);
+        }
+    }
+    public void OnSorting(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, string> args)
+    {
+        this.CardDatas = this.GetSortedCardDatas(this.CardDatas);
+    }
+    public void OnFiltering(MultiSelectChangeEventArgs<string[]> args)
+    {
+        this.CardDatas = this.GetCardDatas(args.Value);
+    }
+    public void OnReset()
+    {
+        this.SearchValue = null;
+        this.SortingValue = null;
+        this.FilteringValue = null;
+        this.CardDatas = this.GetCardDatas();
+    }
+}
+
+

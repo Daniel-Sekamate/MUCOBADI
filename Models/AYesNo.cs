@@ -110,6 +110,8 @@ namespace MUCOBADI.Models
             HivTbTrackingFormExposedInfantsSupportedToEnrollAndAdhereToPmtctNavigation = new HashSet<HivTbTrackingFormExposedInfants>();
             HivTbTrackingFormIsClientEligibleForViralloadNavigation = new HashSet<HivTbTrackingForm>();
             HivTbTrackingFormOnArtNavigation = new HashSet<HivTbTrackingForm>();
+            HivTbTrackingFormOptimizedYesNoNavigation = new HashSet<HivTbTrackingForm>();
+            HivTbTrackingFormSupportedToDiscloseHivStatusToFamilyYesNo = new HashSet<HivTbTrackingForm>();
             HivTbTrackingFormViralloadResultsReceivedNavigation = new HashSet<HivTbTrackingForm>();
             HivTbTrackingFormViralloadTestDoneNavigation = new HashSet<HivTbTrackingForm>();
             HouseHoldMembersCurrentlyonArtNavigation = new HashSet<HouseHoldMembers>();
@@ -131,6 +133,10 @@ namespace MUCOBADI.Models
             HvatIsSavingsGroupMemberNavigation = new HashSet<Hvat>();
             HvatLackofFoodNavigation = new HashSet<Hvat>();
             HvatSameAdultPrimaryCareGiverNavigation = new HashSet<Hvat>();
+            InterventionAttendanceFormDetail = new HashSet<InterventionAttendanceFormDetail>();
+            IsvatcurrentBusinessOpportunity = new HashSet<IsvatcurrentBusinessOpportunity>();
+            IsvatincomeEarner = new HashSet<IsvatincomeEarner>();
+            IsvatincomeOwnership = new HashSet<IsvatincomeOwnership>();
             MonthlyCaseTrackingRegisterDetailPendingNavigation = new HashSet<MonthlyCaseTrackingRegisterDetail>();
             MonthlyCaseTrackingRegisterDetailReferredNavigation = new HashSet<MonthlyCaseTrackingRegisterDetail>();
             MonthlyCaseTrackingRegisterDetailResolvedNavigation = new HashSet<MonthlyCaseTrackingRegisterDetail>();
@@ -141,6 +147,10 @@ namespace MUCOBADI.Models
             SinoParentingDirectMemberDetailTeenAttendedNavigation = new HashSet<SinoParentingDirectMemberDetail>();
             SinoParentingIndirectMemberDetailParentAttendedNavigation = new HashSet<SinoParentingIndirectMemberDetail>();
             SinoParentingIndirectMemberDetailTeenAttendedNavigation = new HashSet<SinoParentingIndirectMemberDetail>();
+            SmuAssessmentGuideConsentObtainedYesNoNavigation = new HashSet<SmuAssessmentGuide>();
+            SmuAssessmentGuideExperiencedGenderBasedViolenceNavigation = new HashSet<SmuAssessmentGuide>();
+            SmuAssessmentGuideExperiencedThoughtsOffDeadHurtingNavigation = new HashSet<SmuAssessmentGuide>();
+            SmuAssessmentGuideStressfulEvent = new HashSet<SmuAssessmentGuide>();
             VslaTrackingToolLinkageToExternalCreditNavigation = new HashSet<VslaTrackingTool>();
             VslaTrackingToolLinkageToExternalSavingNavigation = new HashSet<VslaTrackingTool>();
         }
@@ -249,6 +259,8 @@ namespace MUCOBADI.Models
         public virtual ICollection<HivTbTrackingFormExposedInfants> HivTbTrackingFormExposedInfantsSupportedToEnrollAndAdhereToPmtctNavigation { get; set; }
         public virtual ICollection<HivTbTrackingForm> HivTbTrackingFormIsClientEligibleForViralloadNavigation { get; set; }
         public virtual ICollection<HivTbTrackingForm> HivTbTrackingFormOnArtNavigation { get; set; }
+        public virtual ICollection<HivTbTrackingForm> HivTbTrackingFormOptimizedYesNoNavigation { get; set; }
+        public virtual ICollection<HivTbTrackingForm> HivTbTrackingFormSupportedToDiscloseHivStatusToFamilyYesNo { get; set; }
         public virtual ICollection<HivTbTrackingForm> HivTbTrackingFormViralloadResultsReceivedNavigation { get; set; }
         public virtual ICollection<HivTbTrackingForm> HivTbTrackingFormViralloadTestDoneNavigation { get; set; }
         public virtual ICollection<HouseHoldMembers> HouseHoldMembersCurrentlyonArtNavigation { get; set; }
@@ -270,6 +282,10 @@ namespace MUCOBADI.Models
         public virtual ICollection<Hvat> HvatIsSavingsGroupMemberNavigation { get; set; }
         public virtual ICollection<Hvat> HvatLackofFoodNavigation { get; set; }
         public virtual ICollection<Hvat> HvatSameAdultPrimaryCareGiverNavigation { get; set; }
+        public virtual ICollection<InterventionAttendanceFormDetail> InterventionAttendanceFormDetail { get; set; }
+        public virtual ICollection<IsvatcurrentBusinessOpportunity> IsvatcurrentBusinessOpportunity { get; set; }
+        public virtual ICollection<IsvatincomeEarner> IsvatincomeEarner { get; set; }
+        public virtual ICollection<IsvatincomeOwnership> IsvatincomeOwnership { get; set; }
         public virtual ICollection<MonthlyCaseTrackingRegisterDetail> MonthlyCaseTrackingRegisterDetailPendingNavigation { get; set; }
         public virtual ICollection<MonthlyCaseTrackingRegisterDetail> MonthlyCaseTrackingRegisterDetailReferredNavigation { get; set; }
         public virtual ICollection<MonthlyCaseTrackingRegisterDetail> MonthlyCaseTrackingRegisterDetailResolvedNavigation { get; set; }
@@ -280,6 +296,10 @@ namespace MUCOBADI.Models
         public virtual ICollection<SinoParentingDirectMemberDetail> SinoParentingDirectMemberDetailTeenAttendedNavigation { get; set; }
         public virtual ICollection<SinoParentingIndirectMemberDetail> SinoParentingIndirectMemberDetailParentAttendedNavigation { get; set; }
         public virtual ICollection<SinoParentingIndirectMemberDetail> SinoParentingIndirectMemberDetailTeenAttendedNavigation { get; set; }
+        public virtual ICollection<SmuAssessmentGuide> SmuAssessmentGuideConsentObtainedYesNoNavigation { get; set; }
+        public virtual ICollection<SmuAssessmentGuide> SmuAssessmentGuideExperiencedGenderBasedViolenceNavigation { get; set; }
+        public virtual ICollection<SmuAssessmentGuide> SmuAssessmentGuideExperiencedThoughtsOffDeadHurtingNavigation { get; set; }
+        public virtual ICollection<SmuAssessmentGuide> SmuAssessmentGuideStressfulEvent { get; set; }
         public virtual ICollection<VslaTrackingTool> VslaTrackingToolLinkageToExternalCreditNavigation { get; set; }
         public virtual ICollection<VslaTrackingTool> VslaTrackingToolLinkageToExternalSavingNavigation { get; set; }
     }

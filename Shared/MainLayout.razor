@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @inject IBootstrapCss BootstrapCss;
-@*@using MUCOBADI.Data;
-    @inject UserManagement userManagement;*@
+@using MUCOBADI.Data;
+@using Microsoft.EntityFrameworkCore
+@inject MUCOBADIContext db;
+@inject UserManagement userManagement;
 
 <style>
     .blazored-toast-container {
@@ -11,9 +13,40 @@
     .e-toast-container {
         z-index: 4000;
     }
+
+    .mud-nav-link .mud-nav-link-text {
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+    .mud-nav-group > .mud-nav-link > .mud-nav-link-text {
+        font-weight: 700;
+    }
+
+    .mud-appbar {
+        color: #ffc107;
+        background-color: black;
+        font-size: 0.7rem;
+    }
+
+    .mud-icon-size-medium {
+        font-size: 0.7rem;
+        margin: auto;
+    }
+
+    /* .mud-overlay.mud-overlay-absolute {
+        z-index: 20000;
+        background-color: rgb(0, 0, 0, 0.8);
+    } */
+
+    .mud-overlay .mud-overlay-content {
+        width: 96%;
+        margin: auto;
+    }
 </style>
 
-<BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.TopRight"
+@* <BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.TopRight"
                 Timeout="10"
                 IconType="Blazored.Toast.IconType.FontAwesome"
                 SuccessClass="success-toast-override"
@@ -58,6 +91,70 @@
         if (isServerSide && firstRun)
         {
             await BootstrapCss.SetBootstrapCss("4.3.1");
+        }
+    }
+} *@
+
+
+<AuthorizeView>
+    <Authorized>
+        <MudLayout>
+            <MudAppBar>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="MudBlazor.Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                MUCOBADI
+            </MudAppBar>
+            <MudDrawer @bind-Open="@_drawerOpen">
+                <MyNavMenu Credentials="@Credentials" />
+            </MudDrawer>
+            <MudMainContent Style="Padding:10px; padding-top:70px;">
+                <BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.TopRight"
+                                Timeout="10"
+                                IconType="Blazored.Toast.IconType.FontAwesome"
+                                SuccessClass="success-toast-override"
+                                SuccessIcon="fa fa-check"
+                                ErrorIcon="fa fa-times"
+                                InfoIcon="fa fa-info"
+                                WarningIcon="fa fa-warning" />
+                @Body
+            </MudMainContent>
+        </MudLayout>
+    </Authorized>
+    <NotAuthorized>
+        <BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.TopRight"
+                        Timeout="10"
+                        IconType="Blazored.Toast.IconType.FontAwesome"
+                        SuccessClass="success-toast-override"
+                        SuccessIcon="fa fa-check"
+                        ErrorIcon="fa fa-times"
+                        InfoIcon="fa fa-info"
+                        WarningIcon="fa fa-warning" />
+        @Body
+    </NotAuthorized>
+</AuthorizeView>
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+@code {
+    ViewUserManagement? Credentials { get; set; }
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await base.OnInitializedAsync();
+            var username = userManagement.GetUserName();
+            Credentials = await db.ViewUserManagement.FirstOrDefaultAsync(o => o.UserName == username);
+        }
+        catch (Exception ex)
+        {
+
         }
     }
 }

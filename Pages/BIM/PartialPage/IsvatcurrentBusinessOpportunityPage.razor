@@ -1,0 +1,169 @@
+﻿@* <h3>IsvatcurrentBusinessOpportunityPage</h3> *@
+@using MUCOBADI.Models
+@inject IToastService toastService;
+
+@if (DataSource != null && DataSource.Count > 0)
+{
+    <SfGrid @ref=@HeaderGrid TValue="IsvatcurrentBusinessOpportunity" DataSource="@DataSource"
+            AllowFiltering=false AllowGrouping=false AllowPaging=false AllowTextWrap=true ShowColumnChooser=true
+            GridLines="GridLine.Both" AllowSelection="true" Toolbar="@(new string[] {"Edit","Update","Cancel","ColumnChooser" })"
+            EnableStickyHeader=true ClipMode="ClipMode.EllipsisWithTooltip" EnableAltRow=true>
+        <GridGroupSettings Columns="@Initial"></GridGroupSettings>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridEvents CellSaved="DetailedCellSavedHandler" CellSelected="DetailedCellSelectHandler" TValue="IsvatcurrentBusinessOpportunity"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field="@(nameof(IsvatcurrentBusinessOpportunity.IsvatcurrentBusinessOpportunityId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridForeignColumn Field="@(nameof(IsvatcurrentBusinessOpportunity.CurrenBusinessOpportunityId))" HeaderText="OPPORTUNITIES" Width="130" AllowEditing=false ForeignKeyField="@(nameof(ACurrenBusinessOpportunity.CurrenBusinessOpportunityId))" ForeignKeyValue="@(nameof(ACurrenBusinessOpportunity.CurrenBusinessOpportunityDesc))" ForeignDataSource="@CurrenBusinessOpportunityData"></GridForeignColumn>
+            <GridColumn Field=@nameof(IsvatcurrentBusinessOpportunity.OtherCurrenBusinessOpportunity) Visible="true" AllowFiltering="true" HeaderText="OTHER OPPORTUNITIES" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="140"></GridColumn>
+            <GridForeignColumn Field="@(nameof(IsvatcurrentBusinessOpportunity.YesNoId))" HeaderText="YES/NO/NA" Width="130" ForeignKeyField="@(nameof(AYesNo.YesNoId))" ForeignKeyValue="@(nameof(AYesNo.YesNoDescription))" ForeignDataSource="@YesNoData"></GridForeignColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+
+@code {
+    [Parameter]
+    public List<ACurrenBusinessOpportunity>? CurrenBusinessOpportunityData { get; set; }
+    [Parameter]
+    public List<AYesNo>? YesNoData { get; set; }
+    [Parameter]
+    public List<IsvatcurrentBusinessOpportunity>? IsvatcurrentBusinessOpportunityData { get; set; }
+    [Parameter]
+    public int IsvatheaderId { get; set; }
+    [Parameter]
+    public EventCallback<List<IsvatcurrentBusinessOpportunity>?> DetailToggle { get; set; }
+
+    public string[] Initial = (new string[] { "YesNoIdCategory", "YesNoIdClassification" });
+
+    List<IsvatcurrentBusinessOpportunity>? DataSource { get; set; }
+    int? PreviousIsvatheaderId { get; set; }
+    public SfGrid<IsvatcurrentBusinessOpportunity>? HeaderGrid;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (PreviousIsvatheaderId != IsvatheaderId)
+            {
+
+                if (IsvatcurrentBusinessOpportunityData != null && IsvatcurrentBusinessOpportunityData.Count > 0)
+                {
+                    if (CurrenBusinessOpportunityData != null && CurrenBusinessOpportunityData.Count > 0)
+                    {
+                        DataSource = new List<IsvatcurrentBusinessOpportunity>();
+                        int CountId = -1;
+                        foreach (var item in CurrenBusinessOpportunityData)
+                        {
+                            var exists = IsvatcurrentBusinessOpportunityData.FirstOrDefault(o => o.CurrenBusinessOpportunityId == item.CurrenBusinessOpportunityId);
+                            if (exists != null)
+                            {
+                                DataSource.Add(new IsvatcurrentBusinessOpportunity()
+                                    {
+                                        IsvatcurrentBusinessOpportunityId = exists.IsvatcurrentBusinessOpportunityId,
+                                        IsvatheaderId = exists.IsvatheaderId,
+                                        CurrenBusinessOpportunityId = item.CurrenBusinessOpportunityId,
+                                        OtherCurrenBusinessOpportunity = exists.OtherCurrenBusinessOpportunity,
+                                        YesNoId = exists.YesNoId,
+                                    });
+                            }
+                            else
+                            {
+                                DataSource.Add(new IsvatcurrentBusinessOpportunity()
+                                    {
+                                        IsvatcurrentBusinessOpportunityId = CountId,
+                                        IsvatheaderId = IsvatheaderId,
+                                        CurrenBusinessOpportunityId = item.CurrenBusinessOpportunityId,
+                                    });
+                            }
+                            CountId--;
+                        }
+                    }
+                }
+                else
+                {
+                    if (CurrenBusinessOpportunityData != null && CurrenBusinessOpportunityData.Count > 0)
+                    {
+                        DataSource = new List<IsvatcurrentBusinessOpportunity>();
+                        int CountId = -1;
+                        foreach (var item in CurrenBusinessOpportunityData)
+                        {
+                            DataSource.Add(new IsvatcurrentBusinessOpportunity()
+                                {
+                                    IsvatcurrentBusinessOpportunityId = CountId,
+                                    IsvatheaderId = IsvatheaderId,
+                                    CurrenBusinessOpportunityId = item.CurrenBusinessOpportunityId,
+                                });
+                            CountId--;
+                        }
+                    }
+                }
+                PreviousIsvatheaderId = IsvatheaderId;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            //  throw;
+        }
+        base.OnInitialized();
+    }
+
+    private async Task DetailedCellSavedHandler(CellSaveArgs<IsvatcurrentBusinessOpportunity> args)
+    {
+        try
+        {
+            if (HeaderGrid != null)
+            {
+                var index = await HeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.IsvatcurrentBusinessOpportunityId);
+                //await HeaderGrid.UpdateCellAsync(index, nameof(IsvatcurrentBusinessOpportunity.ComplaintId), ComplaintId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            if (HeaderGrid != null)
+            {
+                await HeaderGrid.EndEditAsync();
+            }
+            if (DataSource != null)
+            {
+                await DetailToggle.InvokeAsync(DataSource);
+            }
+        }
+    }
+    private async Task DetailedCellSelectHandler(CellSelectEventArgs<IsvatcurrentBusinessOpportunity> args)
+    {
+        if (HeaderGrid != null)
+        {
+            //get selected cell index
+            var CellIndexes = await HeaderGrid.GetSelectedRowCellIndexesAsync();
+
+            //get the row and cell index
+            var CurrentEditRowIndex = CellIndexes[0].Item1;
+            var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+            //get the available fields
+            var fields = await HeaderGrid.GetColumnFieldNamesAsync();
+            // edit the selected cell using the cell index and column name
+            await HeaderGrid.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+        }
+
+    }
+}
+
+
+
+
+
+

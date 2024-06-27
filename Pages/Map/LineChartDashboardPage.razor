@@ -1,0 +1,41 @@
+﻿@page "/line_chart"
+@using Syncfusion.Blazor.Charts
+  <div class="col-md-6">
+    <div class="control-section" style="text-align: center">
+        <SfChart Title="Historical Trends in Intra-EAC Trade Values Over time">
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"
+                               Title="Financial Years">
+                <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+            </ChartPrimaryXAxis>
+            <ChartPrimaryYAxis Minimum="10" Maximum="100" Interval="10" Title="Trade Values(USD)" LabelFormat="{value}M" RangePadding="ChartRangePadding.None">
+                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+                <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+            </ChartPrimaryYAxis>
+            <ChartSeriesCollection>
+                <ChartSeries DataSource="@MedalDetails" XName="X" YName="Y" PointColorMapping="Color" Type="ChartSeriesType.MultiColoredLine">
+                </ChartSeries>
+            </ChartSeriesCollection>
+        </SfChart>
+    </div>
+   </div>
+
+
+@code {
+    public class ChartData
+    {
+        public string X { get; set; }
+        public double Y { get; set; }
+        public string Color { get; set; }
+    }
+
+    public List<ChartData> MedalDetails = new List<ChartData>
+    {
+        new ChartData { X= "2018", Y= 39.4, Color="red" },
+        new ChartData { X= "2019", Y= 61.3, Color="green" },
+        new ChartData { X= "2020", Y= 20.4, Color="#ff0097" },
+        new ChartData { X= "2021", Y= 65.1, Color="crimson" },
+        new ChartData { X= "2022", Y= 15.8, Color="blue" },
+        new ChartData { X= "2023", Y= 29.2, Color="darkorange" },
+    };
+}

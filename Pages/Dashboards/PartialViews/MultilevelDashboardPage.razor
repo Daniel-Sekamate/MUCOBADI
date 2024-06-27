@@ -1,0 +1,52 @@
+﻿@*@page "/Multilevel"*@
+@using Syncfusion.Blazor.Charts
+@if (MedalDetails != null && MedalDetails.Count > 0)
+{
+<SfChart>
+    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+        <ChartMultiLevelLabels>
+            <ChartMultiLevelLabel>
+                <ChartCategories>
+                    <ChartCategory Start="-0.5" End="3.5" Text="MUCO.076" MaximumTextWidth="50"></ChartCategory>
+                    <ChartCategory Start="3.5" End="7.5" Text="MUO.077" MaximumTextWidth="50"></ChartCategory>
+                    <ChartCategory Start="7.5" End="11.5" Text="MUO.078" MaximumTextWidth="50"></ChartCategory>
+                </ChartCategories>
+                <ChartAxisMultiLevelLabelBorder Type="Syncfusion.Blazor.Charts.BorderType.Brace" Color="blue" Width=1></ChartAxisMultiLevelLabelBorder>
+            </ChartMultiLevelLabel>
+        </ChartMultiLevelLabels>
+    </ChartPrimaryXAxis>
+
+    <ChartSeriesCollection>
+        <ChartSeries DataSource="@MedalDetails" XName="X" YName="Y" Type="ChartSeriesType.Column">
+        </ChartSeries>
+    </ChartSeriesCollection>
+</SfChart>
+
+}
+@code {
+
+    public int start = 0, end = 45;
+
+    public class ChartData
+    {
+        public string X { get; set; }
+        public double Y { get; set; }
+    }
+
+    public List<ChartData> MedalDetails = new List<ChartData>
+    {
+        new ChartData { X= "ICARE", Y= 0 },
+        new ChartData { X= "SHE Leads", Y= 0 },
+        new ChartData { X= "Global Fund", Y= 0 },
+        new ChartData { X= "YAW", Y= 0 },
+              new ChartData { X= "ICARE", Y= 0 },
+        new ChartData { X= "SHE Leads", Y= 0 },
+        new ChartData { X= "Global Fund", Y= 0 },
+        new ChartData { X= "YAW", Y= 0 },
+               new ChartData { X= "ICARE", Y= 0 },
+        new ChartData { X= "SHE Leads", Y= 0 },
+        new ChartData { X= "Global Fund", Y= 0 },
+        new ChartData { X= "YAW", Y= 0 },
+
+    };
+}

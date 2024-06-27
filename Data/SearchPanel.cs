@@ -21,5 +21,12 @@ namespace MUCOBADI.Data
         public int? IsDueForViralload { get; set; }
 		public int?[] DashboardQuarterId { get; set; }
 		public int?[] DashboardYear { get; set; }
-	}
+        public int?[] IndicatorId { get; set; }
+        public int?[] ServiceProviderId { get; set; }
+        public string? ServiceProviderIdd { get; set; }
+        public int?[] FinancialYearId { get; set; }
+        public string Response { get; set; }
+    }
+
+
 }

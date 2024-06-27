@@ -1,0 +1,128 @@
+﻿@using MUCOBADI.Models
+@* <h3>InterventionAttendanceFormInstructorPage</h3> *@
+@inject IToastService toastService;
+
+@if (DataSource != null)
+{
+    <SfGrid @ref=@HeaderGrid TValue="InterventionAttendanceFormInstructor" DataSource="@DataSource"
+            AllowFiltering=false AllowGrouping=false AllowPaging=false AllowTextWrap=true ShowColumnChooser=true
+            GridLines="GridLine.Both" AllowSelection="true" Toolbar="@(new string[] {"Add","Edit","Update","Cancel","ColumnChooser" })"
+            EnableStickyHeader=true ClipMode="ClipMode.EllipsisWithTooltip" EnableAltRow=true>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridEvents CellSaved="DetailedCellSavedHandler" CellSelected="DetailedCellSelectHandler" OnBatchAdd=@onBatchAddEvent TValue="InterventionAttendanceFormInstructor"></GridEvents>
+        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field="@(nameof(InterventionAttendanceFormInstructor.InterventionAttendanceFormInstructorId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridColumn Field="@(nameof(InterventionAttendanceFormInstructor.InterventionAttendanceFormId))" HeaderText="InterventionAttendanceFormId" Width="130" AllowEditing=false Visible=false ShowInColumnChooser=false></GridColumn>
+            <GridColumn Field=@nameof(InterventionAttendanceFormInstructor.InstructorName) Visible="true" AllowFiltering="true" HeaderText="Instructor" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="140"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+@code {
+    [Parameter]
+    public List<InterventionAttendanceFormInstructor>? InterventionAttendanceFormInstructorData { get; set; }
+    [Parameter]
+    public int InterventionAttendanceFormId { get; set; }
+    [Parameter]
+    public EventCallback<List<InterventionAttendanceFormInstructor>?> DetailToggle { get; set; }
+
+    List<InterventionAttendanceFormInstructor>? DataSource { get; set; }
+    int? PreviousInterventionAttendanceFormId { get; set; }
+    public SfGrid<InterventionAttendanceFormInstructor>? HeaderGrid;
+
+    int InterventionAttendanceFormInstructorId = -1;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (PreviousInterventionAttendanceFormId != InterventionAttendanceFormId)
+            {
+                DataSource = new List<InterventionAttendanceFormInstructor>();
+
+                if (InterventionAttendanceFormInstructorData != null && InterventionAttendanceFormInstructorData.Count > 0)
+                {
+                    DataSource.AddRange(InterventionAttendanceFormInstructorData);
+                }
+                PreviousInterventionAttendanceFormId = InterventionAttendanceFormId;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            //  throw;
+        }
+        base.OnInitialized();
+    }
+
+    private async Task DetailedCellSavedHandler(CellSaveArgs<InterventionAttendanceFormInstructor> args)
+    {
+        try
+        {
+            if (HeaderGrid != null)
+            {
+                var index = await HeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.InterventionAttendanceFormInstructorId);
+                // if (args.RowData.InterventionAttendanceFormInstructorId == 0)
+                // {
+                //     await HeaderGrid.UpdateCellAsync(index, nameof(InterventionAttendanceFormInstructor.InterventionAttendanceFormInstructorId), InterventionAttendanceFormInstructorId);
+                //     InterventionAttendanceFormInstructorId--;
+                // }
+                //await HeaderGrid.UpdateCellAsync(index, nameof(InterventionAttendanceFormInstructor.ComplaintId), ComplaintId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            if (HeaderGrid != null)
+            {
+                await HeaderGrid.EndEditAsync();
+            }
+            if (DataSource != null)
+            {
+                await DetailToggle.InvokeAsync(DataSource);
+            }
+        }
+    }
+    private async Task DetailedCellSelectHandler(CellSelectEventArgs<InterventionAttendanceFormInstructor> args)
+    {
+        if (HeaderGrid != null)
+        {
+            //get selected cell index
+            var CellIndexes = await HeaderGrid.GetSelectedRowCellIndexesAsync();
+
+            //get the row and cell index
+            var CurrentEditRowIndex = CellIndexes[0].Item1;
+            var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+            //get the available fields
+            var fields = await HeaderGrid.GetColumnFieldNamesAsync();
+            // edit the selected cell using the cell index and column name
+            await HeaderGrid.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+        }
+
+    }
+    private void onBatchAddEvent(BeforeBatchAddArgs<InterventionAttendanceFormInstructor> args)
+    {
+        try
+        {
+            args.DefaultData.InterventionAttendanceFormInstructorId = InterventionAttendanceFormInstructorId;
+            InterventionAttendanceFormInstructorId--;
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+    }
+}
+

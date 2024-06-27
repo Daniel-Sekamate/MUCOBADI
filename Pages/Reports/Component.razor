@@ -1,0 +1,665 @@
+﻿@page "/irondoom"
+@using System.Collections.ObjectModel
+@using Blazored.Toast.Services;
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.IO;
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.Spinner;
+@using Syncfusion.XlsIO;
+@using Syncfusion.XlsIO.Implementation;
+@using Syncfusion.XlsIORenderer;
+@inject Microsoft.JSInterop.IJSRuntime JS;
+@inject MUCOBADIContext db;
+@inject SPToCoreContext spdb;
+@inject IToastService toastService;
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+</style>
+<ol class="breadcrumb" style="margin-top:5px;">
+    <li class="breadcrumb-item active" style="color: brown;"> <strong>USAID ICARE |</strong> PROJECT INDICATORS REPORT</li>
+</ol>
+
+<div class="form-row">
+    <div class="form-group col-md-12">
+        <EditForm Model="@InputModel" OnValidSubmit="@SearchRecords">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <p>Project</p>
+                    <SfMultiSelect @bind-Value="@InputModel.ServiceProviderId" Enabled="@isEnabled" TValue="int?[]" TItem="AServiceProvider" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ServiceProviderData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Project" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AServiceProvider.ServiceProviderId)" Text="@nameof(AServiceProvider.ServiceProviderDesc)"></MultiSelectFieldSettings>
+                        <MultiSelectEvents TValue="int?[]" TItem="AServiceProvider" ValueChange="OnProjectsChange"></MultiSelectEvents>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>District</p>
+
+                    <SfMultiSelect @bind-Value="@InputModel.DistrictId" TValue="int?[]" TItem="ViewDashboardTargetDatasource" Enabled="@DistrictDropdown" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ViewServiceProviderData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search District" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(ViewDashboardTargetDatasource.DistrictId)" Text="@nameof(ViewDashboardTargetDatasource.DistrictDescription)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+
+                </div>
+                <div class="form-group col-md-6">
+                    <p>Indicator</p>
+                    <SfMultiSelect @bind-Value="@InputModel.IndicatorId" TValue="int?[]" TItem="AIndicators" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@IndicatorData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Indicator" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AIndicators.IndicatorId)" Text="@nameof(AIndicators.IndicatorDescription)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>Year</p>
+                    <SfMultiSelect @bind-Value="@InputModel.DashboardYear" TValue="int?[]" TItem="AFinancialYear" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@FinancialYearData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Year" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AFinancialYear.FinancialYearId)" Text="@nameof(AFinancialYear.FinancialYearDesc)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>Quarter</p>
+                    <SfMultiSelect @bind-Value="@InputModel.DashboardQuarterId" TValue="int?[]" TItem="AQuarter" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@QuarterData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Quarter" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AQuarter.QuarterId)" Text="@nameof(AQuarter.QuarterName)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+
+
+                @if (Downloadreport == false)
+                {
+                    <div class="col col-md-3">
+                        <BSButton Color="Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Download Report</BSButton>
+                        <BSButton Color="Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                    </div>
+
+                }
+
+                @if (!string.IsNullOrEmpty(Response))
+                {
+                    <div class="form-group col-md-12">
+                        @if (Response.Contains("No Record"))
+                        {
+                            <p class="alert alert-danger" style="padding:10px;">@Response</p>
+                        }
+                        else
+                        {
+                            <p class="alert alert-success" style="padding:10px;">@Response</p>
+                        }
+                    </div>
+                }
+                <div class="form-group col-md-12">
+                    <SfSpinner @ref="DownloadSpinner" Label="Downloading Report Please Wait....." Size="50" Type="@SpinnerType.Bootstrap"></SfSpinner>
+                </div>
+
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+
+
+
+
+@code {
+    #region Toasters
+    public static string ToastContent { get; set; }
+    SfToast ToastObj;
+    SfToast DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    bool DistrictDropdown { get; set; } = false;
+    SfMultiSelect<int[], AServiceProvider>? ServiceProviderObj;
+    private SearchPanel InputModel = new();
+    List<ADistrict> DistrictsData { get; set; }
+    List<AFinancialYear> FinancialYearData { get; set; }
+    List<AIndicators> IndicatorData { get; set; }
+    List<AServiceProvider> ServiceProviderData { get; set; }
+    List<ViewDashboardTargetDatasource> ViewServiceProviderData { get; set; }
+    List<AQuarter> QuarterData { get; set; }
+    List<ViewUserManagement> UserManagementData { get; set; }
+    bool isEnabled { get; set; } = true;
+    string Response { get; set; }
+    SfSpinner DownloadingSpinner;
+    bool Downloadreport { get; set; } = false;
+    SfSpinner DownloadSpinner;
+    private void ClearSearchBtnClick()
+    {
+        InputModel = new();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        InputModel = new SearchPanel();
+        DistrictsData = db.ADistrict.AsNoTracking().ToList();
+        FinancialYearData = db.AFinancialYear.AsNoTracking().ToList();
+        IndicatorData = db.AIndicators.AsNoTracking().ToList();
+        ServiceProviderData = db.AServiceProvider
+        .Where(o => o.ServiceProviderId != 1)
+        .AsNoTracking()
+        .ToList();
+        ViewServiceProviderData = db.ViewDashboardTargetDatasource.Distinct()
+        .ToList().Where(o => o.ServiceProviderId != 1).ToList();
+        QuarterData = db.AQuarter.Where(o => o.QuarterId >= 1 && o.QuarterId <= 4).ToList();
+        UserManagementData = db.ViewUserManagement.ToList();
+        List<int?> mm = new List<int?>();
+
+        if (userManagement.GetServiceProviderId() == 1)
+        {
+
+        }
+        else
+        {
+            mm.Add(userManagement.GetServiceProviderId());
+            InputModel.ServiceProviderId = mm.ToArray();
+            isEnabled = false;
+            ViewServiceProviderData = db.ViewDashboardTargetDatasource.Distinct().Where(o => o.ServiceProviderId == userManagement.GetServiceProviderId()).ToList();
+            DistrictDropdown = true;
+        }
+
+    }
+    public void OnProjectsChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int?[]> args)
+    {
+        if (args.Value != null)
+        {
+            using (var db = new MUCOBADIContext())
+            {
+                ViewServiceProviderData = db.ViewDashboardTargetDatasource.Distinct().Where(o => args.Value.Any(a => a == o.ServiceProviderId) == true).ToList();
+                DistrictDropdown = true;
+            }
+        }
+    }
+    private async void SearchRecords()
+    {
+        try
+        {
+            if (DownloadSpinner != null)
+            {
+                await DownloadSpinner.ShowAsync();
+                string _Project = null;
+                if (InputModel.ServiceProviderId != null)
+                {
+                    _Project = string.Join(",", InputModel.ServiceProviderId);
+                }
+                string _Indicator = null;
+                if (InputModel.IndicatorId != null)
+                {
+                    _Indicator = string.Join(",", InputModel.IndicatorId);
+                }
+                string _District = null;
+                if (InputModel.DistrictId != null)
+                {
+                    _District = string.Join(",", InputModel.DistrictId);
+                }
+                string _FinancialYearId = null;
+                if (InputModel.FinancialYearId != null)
+                {
+                    _FinancialYearId = string.Join(",", InputModel.FinancialYearId);
+                }
+                string _QuarterId = null;
+                if (InputModel.QuarterId != null)
+                {
+                    _QuarterId = InputModel.QuarterId.ToString();
+                }
+                using (var db = new SPToCoreContext())
+                {
+                var data = await db.spProject_Indicator_ReportAsync(_Project, _District, _Indicator, _QuarterId, _FinancialYearId);
+
+                 if (data != null)
+                   {
+                        using (ExcelEngine excelEngine = new ExcelEngine())
+                        {
+                            IApplication application = excelEngine.Excel;
+                            application.DefaultVersion = ExcelVersion.Excel2013;
+                            IWorkbook workbook = application.Workbooks.Create(1);
+                            IWorksheet worksheet = workbook.Worksheets[0];
+                            worksheet.Name = "PROJECTS INDICATOR REPORT";
+                            #region Styles
+
+                            var TitleStyle = workbook.Styles.Add("TitleStyle");
+
+                            TitleStyle.BeginUpdate();
+                            TitleStyle.Color = Syncfusion.Drawing.Color.White; //Syncfusion.Drawing.Color.FromArgb(255, 0, 0);
+                            TitleStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            TitleStyle.Font.Bold = true;
+                            TitleStyle.Font.FontName = "Arial";
+                            TitleStyle.Font.Size = 20f;
+                            TitleStyle.Font.Color = ExcelKnownColors.Black;
+
+                            TitleStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                            TitleStyle.Borders.Color = ExcelKnownColors.White;
+
+                            TitleStyle.WrapText = true;
+
+                            TitleStyle.EndUpdate();
+
+                            var headerStyle = workbook.Styles.Add("headerStyle");
+
+                            headerStyle.BeginUpdate();
+                            headerStyle.Color = Syncfusion.Drawing.Color.Black; //Syncfusion.Drawing.Color.FromArgb(255, 0, 0);
+                            headerStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            headerStyle.Font.Bold = true;
+                            headerStyle.Font.FontName = "Arial";
+                            headerStyle.Font.Size = 8f;
+                            headerStyle.Font.Color = ExcelKnownColors.White;
+
+                            headerStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                            headerStyle.Borders.Color = ExcelKnownColors.White;
+                            headerStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                            headerStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                            headerStyle.WrapText = true;
+
+                            headerStyle.EndUpdate();
+
+                            var Style = workbook.Styles.Add("bodyStyle");
+
+                            Style.BeginUpdate();
+                            Style.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            Style.Font.Bold = false;
+                            Style.Font.FontName = "Arial";
+                            Style.Font.Size = 8f;
+                            Style.Font.Color = ExcelKnownColors.Black;
+                            Style.WrapText = true;
+                            Style.Borders.Color = ExcelKnownColors.Black;
+                            Style.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                            Style.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                            Style.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                            Style.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                            Style.EndUpdate();
+
+                            var CategoryStyle = workbook.Styles.Add("CategoryStyle");
+
+                            CategoryStyle.BeginUpdate();
+                            CategoryStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(0, 32, 96);
+                            CategoryStyle.Font.Bold = true;
+                            CategoryStyle.Font.FontName = "Arial";
+                            CategoryStyle.Font.Size = 14f;
+                            CategoryStyle.Font.Color = ExcelKnownColors.White;
+                            CategoryStyle.WrapText = true;
+                            CategoryStyle.Borders.Color = ExcelKnownColors.White;
+                            CategoryStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle.EndUpdate();
+
+
+                            var CategoryTotalStyle = workbook.Styles.Add("CategoryTotalStyle");
+                            CategoryTotalStyle.BeginUpdate();
+                            CategoryTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                            CategoryTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            CategoryTotalStyle.Color = Syncfusion.Drawing.Color.FromArgb(76, 98, 132);
+                            CategoryTotalStyle.Font.Bold = true;
+                            CategoryTotalStyle.Font.FontName = "Arial";
+                            CategoryTotalStyle.Font.Size = 8f;
+                            CategoryTotalStyle.Font.Color = ExcelKnownColors.White;
+                            CategoryTotalStyle.WrapText = true;
+                            CategoryTotalStyle.Borders.Color = ExcelKnownColors.White;
+                            CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                            CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                            CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                            CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                            CategoryTotalStyle.EndUpdate();
+
+                            var HHMembersStyle = workbook.Styles.Add("HHMembersStyle");
+                            HHMembersStyle.BeginUpdate();
+                            HHMembersStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                            HHMembersStyle.Color = Syncfusion.Drawing.Color.FromArgb(119, 140, 163); // rgb(119, 140, 163)CARROT ORANGE
+                            HHMembersStyle.Font.Bold = true;
+                            HHMembersStyle.Font.FontName = "Arial";
+                            HHMembersStyle.Font.Size = 10f;
+                            HHMembersStyle.Font.Color = ExcelKnownColors.White;
+                            HHMembersStyle.WrapText = true;
+                            HHMembersStyle.Borders.Color = ExcelKnownColors.White;
+                            HHMembersStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                            HHMembersStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                            HHMembersStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                            HHMembersStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                            HHMembersStyle.EndUpdate();
+
+                            var CategoryStyle_2 = workbook.Styles.Add("CategoryStyle_2");
+                            CategoryStyle_2.BeginUpdate();
+                            CategoryStyle_2.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                            CategoryStyle_2.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            CategoryStyle_2.Color = Syncfusion.Drawing.Color.FromArgb(61, 111, 0);
+                            CategoryStyle_2.Font.Bold = true;
+                            CategoryStyle_2.Font.FontName = "Arial";
+                            CategoryStyle_2.Font.Size = 8f;
+                            CategoryStyle_2.Font.Color = ExcelKnownColors.White;
+                            CategoryStyle_2.WrapText = true;
+                            CategoryStyle_2.Borders.Color = ExcelKnownColors.White;
+                            CategoryStyle_2.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle_2.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle_2.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle_2.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                            CategoryStyle_2.EndUpdate();
+                            #endregion
+
+                            int row = 1;
+                            worksheet.Range["A" + row].Text = "PROJECTS INDICATOR REPORT" + DateTime.Now.ToString("dd/MM/yyyy");
+                            worksheet.Range["A" + row + ":R" + row].CellStyle = TitleStyle;
+                            worksheet.Range["A" + row + ":R" + row].Merge();
+                            worksheet.Range["A" + row + ":R" + row].WrapText = true;
+                            worksheet.Range["A" + row + ":R" + row].RowHeight = 25;
+                            row += 2;
+
+                            worksheet.Range["E" + row].Text = "<1 Year";
+                            worksheet.Range["E" + row + ":F" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["E" + row + ":F" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                            worksheet.Range["E" + row + ":F" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["E" + row].RowHeight = 20;
+                            worksheet.Range["E" + row + ":F" + row].Merge();
+
+                            worksheet.Range["G" + row].Text = "1-4 Years";
+                            worksheet.Range["G" + row + ":H" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["G" + row + ":H" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            worksheet.Range["G" + row + ":H" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["G" + row].RowHeight = 20;
+                            worksheet.Range["G" + row + ":H" + row].Merge();
+
+                            worksheet.Range["I" + row].Text = "5-9 Years";
+                            worksheet.Range["I" + row + ":J" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["I" + row + ":J" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            worksheet.Range["I" + row + ":J" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["I" + row].RowHeight = 20;
+                            worksheet.Range["I" + row + ":J" + row].Merge();
+
+                            worksheet.Range["K" + row].Text = "10-14 Years";
+                            worksheet.Range["K" + row + ":L" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["K" + row + ":L" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            worksheet.Range["K" + row + ":L" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["K" + row].RowHeight = 20;
+                            worksheet.Range["K" + row + ":L" + row].Merge();
+
+                            worksheet.Range["M" + row].Text = "15-17 Years";
+                            worksheet.Range["M" + row + ":N" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["M" + row + ":N" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            worksheet.Range["M" + row + ":N" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["M" + row].RowHeight = 20;
+                            worksheet.Range["M" + row + ":N" + row].Merge();
+
+                            worksheet.Range["O" + row].Text = "18-24 Years";
+                            worksheet.Range["O" + row + ":P" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["O" + row + ":P" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            worksheet.Range["O" + row + ":P" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["O" + row].RowHeight = 20;
+                            worksheet.Range["O" + row + ":P" + row].Merge();
+
+                            worksheet.Range["Q" + row].Text = "25+ Years";
+                            worksheet.Range["Q" + row + ":R" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["Q" + row + ":R" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            worksheet.Range["Q" + row + ":R" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["Q" + row].RowHeight = 20;
+                            worksheet.Range["Q" + row + ":R" + row].Merge();
+
+                            worksheet.Range["S" + row].Text = "Total";
+                            worksheet.Range["S" + row + ":T" + row].CellStyle = CategoryTotalStyle;
+                            worksheet.Range["S" + row + ":T" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                            worksheet.Range["S" + row + ":T" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                            worksheet.Range["S" + row].RowHeight = 20;
+                            worksheet.Range["S" + row + ":T" + row].Merge();
+
+                            worksheet.Range["U" + row].Text = "Total";
+                            worksheet.Range["U" + row].RowHeight = 20;
+                            worksheet.Range["U" + row].ColumnWidth = 10;
+                            worksheet.Range["U" + row].CellStyle = CategoryTotalStyle;
+
+                            row++;
+
+                            worksheet.Range["A" + row].Text = "Indicator";
+                            worksheet.Range["A" + row].ColumnWidth = 30;
+
+                            worksheet.Range["B" + row].Text = "District";
+                            worksheet.Range["B" + row].ColumnWidth = 12;
+
+                            worksheet.Range["C" + row].Text = "Year";
+                            worksheet.Range["C" + row].ColumnWidth = 5;
+
+                            worksheet.Range["D" + row].Text = "Quarter";
+                            worksheet.Range["D" + row].ColumnWidth = 8;
+
+                            worksheet.Range["E" + row].Text = "Male";
+                            worksheet.Range["E" + row].ColumnWidth = 7;
+
+                            worksheet.Range["F" + row].Text = "Female";
+                            worksheet.Range["F" + row].ColumnWidth = 7;
+
+                            worksheet.Range["G" + row].Text = "Male";
+                            worksheet.Range["G" + row].ColumnWidth = 7;
+
+                            worksheet.Range["H" + row].Text = "Female";
+                            worksheet.Range["H" + row].ColumnWidth = 7;
+
+                            worksheet.Range["I" + row].Text = "Male";
+                            worksheet.Range["I" + row].ColumnWidth = 7;
+
+                            worksheet.Range["J" + row].Text = "Female";
+                            worksheet.Range["J" + row].ColumnWidth = 7;
+
+                            worksheet.Range["K" + row].Text = "Male";
+                            worksheet.Range["K" + row].ColumnWidth = 7;
+
+                            worksheet.Range["L" + row].Text = "Female";
+                            worksheet.Range["L" + row].ColumnWidth = 7;
+
+                            worksheet.Range["M" + row].Text = "Male";
+                            worksheet.Range["M" + row].ColumnWidth = 7;
+
+                            worksheet.Range["N" + row].Text = "Female";
+                            worksheet.Range["N" + row].ColumnWidth = 7;
+
+                            worksheet.Range["O" + row].Text = "Male";
+                            worksheet.Range["O" + row].ColumnWidth = 7;
+
+                            worksheet.Range["P" + row].Text = "Female";
+                            worksheet.Range["P" + row].ColumnWidth = 7;
+
+                            worksheet.Range["Q" + row].Text = "Male";
+                            worksheet.Range["Q" + row].ColumnWidth = 7;
+
+                            worksheet.Range["R" + row].Text = "Female";
+                            worksheet.Range["R" + row].ColumnWidth = 7;
+
+                            worksheet.Range["S" + row].Text = "Female";
+                            worksheet.Range["S" + row].ColumnWidth = 7;
+                            worksheet.Range["T" + row].Text = "Male";
+                            worksheet.Range["T" + row].ColumnWidth = 7;
+
+                            worksheet.Range["U" + row].Text = "Reached";
+                            worksheet.Range["U" + row].ColumnWidth = 10;
+          
+                            worksheet.Range["A" + row + ":U" + row].CellStyle = headerStyle;
+                            row++;
+                            var project = data.Select(o => new { o.Service_Provider_Id, o.Service_Provider_Desc }).ToList().Distinct().ToList();
+                            foreach (var a in project)
+                            {
+                                var projectdata = data.Where(o => o.Service_Provider_Id == a.Service_Provider_Id).ToList();
+                                if (projectdata.Count > 0)
+                                {
+                                    worksheet.Range["A" + row].Text = a.Service_Provider_Desc;
+                                    worksheet.Range["A" + row + ":U" + row].CellStyle = CategoryStyle;
+                                    worksheet.Range["A" + row + ":U" + row].Merge();
+                                    worksheet.Range["A" + row + ":U" + row].WrapText = true;
+                                    worksheet.Range["A" + row].RowHeight = 20;
+                                    row++;
+                                    var indicator = projectdata.Select(o => new { o.IndicatorCode, o.IndicatorDescription, o.IndicatorId }).ToList().Distinct().ToList();
+                                    foreach (var b in indicator)
+                                    {
+                                        var indicatorData = projectdata.Where(o => o.IndicatorId == b.IndicatorId).ToList();
+                                        if (indicatorData.Count > 0)
+                                        {
+                                            int objectivestartrow = row;
+                                            int objectendrow = row;
+                                            var district = indicatorData.Select(o => new { o.District_Description, o.DistrictId }).ToList().Distinct().ToList();
+                                            foreach (var d in district)
+                                            {
+                                                int indicatorStartrow = row;
+                                                int indicatorendrow = row;
+                                                var districtData = indicatorData.Where(o => o.DistrictId == d.DistrictId).ToList();
+                                                foreach (var n in districtData)
+                                                {
+                                                    worksheet.Range["A" + row].Text = b.IndicatorCode + " " + b.IndicatorDescription;
+                                                    worksheet.Range["B" + row].Text = n.District_Description;
+                                                    worksheet.Range["C" + row].Text = n.FinancialYearDesc;
+                                                    worksheet.Range["D" + row].Text = n.QuarterName;
+                                                    {
+                                                        worksheet.Range["E" + row].Number = Convert.ToDouble(n.Lessthan1YearMale);
+                                                        worksheet.Range["E" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.Lessthan1YearFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["F" + row].Number = Convert.ToDouble(n.Lessthan1YearFemale);
+                                                        worksheet.Range["F" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.OnetoFourYearsMale.HasValue)
+                                                    {
+                                                        worksheet.Range["G" + row].Number = Convert.ToDouble(n.OnetoFourYearsMale);
+                                                        worksheet.Range["G" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.OnetoFourYearsFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["H" + row].Number = Convert.ToDouble(n.OnetoFourYearsFemale);
+                                                        worksheet.Range["H" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.FivetoNineYearsMale.HasValue)
+                                                    {
+                                                        worksheet.Range["I" + row].Number = Convert.ToDouble(n.FivetoNineYearsMale);
+                                                        worksheet.Range["I" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.FivetoNineYearsFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["J" + row].Number = Convert.ToDouble(n.FivetoNineYearsFemale);
+                                                        worksheet.Range["J" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.TentoFourteenYearsMale.HasValue)
+                                                    {
+                                                        worksheet.Range["K" + row].Number = Convert.ToDouble(n.TentoFourteenYearsMale);
+                                                        worksheet.Range["K" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.TentoFourteenYearsFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["L" + row].Number = Convert.ToDouble(n.TentoFourteenYearsFemale);
+                                                        worksheet.Range["L" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.FifteentoSeventeenYearsMale.HasValue)
+                                                    {
+                                                        worksheet.Range["M" + row].Number = Convert.ToDouble(n.FifteentoSeventeenYearsMale);
+                                                        worksheet.Range["M" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.FifteentoSeventeenYearsFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["N" + row].Number = Convert.ToDouble(n.FifteentoSeventeenYearsFemale);
+                                                        worksheet.Range["N" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.EighteentoTwentyFourYearsMale.HasValue)
+                                                    {
+                                                        worksheet.Range["O" + row].Number = Convert.ToDouble(n.EighteentoTwentyFourYearsMale);
+                                                        worksheet.Range["O" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.EighteentoTwentyFourYearsFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["P" + row].Number = Convert.ToDouble(n.EighteentoTwentyFourYearsFemale);
+                                                        worksheet.Range["P" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+
+                                                    if (n.TwentyFiveAboveYearsMale.HasValue)
+                                                    {
+                                                        worksheet.Range["Q" + row].Number = Convert.ToDouble(n.TwentyFiveAboveYearsMale);
+                                                        worksheet.Range["Q" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+                                                    if (n.TwentyFiveAboveYearsFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["R" + row].Number = Convert.ToDouble(n.TwentyFiveAboveYearsFemale);
+                                                        worksheet.Range["R" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+                                                    if (n.TotalFemale.HasValue)
+                                                    {
+                                                        worksheet.Range["S" + row].Number = Convert.ToDouble(n.TotalFemale);
+                                                        worksheet.Range["S" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+                                                    if (n.TotalMale.HasValue)
+                                                    {
+                                                        worksheet.Range["T" + row].Number = Convert.ToDouble(n.TotalMale);
+                                                        worksheet.Range["T" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+                                                    if (n.OverAll.HasValue)
+                                                    {
+                                                        worksheet.Range["U" + row].Number = Convert.ToDouble(n.OverAll);
+                                                        worksheet.Range["U" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    }
+                                                    worksheet.Range["A" + row + ":U" + row].CellStyle = Style;
+                                                    worksheet.Range["A" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    worksheet.Range["B" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignTop;
+                                                    indicatorendrow = row;
+                                                    objectendrow = row;
+                                                    row++;
+                                                }
+                                                worksheet.Range["B" + indicatorStartrow + ":B" + indicatorendrow].Merge();
+                                            }
+                                            if ((objectivestartrow + 1) < objectendrow)
+                                            {
+                                                worksheet.Range["A" + objectivestartrow + ":A" + objectendrow].Merge();
+                                            }
+
+                                        }
+
+                                    }
+                                    MemoryStream ms = new MemoryStream();
+                                    // Save and close the document.
+                                    workbook.SaveAs(ms);
+                                    //Reset the memory stream position.
+                                    ms.Position = 0;
+                                    await JS.SaveAs("PROJECTS INDICATOR REPORT.xlsx", ms.ToArray());
+                                    ms.Dispose();
+                                    workbook.Close();
+                                    //excelEngine.Dispose();
+                                    Response = "Success:- The report was successfully downloaded.";
+                                }
+                            }
+                        }
+                   }
+                  else
+                   {
+                        InputModel.Response = "There were no records found that match the given search parameters";
+                   }
+                }
+            }
+            else
+            {
+              
+            }
+        }
+        catch (Exception ex)
+        {
+            await ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message.ToString(), CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        finally
+        {
+            await DownloadSpinner.HideAsync();
+            StateHasChanged();
+        }
+    }
+}
+

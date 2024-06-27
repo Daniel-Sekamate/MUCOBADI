@@ -1,0 +1,506 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools;
+<style>
+    .control-wrapper {
+        max-width: 250px;
+        margin: 0 auto;
+        padding: 20px 0px 0px;
+    }
+
+    .example-label {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+</style>
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+<div class="row">
+   <div class="col-md-12">
+       @if(SmuAttendanceHeaderDataSource != null)
+       {
+            <SfGrid @ref="SmuAttendanceHeaderGrid" DataSource="@SmuAttendanceHeaderDataSource" TValue="SmuAttendenceHeader" AllowFiltering=false AllowGrouping=false AllowPaging=true AllowTextWrap=true
+               GridLines="GridLine.Both" AllowSelection="true" Toolbar="ToolbarMenu" RowHeight="35" EnableStickyHeader="true">
+                <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridPageSettings PageSize="20"></GridPageSettings>
+                <GridEvents RowSelected="RowSelectedhandler" RowDeselected="DeselectedRowSelecthandler" OnActionBegin="SmuAttendanceActionBeginHandler" OnActionComplete=@SmuAttendanceActionComplete TValue="SmuAttendenceHeader"></GridEvents>
+                <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+                    <HeaderTemplate Context="hContext">
+                        @{
+                            var text = GetNewRecord((hContext as SmuAttendenceHeader));
+                            <div class="headerbandimg" />
+                            <span>@text</span>
+                        }
+                    </HeaderTemplate>
+                       <Template Context="testPlanContext">
+                        @{
+                            SmuAttendanceHeaderData = (testPlanContext as SmuAttendenceHeader);
+                            if (SmuAttendanceHeaderData != null)
+                            {
+                                <div style="margin:10px;">
+                                     <div class="row">
+                                        <div class="col-md-12" hidden>
+                                            <SfNumericTextBox ID="AttendenceFormHeaderId" @bind-Value="@(SmuAttendanceHeaderData.AttendenceFormHeaderId)" Enabled="false" Placeholder="TestingPlanId" Format="N0" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                        </div>
+                                         <div class="col-md-4">
+                                            <p>Group Name:</p>
+                                            <SfDropDownList @bind-Value="@(SmuAttendanceHeaderData.SmuGroupId)" Enabled="false" TItem="SmuGroup" TValue="int?" DataSource="@SmuGroupData"  FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuGroup.SmuGroupId)" Text="@nameof(SmuGroup.SmuGroupName)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuAttendanceHeaderData.SmuGroupId)" /></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Year:</p>
+                                            <SfDropDownList @bind-Value="@(SmuAttendanceHeaderData.AttendenceYearId)" Enabled="true" TItem="AFinancialYear" TValue="int?" DataSource="@FinancialYearData" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(AFinancialYear.FinancialYearId)" Text="@nameof(AFinancialYear.FinancialYearDesc)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuAttendanceHeaderData.AttendenceYearId)" /></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Cycle:</p>
+                                            <SfDropDownList @bind-Value="@(SmuAttendanceHeaderData.AttendenceCycleId)" Enabled="true" TItem="SmuCycle" TValue="int?" DataSource="@SmuCycleData" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuCycle.CycleId)" Text="@nameof(SmuCycle.CycleDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuAttendanceHeaderData.AttendenceCycleId)" /></p>
+                                        </div>
+                                        <div class="col-md-12">
+                                         <SfTab @ref="Tab" CssClass="BlazorTab" Height="auto" LoadOn="ContentLoad.Demand">
+                                         <TabItems>
+                                           <TabItem>
+                                               <ChildContent>
+                                               <TabHeader Text="Session One"></TabHeader>
+                                               </ChildContent>
+                                               <ContentTemplate>
+                                               <div class="col-md-12">
+                                                 <div class="col-lg-3 control-section">
+                                                    <div class="control-wrapper">
+                                                     <label class="example-label">Session One Date</label>
+                                                     <SfDatePicker @bind-Value=@SmuAttendanceHeaderData.SessionOneDate TValue="DateTime?" Placeholder="Choose a Date" FloatLabelType="FloatLabelType.Never" ShowClearButton="true"></SfDatePicker>
+                                                    </div>
+                                                 </div> 
+                                                 <div style="margin:10px;">
+                                                    <SMUAttendenceDetailsSessionOnePage @ref="@_sMUAttendanceDetailsSessionOnePage" SelectedAttendanceHeaderId="@SelectedAttendanceHeaderId"
+                                                     SmuAttendanceKeyData="@SmuAttendanceKeyData" SmuClientRegistrationFormData="@SmuClientRegistrationFormData"
+                                                     SmuKaguguScoreData="@SmuKaguguScoreData" SmuReasonForAbsenceData="@SmuReasonForAbsenceData"
+                                                     SmuAttendanceFormDetailCallBack="@SmuAttendanceFormDetailCallBack">
+                                                    </SMUAttendenceDetailsSessionOnePage>
+                                                 </div>   
+                                               </div>
+                                               </ContentTemplate>
+                                           </TabItem>
+                                           <TabItem>
+                                               <ChildContent>
+                                               <TabHeader Text="Session Two"></TabHeader>
+                                               </ChildContent>
+                                               <ContentTemplate>
+                                                <div class="col-md-12">
+                                                 <div class="col-lg-3 control-section">
+                                                    <div class="control-wrapper">
+                                                     <label class="example-label">Session Two Date</label>
+                                                     <SfDatePicker @bind-Value=@SmuAttendanceHeaderData.SessionTwoDate TValue="DateTime?" Placeholder="Choose a Date" FloatLabelType="FloatLabelType.Never" ShowClearButton="true"></SfDatePicker>
+                                                    </div>
+                                                 </div> 
+                                                 <div style="margin:10px;">
+                                                    <SMUAttendenceDetailsSessionTwoPage @ref="@_sMUAttendanceDetailsSessionTwoPage" SelectedAttendanceHeaderId="@SelectedAttendanceHeaderId"
+                                                     SmuAttendanceKeyData="@SmuAttendanceKeyData"
+                                                     SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuKaguguScoreData="@SmuKaguguScoreData" SmuReasonForAbsenceData="@SmuReasonForAbsenceData"
+                                                     SmuAttendanceFormDetailCallBack="@SmuAttendanceFormDetailCallBack1">
+                                                    </SMUAttendenceDetailsSessionTwoPage>
+                                                 </div>   
+                                               </div>
+                                               </ContentTemplate>
+                                           </TabItem>
+                                           <TabItem>
+                                               <ChildContent>
+                                               <TabHeader Text="Session Three"></TabHeader>
+                                               </ChildContent>
+                                               <ContentTemplate>
+                                               <div class="col-md-12">
+                                                <div class="col-lg-3 control-section">
+                                                    <div class="control-wrapper">
+                                                     <label class="example-label">Session Three Date</label>
+                                                     <SfDatePicker @bind-Value=@SmuAttendanceHeaderData.SessionThreeDate TValue="DateTime?" Placeholder="Choose a Date" FloatLabelType="FloatLabelType.Never" ShowClearButton="true"></SfDatePicker>
+                                                    </div>
+                                                 </div> 
+                                                 <div style="margin:10px;">
+                                                    <SMUAttendenceDetailsSessionThreePage @ref="@_sMUAttendanceDetailsSessionThreePage" SelectedAttendanceHeaderId="@SelectedAttendanceHeaderId"
+                                                      SmuAttendanceKeyData="@SmuAttendanceKeyData"
+                                                     SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuKaguguScoreData="@SmuKaguguScoreData" SmuReasonForAbsenceData="@SmuReasonForAbsenceData"
+                                                     SmuAttendanceFormDetailCallBack="@SmuAttendanceFormDetailCallBack2">
+                                                    </SMUAttendenceDetailsSessionThreePage>
+                                                 </div>   
+                                               </div>
+                                               </ContentTemplate>
+                                           </TabItem>
+                                           <TabItem>
+                                               <ChildContent>
+                                               <TabHeader Text="Session Four"></TabHeader>
+                                               </ChildContent>
+                                               <ContentTemplate>
+                                               <div class="col-md-12">
+                                                <div class="col-lg-3 control-section">
+                                                    <div class="control-wrapper">
+                                                     <label class="example-label">Session Four Date</label>
+                                                     <SfDatePicker @bind-Value=@SmuAttendanceHeaderData.SessionFourDate TValue="DateTime?" Placeholder="Choose a Date" FloatLabelType="FloatLabelType.Never" ShowClearButton="true"></SfDatePicker>
+                                                    </div>
+                                                 </div> 
+                                                 <div style="margin:10px;">
+                                                    <SMUAttendenceDetailsSessionFourPage @ref="@_sMUAttendanceDetailsSessionFourPage" SelectedAttendanceHeaderId="@SelectedAttendanceHeaderId"
+                                                     SmuAttendanceKeyData="@SmuAttendanceKeyData"
+                                                     SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuKaguguScoreData="@SmuKaguguScoreData" SmuReasonForAbsenceData="@SmuReasonForAbsenceData"
+                                                     SmuAttendanceFormDetailCallBack="@SmuAttendanceFormDetailCallBack3">
+                                                    </SMUAttendenceDetailsSessionFourPage>
+                                                 </div>   
+                                               </div>
+                                               </ContentTemplate>
+                                           </TabItem>
+                                           <TabItem>
+                                               <ChildContent>
+                                               <TabHeader Text="Session Five"></TabHeader>
+                                               </ChildContent>
+                                               <ContentTemplate>
+                                                <div class="col-md-12">
+                                                 <div class="col-lg-3 control-section">
+                                                    <div class="control-wrapper">
+                                                     <label class="example-label">Session Five Date</label>
+                                                     <SfDatePicker @bind-Value=@SmuAttendanceHeaderData.SessionFiveDate TValue="DateTime?" Placeholder="Choose a Date" FloatLabelType="FloatLabelType.Never" ShowClearButton="true"></SfDatePicker>
+                                                    </div>
+                                                 </div> 
+                                                 <div style="margin:10px;">
+                                                    <SMUAttendenceDetailsSessionFivePage @ref="@_sMUAttendanceDetailsSessionFivePage" SelectedAttendanceHeaderId="@SelectedAttendanceHeaderId"
+                                                      SmuAttendanceKeyData="@SmuAttendanceKeyData"
+                                                     SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuKaguguScoreData="@SmuKaguguScoreData" SmuReasonForAbsenceData="@SmuReasonForAbsenceData"
+                                                     SmuAttendanceFormDetailCallBack="@SmuAttendanceFormDetailCallBack4">
+                                                    </SMUAttendenceDetailsSessionFivePage>
+                                                 </div>   
+                                               </div>
+                                               </ContentTemplate>
+                                               </TabItem>
+                                           <TabItem>
+                                               <ChildContent>
+                                               <TabHeader Text="Session Six"></TabHeader>
+                                               </ChildContent>
+                                               <ContentTemplate>
+                                                <div class="col-md-12">
+                                                 <div class="col-lg-3 control-section">
+                                                    <div class="control-wrapper">
+                                                     <label class="example-label">Session Six Date</label>
+                                                     <SfDatePicker @bind-Value=@SmuAttendanceHeaderData.SessionSixDate TValue="DateTime?" Placeholder="Choose a Date" FloatLabelType="FloatLabelType.Never" ShowClearButton="true"></SfDatePicker>
+                                                    </div>
+                                                 </div> 
+                                                 <div style="margin:10px;">
+                                                    <SMUAttendenceDetailsSessionSixPage @ref="@_sMUAttendanceDetailsSessionSixPage" SelectedAttendanceHeaderId="@SelectedAttendanceHeaderId"
+                                                      SmuAttendanceKeyData="@SmuAttendanceKeyData"
+                                                     SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuKaguguScoreData="@SmuKaguguScoreData" SmuReasonForAbsenceData="@SmuReasonForAbsenceData"
+                                                     SmuAttendanceFormDetailCallBack="@SmuAttendanceFormDetailCallBack5">
+                                                    </SMUAttendenceDetailsSessionSixPage>
+                                                 </div>   
+                                               </div>
+                                               </ContentTemplate>
+                                               </TabItem>
+                                         </TabItems>
+                                         </SfTab>
+                                             
+                                        </div>
+                                     </div>
+                                </div>
+                            }
+                        }
+                       </Template>
+                    <FooterTemplate Context="headerContext">
+                        <button class="btn btn-success" @onclick=SavAttendance>Save Attendance</button>
+                        <button class="btn btn-danger" @onclick=CancelAttendance>Cancel</button>
+                        @if (IsSaving)
+                        {
+                            <SfSpinner @bind-Visible="IsSaving" Type="@SpinnerType.Bootstrap" Size="70" Label="Saving Data">
+                            </SfSpinner>
+                        }
+
+                    </FooterTemplate>
+                </GridEditSettings>
+
+                <GridColumns>
+                    <GridColumn Type="ColumnType.CheckBox" Width="30"></GridColumn>
+                    <GridColumn Field=@nameof(SmuAttendenceHeader.AttendenceFormHeaderId) HeaderText="AttendenceFormHeaderId" TextAlign="TextAlign.Left" IsPrimaryKey="true" IsIdentity="true" Visible="false" Width="80"></GridColumn>
+                
+                    <GridForeignColumn Field="@(nameof(SmuAttendenceHeader.SmuGroupId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Group Name" Width="200" ForeignKeyField="@(nameof(SmuGroup.SmuGroupId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuGroup.SmuGroupName))" ForeignDataSource="@SmuGroupData">
+                    </GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(SmuAttendenceHeader.AttendenceYearId))" TextAlign="TextAlign.Left"
+                                           HeaderText="Year" Width="100" ForeignKeyField="@(nameof(AFinancialYear.FinancialYearId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(AFinancialYear.FinancialYearDesc))" ForeignDataSource="@FinancialYearData">
+                    </GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(SmuAttendenceHeader.AttendenceCycleId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Cycle" Width="100" ForeignKeyField="@(nameof(SmuCycle.CycleId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuCycle.CycleDescription))" ForeignDataSource="@SmuCycleData">
+                    </GridForeignColumn>
+
+                </GridColumns>
+            </SfGrid>
+       }
+   </div>
+</div>
+
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    SfTab? Tab;
+    bool IsSaving { get; set; }
+    int? PreviousGroupId { get; set; }
+    public int SelectedAttendanceHeaderId { get; set; }
+    SMUAttendenceDetailsSessionOnePage? _sMUAttendanceDetailsSessionOnePage;
+    SMUAttendenceDetailsSessionTwoPage? _sMUAttendanceDetailsSessionTwoPage;
+    SMUAttendenceDetailsSessionThreePage? _sMUAttendanceDetailsSessionThreePage;
+    SMUAttendenceDetailsSessionFourPage? _sMUAttendanceDetailsSessionFourPage;
+    SMUAttendenceDetailsSessionFivePage? _sMUAttendanceDetailsSessionFivePage;
+    SMUAttendenceDetailsSessionSixPage? _sMUAttendanceDetailsSessionSixPage;
+    SmuAttendenceHeader? SmuAttendanceHeaderData;
+    private SfGrid<SmuAttendenceHeader>? SmuAttendanceHeaderGrid;
+    List<SmuAttendenceHeader>? SmuAttendanceHeaderDataSource { get; set; }
+    [Parameter]
+    public int GroupId { get; set; }
+    [Parameter]
+    public List<SmuGroup>? SmuGroupData { get; set; }
+    [Parameter]
+    public List<SmuCycle>? SmuCycleData { get; set; }
+    [Parameter]
+    public List<AFinancialYear>? FinancialYearData { get; set; }
+    [Parameter]
+    public List<SmuKaguguScore>? SmuKaguguScoreData { get; set; }
+    [Parameter]
+    public List<SmuReasonsForSessionAbsence>? SmuReasonForAbsenceData { get; set; }
+    [Parameter]
+    public List<SmuAttendanceKey>? SmuAttendanceKeyData { get; set; }
+    [Parameter]
+    public List<SmuClientRegistrationForm>? SmuClientRegistrationFormData { get; set; }
+    private List<object> ToolbarMenu = new List<object> {"Edit",
+    new ItemModel(){TooltipText ="Export Data to XML",
+                                        PrefixIcon = "e-click", Id = "XmlExport"} };
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "5vh", Width = "90%" };
+    public void RowSelectedhandler(RowSelectEventArgs<SmuAttendenceHeader> Args)
+    {
+        SelectedAttendanceHeaderId = Args.Data.AttendenceFormHeaderId;
+    }
+    public void DeselectedRowSelecthandler(RowDeselectEventArgs<SmuAttendenceHeader> Args)
+    {
+        SelectedAttendanceHeaderId = 0;
+    }
+    public async void SmuAttendanceActionBeginHandler(ActionEventArgs<SmuAttendenceHeader> Args)
+    {
+        var data = Args.Data;
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+        {
+            Args.RowData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+        {
+            if (Args.RowData.SmuAttendenceFormDetail == null)
+            {
+                Args.RowData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+            }
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            if (Args.RowData.SmuAttendenceFormDetail == null)
+            {
+                Args.RowData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+            }
+        }
+    }
+    public async void SmuAttendanceActionComplete(ActionEventArgs<SmuAttendenceHeader> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            SmuAttendanceHeaderGrid.PreventRender(false);
+        }
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+
+        }
+    }
+    public string GetNewRecord(SmuAttendenceHeader Value)
+    {
+        if (Value.AttendenceFormHeaderId <= 0)
+        {
+            return "Add new Smu Attendance";
+        }
+        else
+        {
+            return "Edit Smu Attendance";
+        }
+    }
+    private void SmuAttendanceFormDetailCallBack(List<SmuAttendenceFormDetail> attendanceForm) => SmuAttendanceHeaderData.SmuAttendenceFormDetail = attendanceForm;
+     private void SmuAttendanceFormDetailCallBack1(List<SmuAttendenceFormDetail> attendanceForm1) => SmuAttendanceHeaderData.SmuAttendenceFormDetail = attendanceForm1;
+      private void SmuAttendanceFormDetailCallBack2(List<SmuAttendenceFormDetail> attendanceForm2) => SmuAttendanceHeaderData.SmuAttendenceFormDetail = attendanceForm2;
+    private void SmuAttendanceFormDetailCallBack3(List<SmuAttendenceFormDetail> attendanceForm3) => SmuAttendanceHeaderData.SmuAttendenceFormDetail = attendanceForm3;
+     private void SmuAttendanceFormDetailCallBack4(List<SmuAttendenceFormDetail> attendanceForm4) => SmuAttendanceHeaderData.SmuAttendenceFormDetail = attendanceForm4;
+    private void SmuAttendanceFormDetailCallBack5(List<SmuAttendenceFormDetail> attendanceForm5) => SmuAttendanceHeaderData.SmuAttendenceFormDetail = attendanceForm5;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuAttendanceHeaderDataSource = new List<SmuAttendenceHeader>();
+            if (GroupId > 0)
+            {
+                try
+                {
+                    var _SmuAttendanceHeaderDataSource = await _ISMUTools.GetClientAttendanceByGroupId(GroupId);
+                    if (_SmuAttendanceHeaderDataSource != null)
+                    {
+                        SmuAttendanceHeaderDataSource = _SmuAttendanceHeaderDataSource;
+                        StateHasChanged();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+          
+            PreviousGroupId = GroupId;
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+    private async Task CancelAttendance()
+    {
+        await SmuAttendanceHeaderGrid.CloseEditAsync();
+    }
+    private async Task SavAttendance()
+    {
+        try
+        {
+            if (SmuAttendanceHeaderGrid != null)
+            {
+                IsSaving = true;
+
+                if (SmuAttendanceHeaderData != null)
+                {
+                    if (SmuAttendanceHeaderData.AttendenceYearId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select year!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuAttendanceHeaderData.AttendenceCycleId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select cycle!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                  
+                    
+                    else
+                    {
+                        if (_sMUAttendanceDetailsSessionOnePage != null)
+                        {
+                            if (SmuAttendanceHeaderData.SmuAttendenceFormDetail == null)
+                            {
+                                SmuAttendanceHeaderData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+                            }
+                            SmuAttendanceHeaderData.SmuAttendenceFormDetail = await _sMUAttendanceDetailsSessionOnePage.returnData();
+                        }
+                        if (_sMUAttendanceDetailsSessionTwoPage != null)
+                        {
+                            if (SmuAttendanceHeaderData.SmuAttendenceFormDetail == null)
+                            {
+                                SmuAttendanceHeaderData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+                            }
+                            SmuAttendanceHeaderData.SmuAttendenceFormDetail = await _sMUAttendanceDetailsSessionTwoPage.returnData();
+                        }
+                        if (_sMUAttendanceDetailsSessionThreePage != null)
+                        {
+                            if (SmuAttendanceHeaderData.SmuAttendenceFormDetail == null)
+                            {
+                                SmuAttendanceHeaderData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+                            }
+                            SmuAttendanceHeaderData.SmuAttendenceFormDetail = await _sMUAttendanceDetailsSessionThreePage.returnData();
+                        }
+                        if (_sMUAttendanceDetailsSessionFourPage != null)
+                        {
+                            if (SmuAttendanceHeaderData.SmuAttendenceFormDetail == null)
+                            {
+                                SmuAttendanceHeaderData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+                            }
+                            SmuAttendanceHeaderData.SmuAttendenceFormDetail = await _sMUAttendanceDetailsSessionFourPage.returnData();
+                        }
+                        if (_sMUAttendanceDetailsSessionFivePage != null)
+                        {
+                            if (SmuAttendanceHeaderData.SmuAttendenceFormDetail == null)
+                            {
+                                SmuAttendanceHeaderData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+                            }
+                            SmuAttendanceHeaderData.SmuAttendenceFormDetail = await _sMUAttendanceDetailsSessionFivePage.returnData();
+                        }
+                        if (_sMUAttendanceDetailsSessionSixPage != null)
+                        {
+                            if (SmuAttendanceHeaderData.SmuAttendenceFormDetail == null)
+                            {
+                                SmuAttendanceHeaderData.SmuAttendenceFormDetail = new List<SmuAttendenceFormDetail>();
+                            }
+                            SmuAttendanceHeaderData.SmuAttendenceFormDetail = await _sMUAttendanceDetailsSessionSixPage.returnData();
+                        }
+                        await SmuAttendanceHeaderGrid.EndEditAsync();
+                        await _ISMUTools.SaveSmuAttendenceHeader(SmuAttendanceHeaderData);
+                    }
+
+                }
+
+
+            }
+        }
+        catch (ArgumentNullException ex)
+        {
+            // Log or handle the ArgumentNullException here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        catch (Exception ex)
+        {
+            // Log or handle other exceptions here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        finally
+        {
+            IsSaving = false; // Reset IsSaving flag regardless of success or failure
+        }
+    }
+}

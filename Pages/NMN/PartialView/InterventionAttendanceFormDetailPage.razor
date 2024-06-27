@@ -1,0 +1,192 @@
+﻿@* <h3>InterventionAttendanceFormDetailPage</h3> *@
+@using MUCOBADI.Models
+@inject IToastService toastService;
+
+@if (DataSource != null)
+{
+    <SfGrid @ref=@HeaderGrid TValue="InterventionAttendanceFormDetail" DataSource="@DataSource"
+            AllowFiltering=false AllowGrouping=false AllowPaging=false AllowTextWrap=true ShowColumnChooser=true
+            GridLines="GridLine.Both" AllowSelection="true" Toolbar="@(new string[] {"Add","Edit","Update","Cancel","ColumnChooser" })"
+            EnableStickyHeader=true ClipMode="ClipMode.EllipsisWithTooltip" EnableAltRow=true>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridEvents CellSaved="DetailedCellSavedHandler" CellSelected="DetailedCellSelectHandler" OnBatchAdd=@onBatchAddEvent TValue="InterventionAttendanceFormDetail"></GridEvents>
+        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field="@(nameof(InterventionAttendanceFormDetail.InterventionAttendanceFormDetailId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridColumn Field="@(nameof(InterventionAttendanceFormDetail.InterventionAttendanceFormId))" HeaderText="InterventionAttendanceFormId" Width="130" AllowEditing=false Visible=false ShowInColumnChooser=false></GridColumn>
+            <GridColumn Field=@nameof(InterventionAttendanceFormDetail.UniqueId) Visible="true" AllowFiltering="true" HeaderText="Unique Id" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100"></GridColumn>
+            <GridColumn Field=@nameof(InterventionAttendanceFormDetail.FirstName) Visible="true" AllowFiltering="true" HeaderText="First Name/Given Name" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(InterventionAttendanceFormDetail.LastName) Visible="true" AllowFiltering="true" HeaderText="Last Name/Family Name" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(InterventionAttendanceFormDetail.Age) Visible="true" AllowFiltering="true" HeaderText="Age" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" EditType="EditType.NumericEdit" Type="ColumnType.Number" Format="N0"></GridColumn>
+            <GridColumn HeaderText="Module 1">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleOneDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleOneInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 2">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleTwoDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleTwoInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 3">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleThreeDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleThreeInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 4">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleFourDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleFourInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 5">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleFiveDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleFiveInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 6">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleSixDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleSixInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 7">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleSevenDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleSevenInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 8">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleEightDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleEightInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 9">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleNineDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleNineInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridColumn HeaderText="Module 10">
+                <GridColumns>
+                    <GridColumn Field=@nameof(InterventionAttendanceFormDetail.ModuleTenDate) Visible="true" AllowFiltering="true" HeaderText="Date" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="100" Format="dd/MM/yyyy" EditType="EditType.DatePickerEdit" Type="ColumnType.Date"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.ModuleTenInterventionAttendanceId))" HeaderText="Participated" Width="110" ForeignKeyField="@(nameof(AInterventionAttendance.InterventionAttendanceId))" ForeignKeyValue="@(nameof(AInterventionAttendance.InterventionAttendanceDesc))" ForeignDataSource="@InterventionAttendanceData" EditType="EditType.DropDownEdit"></GridForeignColumn>
+                </GridColumns>
+            </GridColumn>
+            <GridForeignColumn Field="@(nameof(InterventionAttendanceFormDetail.GraduatedYesNoId))" HeaderText="Graduated" Width="130" ForeignKeyField="@(nameof(AYesNo.YesNoId))" ForeignKeyValue="@(nameof(AYesNo.YesNoDescription))" ForeignDataSource="@YesNoData"></GridForeignColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+@code {
+    [Parameter]
+    public List<InterventionAttendanceFormDetail>? InterventionAttendanceFormDetailData { get; set; }
+    [Parameter]
+    public List<AInterventionAttendance>? InterventionAttendanceData { get; set; }
+    [Parameter]
+    public List<AYesNo>? YesNoData { get; set; }
+    [Parameter]
+    public int InterventionAttendanceFormId { get; set; }
+    [Parameter]
+    public EventCallback<List<InterventionAttendanceFormDetail>?> DetailToggle { get; set; }
+
+    List<InterventionAttendanceFormDetail>? DataSource { get; set; }
+    int? PreviousInterventionAttendanceFormId { get; set; }
+    public SfGrid<InterventionAttendanceFormDetail>? HeaderGrid;
+    int InterventionAttendanceFormDetailId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (PreviousInterventionAttendanceFormId != InterventionAttendanceFormId)
+            {
+                InterventionAttendanceFormDetailId = -1;
+                DataSource = new List<InterventionAttendanceFormDetail>();
+
+                if (InterventionAttendanceFormDetailData != null && InterventionAttendanceFormDetailData.Count > 0)
+                {
+                    DataSource.AddRange(InterventionAttendanceFormDetailData);
+                }
+                PreviousInterventionAttendanceFormId = InterventionAttendanceFormId;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            //  throw;
+        }
+        base.OnInitialized();
+    }
+
+    private async Task DetailedCellSavedHandler(CellSaveArgs<InterventionAttendanceFormDetail> args)
+    {
+        try
+        {
+            if (HeaderGrid != null)
+            {
+                var index = await HeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.InterventionAttendanceFormDetailId);
+                //await HeaderGrid.UpdateCellAsync(index, nameof(InterventionAttendanceFormDetail.ComplaintId), ComplaintId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            if (HeaderGrid != null)
+            {
+                await HeaderGrid.EndEditAsync();
+            }
+            if (DataSource != null)
+            {
+                await DetailToggle.InvokeAsync(DataSource);
+            }
+        }
+    }
+    private async Task DetailedCellSelectHandler(CellSelectEventArgs<InterventionAttendanceFormDetail> args)
+    {
+        if (HeaderGrid != null)
+        {
+            //get selected cell index
+            var CellIndexes = await HeaderGrid.GetSelectedRowCellIndexesAsync();
+
+            //get the row and cell index
+            var CurrentEditRowIndex = CellIndexes[0].Item1;
+            var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+            //get the available fields
+            var fields = await HeaderGrid.GetColumnFieldNamesAsync();
+            // edit the selected cell using the cell index and column name
+            await HeaderGrid.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+        }
+
+    }
+
+    private void onBatchAddEvent(BeforeBatchAddArgs<InterventionAttendanceFormDetail> args)
+    {
+        try
+        {
+            args.DefaultData.InterventionAttendanceFormDetailId = InterventionAttendanceFormDetailId;
+            InterventionAttendanceFormDetailId--;
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+    }
+}
+

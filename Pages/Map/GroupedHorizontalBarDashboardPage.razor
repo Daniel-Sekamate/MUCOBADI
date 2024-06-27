@@ -1,0 +1,72 @@
+﻿@page "/horizontalChart"
+@using Syncfusion.Blazor.Charts
+<div class="row">
+    <div class="col-md-8">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfChart Title="Top Ten Products Transferred Within the EAC Per Financial Year">
+                    <ChartPrimaryXAxis ValueType="@Syncfusion.Blazor.Charts.ValueType.Category" LabelFormat="%{value}"
+                                       Title="Financial Year">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryXAxis>
+                    <ChartPrimaryYAxis Title="Quantity Traded(%)">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryYAxis>
+                    <ChartSeriesCollection>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Electronics" YName="USA_Total" GroupName="USA" ColumnWidth="0.7" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Automotive" YName="USA_Gold" GroupName="USA" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Music and Entertainment" YName="UK_Total" GroupName="UK" ColumnWidth="0.7" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Health and Wellness" YName="UK_Gold" GroupName="UK" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Sports and Outdoors" YName="_China_Total" GroupName="_China" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Agricultural" YName="_China_Gold" GroupName="_China" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Industrial " YName="_UK_Total" GroupName="_UK" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Tourism" YName="_UK_Gold" GroupName="_UK" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Transport" YName="_USA_Total" GroupName="_USA" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartSeries DataSource="@ChartPoints" XName="Year" Name="Technology" YName="_USA_Gold" GroupName="_USA" ColumnWidth="0.5" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                        </ChartSeries>
+                        <ChartLegendSettings Visible="true" />
+                    </ChartSeriesCollection>
+                </SfChart>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public class ColumnData
+    {
+        public string Year { get; set; }
+        public double USA_Total { get; set; }
+        public double USA_Gold { get; set; }
+        public double UK_Total { get; set; }
+        public double UK_Gold { get; set; }
+        public double China_Total { get; set; }
+        public double China_Gold { get; set; }
+
+        public double _China_Total { get; set; }
+        public double _China_Gold { get; set; }
+
+        public double _UK_Total { get; set; }
+        public double _UK_Gold { get; set; }
+
+        public double _USA_Total { get; set; }
+        public double _USA_Gold { get; set; }
+    }
+    public List<ColumnData> ChartPoints { get; set; } = new List<ColumnData>
+    {
+        new ColumnData { Year = "2021", USA_Total = 104, USA_Gold = 46, UK_Total = 65, UK_Gold = 29, China_Total = 91, China_Gold = 38,_USA_Total = 100, _USA_Gold = 42, _UK_Total = 60, _UK_Gold = 20, _China_Total = 49, _China_Gold = 58},
+        new ColumnData { Year = "2022", USA_Total = 121, USA_Gold = 46, UK_Total = 67, UK_Gold = 27, China_Total = 70, China_Gold = 26,_USA_Total = 110, _USA_Gold = 26, _UK_Total = 56, _UK_Gold = 92, _China_Total = 41, _China_Gold = 38},
+        new ColumnData { Year = "2023", USA_Total = 113, USA_Gold = 39, UK_Total = 65, UK_Gold = 22, China_Total = 88, China_Gold = 38,_USA_Total = 110, _USA_Gold = 46, _UK_Total = 76, _UK_Gold = 42, _China_Total = 61, _China_Gold = 78},
+    };
+}

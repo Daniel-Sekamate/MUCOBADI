@@ -1,0 +1,72 @@
+﻿@page "/multi_lineChart"
+@using Syncfusion.Blazor.Charts
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfChart Title="Trade Performance Comparison: Exports and Imports Over [Time Period]">
+                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1">
+                    </ChartPrimaryXAxis>
+
+                    <ChartPrimaryYAxis Title="Export/Import Value" Interval="100" LabelFormat="${value}">
+                    </ChartPrimaryYAxis>
+
+                    <ChartArea>
+                        <ChartAreaBorder Width="0"></ChartAreaBorder>
+                    </ChartArea>
+
+                    <ChartSeriesCollection>
+                        <ChartSeries XName="X" DataSource="@ExpenseReports" Name="Exports" 
+                                     YName="Y" Type="ChartSeriesType.StackingLine">
+                            <ChartMarker Visible="true">
+                            </ChartMarker>
+                        </ChartSeries>
+
+                        <ChartSeries XName="X" DataSource="@ExpenseReports" Name="Imports"
+                                     YName="Y3" Type="ChartSeriesType.StackingLine">
+                            <ChartMarker Visible="true">
+                            </ChartMarker>
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                    <ChartLegendSettings Visible="true" />
+                </SfChart>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    public class ChartData
+    {
+        public string X { get; set; }
+        public double Y { get; set; }
+        public double Y1 { get; set; }
+        public double Y2 { get; set; }
+        public double Y3 { get; set; }
+    }
+
+    public List<ChartData> ExpenseReports = new List<ChartData>
+    {
+        new ChartData { X = "2020" , Y = 90,  Y3= 120},
+        new ChartData { X = "2021", Y = 80,   Y3= 70 },
+        new ChartData { X = "2022",Y = 50,    Y3= 50 },
+        new ChartData { X = "2023",Y = 70,    Y3= 180 },
+        new ChartData { X = "2024", Y = 30,   Y3= 30 },
+        new ChartData { X = "2025", Y = 10,   Y3= 270},
+        new ChartData { X = "2026",Y = 100,  Y3= 40 },
+        new ChartData { X = "2027", Y = 55,  Y3= 75},
+        new ChartData { X = "2028", Y = 20,  Y3= 65 },
+        new ChartData { X = "2029", Y = 40,  Y3= 95 },
+        new ChartData { X = "2030", Y = 45,  Y3= 195 },
+        new ChartData { X = "2031", Y = 75,  Y3= 115 }
+    };
+}

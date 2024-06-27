@@ -1,0 +1,129 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+@if (SmuSafetyPlanningFormWarningSignsDataSource != null)
+{
+    <SfGrid @ref=@SmuSafetyPlanningFormWarningSignsGrid TValue="SmuSafetyPlanningFormWarningSigns"
+            DataSource="SmuSafetyPlanningFormWarningSignsDataSource" RowHeight="30"
+            AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+            AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridEvents TValue="SmuSafetyPlanningFormWarningSigns" CellSaved="OnCellSaved"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn HeaderText="Step 1: Warning signs that a crisis may be developing" TextAlign="TextAlign.Left">
+             <GridColumns>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormWarningSigns.WarningSignsId) HeaderText="WarningSigns" AllowEditing="false" Visible=false IsPrimaryKey="true" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormWarningSigns.WarningSignsNo) HeaderText="S/N" AllowEditing="true" Visible="true" Width="35"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormWarningSigns.WarningSignsDescription) HeaderText="Warning signs (thoughts, images, mood, situation, behavior)" AllowEditing="true" Visible="true" Width="400"></GridColumn>
+             </GridColumns>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    [Parameter]
+    public int SafetyPlanningFormId { get; set; }
+    [Parameter]
+    public EventCallback<List<SmuSafetyPlanningFormWarningSigns>?> SmuSafetyPlanningFormWarningSignsCallBack { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormWarningSigns>? SmuSafetyPlanningFormWarningSignsData { get; set; }
+    int? PreviousSafetyPlanningFormId { get; set; }
+    private SfGrid<SmuSafetyPlanningFormWarningSigns>? SmuSafetyPlanningFormWarningSignsGrid;
+    List<SmuSafetyPlanningFormWarningSigns>? SmuSafetyPlanningFormWarningSignsDataSource { get; set; }
+    public async Task OnCellSaved(CellSaveArgs<SmuSafetyPlanningFormWarningSigns> args)
+    {
+        if (args.Data.WarningSignsDescription != null)
+        {
+            await this.SmuSafetyPlanningFormWarningSignsGrid?.EndEditAsync();
+            await SmuSafetyPlanningFormWarningSignsCallBack.InvokeAsync(SmuSafetyPlanningFormWarningSignsDataSource);
+        }
+    }
+    public async Task<List<SmuSafetyPlanningFormWarningSigns>?> returnData()
+    {
+        if (SmuSafetyPlanningFormWarningSignsGrid != null)
+        {
+            await SmuSafetyPlanningFormWarningSignsGrid.EndEditAsync();
+        }
+        return SmuSafetyPlanningFormWarningSignsDataSource;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuSafetyPlanningFormWarningSignsDataSource = new List<SmuSafetyPlanningFormWarningSigns>();
+            if (SafetyPlanningFormId > 0)
+            {
+                try
+                {
+                    var _SmuSafetyPlanningFormWarningSignsDataSource = await _ISMUTools.GetSmuSafetyPlanningFormWarningSigns(SafetyPlanningFormId);
+                    if (_SmuSafetyPlanningFormWarningSignsDataSource != null && _SmuSafetyPlanningFormWarningSignsDataSource.Any())
+                    {
+                        // If there are records, add one empty row
+                        SmuSafetyPlanningFormWarningSignsDataSource = _SmuSafetyPlanningFormWarningSignsDataSource.ToList();
+                        SmuSafetyPlanningFormWarningSignsDataSource.Add(new SmuSafetyPlanningFormWarningSigns());
+                    }
+                    else
+                    {
+                        // If there are no records, add three empty rows
+                        SmuSafetyPlanningFormWarningSignsDataSource = new List<SmuSafetyPlanningFormWarningSigns>
+                        {
+                            new SmuSafetyPlanningFormWarningSigns(),
+                            new SmuSafetyPlanningFormWarningSigns(),
+                            new SmuSafetyPlanningFormWarningSigns()
+                        };
+                    }
+                    StateHasChanged(); // Ensure UI updates after data retrieval
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+            PreviousSafetyPlanningFormId = SafetyPlanningFormId;
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+}

@@ -7,6 +7,7 @@ namespace MUCOBADI.Models
 {
     public partial class ViewDashboardBeneficiariesonIcarepivotNoFilter
     {
+        public int? ProgramParticipationId { get; set; }
         public int? DistrictId { get; set; }
         public string DistrictDescription { get; set; }
         public int? Qtr { get; set; }

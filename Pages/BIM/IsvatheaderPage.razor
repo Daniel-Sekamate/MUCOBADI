@@ -1,0 +1,783 @@
+﻿@page "/IsvatheaderPage"
+@using MUCOBADI.Data
+@using MUCOBADI.Interfaces
+@using MUCOBADI.Models
+@using MUCOBADI.Pages.BIM.PartialPage
+@using System.Collections
+@using Microsoft.EntityFrameworkCore
+@inject IToastService toastService;
+@inject IBimService Repo;
+@inject MUCOBADIContext db;
+@inject UserManagement userManagement;
+
+
+<style>
+    h2 {
+        background-color: #9b51e0;
+        text-align: center;
+        padding: 5px;
+        margin-bottom: 5px;
+        color: ghostwhite;
+    }
+
+    h3 {
+        background-color: black;
+        text-align: left;
+        padding: 5px;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        color: ghostwhite;
+    }
+</style>
+
+<MudOverlay Visible="@IsLoading" DarkBackground="true" Absolute="true" Style="z-index:200000; height:100vh;">
+    <MudProgressCircular Color="MudBlazor.Color.Secondary" Indeterminate="true" />
+    <MudText Style="color:ghostwhite;">Loading data please wait..</MudText>
+</MudOverlay>
+
+<div class="row">
+    <div class="col-md-12">
+        <BreadCrumbPage CategoryName="BIM" PageName="HOUSEHOLD INCOME SOURCE VIABILITY ASSESSMENT (HIVA, Form EG2202)" />
+    </div>
+    @if (IsLoading == false)
+    {
+        <div class="col-md-12">
+            <SfAccordion ExpandMode="ExpandMode.Single">
+                <AccordionItems>
+                    <AccordionItem Header="Search Model">
+                        <ContentTemplate>
+                            <div class="row" n style="margin:5px;">
+                                <SearchPanelPartialPage @ref=@SearchPanel DistrictData="@DistrictData" HouseHoldData="@HouseHoldData" SubcountyData="@SubcountyData" Credentials=@Credentials />
+                                <div class="col-md-4">
+                                    <button type="button" style="margin-top:32px;" class="btn btn-primary" @onclick="@(()=>{MainQuery = SearchPanel.SearchRecords();})">Search</button>
+                                    <button type="button" style="margin-top:32px;" class="btn btn-secondary" @onclick="@(() => {MainQuery =SearchPanel.ClearSearchBtnClick();})">Clear Search</button>
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </AccordionItem>
+                </AccordionItems>
+            </SfAccordion>
+        </div>
+        <div class="col-md-12">
+            <SfGrid @ref="IsvatheaderGrid" TValue="Isvatheader" Query="@MainQuery"
+                    AllowGrouping="false" ShowColumnChooser="true" AllowTextWrap="true"
+                    AllowPaging="true" AllowFiltering="true" GridLines="GridLine.Both" AllowSelection="true"
+                    Toolbar="@(new string[] {"Add","Edit","Delete","Update","Cancel","ColumnChooser"})">
+                @*<GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>*@
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridPageSettings PageSize="20"></GridPageSettings>
+                <SfDataManager AdaptorInstance="@typeof(IsvatheaderAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
+                <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+                <GridEvents OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="Isvatheader"></GridEvents>
+                <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+                    <Template Context="ReviewHeaderContext">
+                        @{
+                            ReviewData = (ReviewHeaderContext as Isvatheader);
+                            if (ReviewData != null)
+                            {
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2>
+                                            HOUSEHOLD INCOME SOURCE VIABILITY ASSESSMENT (HIVA, Form EG2202)
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h3>Details of Primary OVC Caregiver </h3>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>District</label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.DistrictId)" Enabled="true" TItem="ADistrict" TValue="int?" DataSource="@DistrictData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                            <DropDownListFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Subcounty</label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.SubcountyId)" Enabled="true" TItem="ASubcounty"
+                                                        TValue="int?" DataSource="@SubcountyData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never"
+                                                        Query="@(new Query().Where(new WhereFilter() { Field = "DistrictId", Operator = "equal", value = ReviewData.DistrictId, IgnoreCase = false, IgnoreAccent = false }))">
+                                            <DropDownListFieldSettings Value="@nameof(ASubcounty.SubcountyId)" Text="@nameof(ASubcounty.SubcountyDescription)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Parish</label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.ParishId)" Enabled="true" TItem="AParish"
+                                                        TValue="int?" DataSource="@ParishData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never"
+                                                        Query="@(new Query().Where(new WhereFilter() { Field = "SubcountyId", Operator = "equal", value = ReviewData.SubcountyId, IgnoreCase = false, IgnoreAccent = false }))">
+                                            <DropDownListFieldSettings Value="@nameof(AParish.ParishId)" Text="@nameof(AParish.ParishDescription)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Village</label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.VillageId)" Enabled="true" TItem="AVillage"
+                                                        TValue="int?" DataSource="@VillageData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never"
+                                                        Query="@(new Query().Where(new WhereFilter() { Field = "ParishId", Operator = "equal", value = ReviewData.ParishId, IgnoreCase = false, IgnoreAccent = false }))">
+                                            <DropDownListFieldSettings Value="@nameof(AVillage.VillageId)" Text="@nameof(AVillage.VillageDescription)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Household</label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.HouseholdId)" Enabled="true" TItem="BeneficiaryIdentificationRegister" TValue="int?" DataSource="@HouseHoldData"
+                                                        Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true"
+                                                        Query="@(new Query().Where(new WhereFilter() { Field = "SubcountyId", Operator = "equal", value = ReviewData.SubcountyId, IgnoreCase = false, IgnoreAccent = false }))">
+                                            <DropDownListFieldSettings Value="@nameof(BeneficiaryIdentificationRegister.HouseHoldId)" Text="@nameof(BeneficiaryIdentificationRegister.HouseHoldCode)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Caregiver ID and Name</label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.HouseholdMemberId)" Enabled="true" TItem="HouseHoldMembers" TValue="int?" DataSource="@HouseHoldMembersData"
+                                                        Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true"
+                                                        Query="@(new Query().Where(new WhereFilter() { Field = "HouseHoldId", Operator = "equal", value = ReviewData.HouseholdId, IgnoreCase = false, IgnoreAccent = false }))">
+                                            <DropDownListTemplates TItem="HouseHoldMembers">
+                                                <ItemTemplate>
+                                                    <label>@((context as HouseHoldMembers).HouseHoldMemberCode) @((context as HouseHoldMembers).Surname) @((context as HouseHoldMembers).Givenname)</label>
+                                                </ItemTemplate>
+                                                <ValueTemplate>
+                                                    @((context as HouseHoldMembers).HouseHoldMemberCode) @((context as HouseHoldMembers).Surname) @((context as HouseHoldMembers).Givenname)
+                                                </ValueTemplate>
+                                            </DropDownListTemplates>
+                                            <DropDownListFieldSettings Value="@nameof(HouseHoldMembers.HouseHoldMemberId)" Text="@nameof(HouseHoldMembers.Surname)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label> Nature of Residence </label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.NatureofResidenceId)" Enabled="true" TItem="ANatureofResidence" TValue="int?" DataSource="@NatureofResidenceData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                            <DropDownListFieldSettings Value="@nameof(ANatureofResidence.NatureofResidenceId)" Text="@nameof(ANatureofResidence.NatureofResidenceDesc)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label> Category of Residence </label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.CategoryofResidenceId)" Enabled="true" TItem="ACategoryofResidence" TValue="int?" DataSource="@CategoryofResidenceData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                            <DropDownListFieldSettings Value="@nameof(ACategoryofResidence.CategoryofResidenceId)" Text="@nameof(ACategoryofResidence.CategoryofResidenceDesc)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Sex</label>
+                                        <SfDropDownList @bind-Value="@(ReviewData.GenderId)" Enabled="true" TItem="AGender" TValue="string" DataSource="@GenderData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                            <DropDownListFieldSettings Value="@nameof(AGender.GenderId)" Text="@nameof(AGender.GenderDescription)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Date of Birth</label>
+                                        <SfDatePicker @bind-Value="@(ReviewData.Dob)" Format="dd/MM/yyyy" Placeholder="Enter Date" FloatLabelType="FloatLabelType.Never" />
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Age</label>
+                                        <SfNumericTextBox @bind-Value="@ReviewData.Age" Enabled="true" Placeholder="Enter the age" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                    </div>
+                                    @if (ReviewData.HouseholdId.HasValue && HouseHoldMembersData != null)
+                                    {
+                                        <div class="col-md-12">
+                                            <h3>
+                                                Details of OVC Household Members
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <IsvatincomeEarnerPage IsvatincomeEarnerData="@(ReviewData.IsvatincomeEarner.ToList())" IsvatheaderId="@ReviewData.IsvatheaderId"
+                                                                   HouseHoldMembersData="@(HouseHoldMembersData.Where(o=> o.HouseHoldId==ReviewData.HouseholdId).ToList())" YesNoData=@YesNoData AssetIncomeData=@AssetIncomeData IncomeEarnerToggle="incomeEarnerReturnToggle" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h3>
+                                                WORKING CAPITAL
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <IsvatworkingCapitalPage @ref=@CapitalPage IsvatworkingCapitalData="@(ReviewData.IsvatworkingCapital.ToList())" IsvatheaderId="@ReviewData.IsvatheaderId"
+                                                                     BusinessVentureCapitalInvestmentData="@BusinessVentureCapitalInvestmentData"
+                                                                     AssetIncomeData=@AssetIncomeData DetailToggle="workingCapitalReturnToggle" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h3>
+                                                PROFIT GENERATED (In the past 6 months for on farms ventures and 01 month for off farm ventures)
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <IsvatgeneratedProfitPage @ref=@ProfitPage IsvatgeneratedProfitData="@(ReviewData.IsvatgeneratedProfit.ToList())" IsvatheaderId="@ReviewData.IsvatheaderId"
+                                                                      BusinessVentureCapitalInvestmentData="@BusinessVentureCapitalInvestmentData"
+                                                                      AssetIncomeData=@AssetIncomeData DetailToggle="generatedProfitReturnToggle" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h3>
+                                                LOSS (DEBTOR)
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <IsvatlossPage @ref=@lossPage IsvatlossData="@(ReviewData.Isvatloss.ToList())" IsvatheaderId="@ReviewData.IsvatheaderId"
+                                                           BusinessVentureCapitalInvestmentData="@BusinessVentureCapitalInvestmentData"
+                                                           AssetIncomeData=@AssetIncomeData DetailToggle="lossReturnToggle" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h3>
+                                                RISKS /GAPS ASSOCIATED WITH CURRENT BUSINESS
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <IsvatcurrentBusinessRiskPage @ref=@RiskPage IsvatcurrentBusinessRiskData="@(ReviewData.IsvatcurrentBusinessRisk.ToList())" IsvatheaderId="@ReviewData.IsvatheaderId"
+                                                                          CurrenBusinessRiskData="@BusinessRiskData"
+                                                                          RiskLevelRatingData=@RiskLevelRatingData DetailToggle="BusinessRiskReturnToggle" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h3>
+                                                ARE THERE OPPORTUNITIES ASSOCIATED WITH CURRENT BUSINESS ?
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <IsvatcurrentBusinessOpportunityPage @ref=@OpportunityPage IsvatcurrentBusinessOpportunityData="@(ReviewData.IsvatcurrentBusinessOpportunity.ToList())" IsvatheaderId="@ReviewData.IsvatheaderId"
+                                                                                 CurrenBusinessOpportunityData="@BusinessOpportunityData"
+                                                                                 YesNoData=@YesNoData DetailToggle="BusinessOpportunityReturnToggle" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h3>
+                                                FOR BENEFIARIES WISHING TO START BUSINESS
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <IsvatstartBusinessAnswerPage @ref=@AnswerPage IsvatstartBusinessAnswerData="@(ReviewData.IsvatstartBusinessAnswer.ToList())" IsvatheaderId="@ReviewData.IsvatheaderId"
+                                                                          StartBusinessQuestionData="@StartBusinessQuestionData" YesNoData=@YesNoData DetailToggle="BusinessAnswerReturnToggle" />
+                                        </div>
+                                    }
+
+
+
+                                    <div class="col-md-4">
+                                        <label>Name of Data Collector</label>
+                                        <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataCollectorName)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Title</label>
+                                        <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataCollectorTitle)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Date</label>
+                                        <SfDatePicker @bind-Value="@(ReviewData.DataCollectionDate)" Format="dd/MM/yyyy" Placeholder="Enter Date" FloatLabelType="FloatLabelType.Never" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Name of Data Reviewer</label>
+                                        <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataReviewerName)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Title</label>
+                                        <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataReviewerTitle)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Date</label>
+                                        <SfDatePicker @bind-Value="@(ReviewData.DataReviewDate)" Format="dd/MM/yyyy" Placeholder="Enter Date" FloatLabelType="FloatLabelType.Never" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </Template>
+                    <FooterTemplate>
+                        <SfButton CssClass="e-btn e-success" OnClick="SaveFormBtnClick"> Save Form</SfButton>
+                        <SfButton CssClass="e-btn e-danger" OnClick="@( async()=>{ if(IsvatheaderGrid != null){await IsvatheaderGrid.CloseEditAsync();}})"> Cancel</SfButton>
+                    </FooterTemplate>
+                </GridEditSettings>
+                <GridColumns>
+                    <GridColumn HeaderText="Manage Records" Width="80">
+                        <GridCommandColumns>
+                            <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() { CssClass="e-icons e-view-details",Content="View" })" Title="View"></GridCommandColumn>
+                        </GridCommandColumns>
+                    </GridColumn>
+                    <GridColumn Field="@(nameof(Isvatheader.IsvatheaderId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+                    <GridForeignColumn Field="@(nameof(Isvatheader.DistrictId))" HeaderText="District" Width="160" ForeignKeyField="@(nameof(ADistrict.DistrictId))" ForeignKeyValue="@(nameof(ADistrict.DistrictDescription))" ForeignDataSource="@DistrictData"></GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(Isvatheader.SubcountyId))" HeaderText="Sub-county" Width="160" ForeignKeyField="@(nameof(ASubcounty.SubcountyId))" ForeignKeyValue="@(nameof(ASubcounty.SubcountyDescription))" ForeignDataSource="@SubcountyData"></GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(Isvatheader.HouseholdId))" HeaderText="Household Code" Width="160" ForeignKeyField="@(nameof(BeneficiaryIdentificationRegister.HouseHoldId))" ForeignKeyValue="@(nameof(BeneficiaryIdentificationRegister.HouseHoldCode))" ForeignDataSource="@HouseHoldData"></GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(Isvatheader.HouseholdMemberId))" HeaderText="Caregiver ID" Width="160" ForeignKeyField="@(nameof(HouseHoldMembers.HouseHoldMemberId))" ForeignKeyValue="@(nameof(HouseHoldMembers.Surname))" ForeignDataSource="@HouseHoldMembersData"></GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(Isvatheader.NatureofResidenceId))" HeaderText="Nature of Residence" Width="160" ForeignKeyField="@(nameof(ANatureofResidence.NatureofResidenceId))" ForeignKeyValue="@(nameof(ANatureofResidence.NatureofResidenceDesc))" ForeignDataSource="@NatureofResidenceData"></GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(Isvatheader.CategoryofResidenceId))" HeaderText="Category of Residence" Width="160" ForeignKeyField="@(nameof(ACategoryofResidence.CategoryofResidenceId))" ForeignKeyValue="@(nameof(ACategoryofResidence.CategoryofResidenceDesc))" ForeignDataSource="@CategoryofResidenceData"></GridForeignColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+    }
+</div>
+
+@code {
+    SfGrid<Isvatheader>? IsvatheaderGrid;
+    Query? MainQuery { get; set; }
+    string[]? toolbar { get; set; }
+    Isvatheader? ReviewData { get; set; }
+    SearchPanelPartialPage? SearchPanel;
+
+    List<AGender>? GenderData { get; set; }
+    List<AMaritalStatus>? MaritalStatusData { get; set; }
+    List<HouseHoldMembers>? HouseHoldMembersData { get; set; }
+    List<BeneficiaryIdentificationRegister>? HouseHoldData { get; set; }
+    List<ASubcounty>? SubcountyData { get; set; }
+    List<ADistrict>? DistrictData { get; set; }
+    List<AParish>? ParishData { get; set; }
+    List<AVillage>? VillageData { get; set; }
+    List<ANatureofResidence>? NatureofResidenceData { get; set; }
+    List<ACategoryofResidence>? CategoryofResidenceData { get; set; }
+    List<AYesNo>? YesNoData { get; set; }
+    List<AAssetIncome>? AssetIncomeData { get; set; }
+    List<ARiskLevelRating>? RiskLevelRatingData { get; set; }
+    List<ABusinessVentureCapitalInvestment>? BusinessVentureCapitalInvestmentData { get; set; }
+    List<ACurrenBusinessOpportunity>? BusinessOpportunityData { get; set; }
+    List<ACurrenBusinessRisk>? BusinessRiskData { get; set; }
+    List<AStartBusinessQuestion>? StartBusinessQuestionData { get; set; }
+
+    IsvatworkingCapitalPage? CapitalPage { get; set; }
+    IsvatgeneratedProfitPage? ProfitPage { get; set; }
+    IsvatlossPage? lossPage { get; set; }
+    IsvatcurrentBusinessOpportunityPage? OpportunityPage { get; set; }
+    IsvatcurrentBusinessRiskPage? RiskPage { get; set; }
+    IsvatstartBusinessAnswerPage? AnswerPage { get; set; }
+    bool IsLoading { get; set; }
+
+    private ViewUserManagement? Credentials { get; set; }
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+
+    async Task SaveFormBtnClick()
+    {
+        try
+        {
+            if (CapitalPage != null && CapitalPage.HeaderGrid != null)
+            {
+                await CapitalPage.HeaderGrid.EndEditAsync();
+            }
+            if (ProfitPage != null && ProfitPage.HeaderGrid != null)
+            {
+                await ProfitPage.HeaderGrid.EndEditAsync();
+            }
+            if (lossPage != null && lossPage.HeaderGrid != null)
+            {
+                await lossPage.HeaderGrid.EndEditAsync();
+            }
+            if (OpportunityPage != null && OpportunityPage.HeaderGrid != null)
+            {
+                await OpportunityPage.HeaderGrid.EndEditAsync();
+            }
+            if (AnswerPage != null && AnswerPage.HeaderGrid != null)
+            {
+                await AnswerPage.HeaderGrid.EndEditAsync();
+            }
+            if (RiskPage != null && RiskPage.HeaderGrid != null)
+            {
+                await RiskPage.HeaderGrid.EndEditAsync();
+            }
+
+            if (IsvatheaderGrid != null)
+            {
+                await IsvatheaderGrid.EndEditAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+    }
+
+    private void BusinessOpportunityReturnToggle(List<IsvatcurrentBusinessOpportunity>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.IsvatcurrentBusinessOpportunity == null)
+                {
+                    ReviewData.IsvatcurrentBusinessOpportunity = new List<IsvatcurrentBusinessOpportunity>();
+                }
+                ReviewData.IsvatcurrentBusinessOpportunity = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+    private void BusinessRiskReturnToggle(List<IsvatcurrentBusinessRisk>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.IsvatcurrentBusinessRisk == null)
+                {
+                    ReviewData.IsvatcurrentBusinessRisk = new List<IsvatcurrentBusinessRisk>();
+                }
+                ReviewData.IsvatcurrentBusinessRisk = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+    private void incomeEarnerReturnToggle(List<IsvatincomeEarner>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.IsvatincomeEarner == null)
+                {
+                    ReviewData.IsvatincomeEarner = new List<IsvatincomeEarner>();
+                }
+                ReviewData.IsvatincomeEarner = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+    private void generatedProfitReturnToggle(List<IsvatgeneratedProfit>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.IsvatgeneratedProfit == null)
+                {
+                    ReviewData.IsvatgeneratedProfit = new List<IsvatgeneratedProfit>();
+                }
+                ReviewData.IsvatgeneratedProfit = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+    private void lossReturnToggle(List<Isvatloss>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.Isvatloss == null)
+                {
+                    ReviewData.Isvatloss = new List<Isvatloss>();
+                }
+                ReviewData.Isvatloss = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+    private void BusinessAnswerReturnToggle(List<IsvatstartBusinessAnswer>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.IsvatstartBusinessAnswer == null)
+                {
+                    ReviewData.IsvatstartBusinessAnswer = new List<IsvatstartBusinessAnswer>();
+                }
+                ReviewData.IsvatstartBusinessAnswer = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+    private void workingCapitalReturnToggle(List<IsvatworkingCapital>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.IsvatworkingCapital == null)
+                {
+                    ReviewData.IsvatworkingCapital = new List<IsvatworkingCapital>();
+                }
+                ReviewData.IsvatworkingCapital = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        await base.OnInitializedAsync();
+        try
+        {
+            var primarydata = await Repo.GetPrimaryData();
+                   if (primarydata != null)
+                   {
+                       GenderData = primarydata.GenderData;
+                       CategoryofResidenceData = primarydata.CategoryofResidenceData;
+                       NatureofResidenceData = primarydata.NatureofResidenceData;
+                       MaritalStatusData = primarydata.MaritalStatusData;
+                       ParishData = primarydata.ParishData;
+                       VillageData = primarydata.VillageData;
+                       DistrictData = primarydata.DistrictData;
+                       SubcountyData = primarydata.SubcountyData;
+
+                       YesNoData = primarydata.YesNoData;
+                       AssetIncomeData = primarydata.AssetIncomeData;
+                       RiskLevelRatingData = primarydata.RiskLevelRatingData;
+                       BusinessVentureCapitalInvestmentData = primarydata.BusinessVentureCapitalInvestmentData;
+                       BusinessOpportunityData = primarydata.BusinessOpportunityData;
+                       BusinessRiskData = primarydata.BusinessRiskData;
+                       StartBusinessQuestionData = primarydata.StartBusinessQuestionData;
+                   }
+
+            HouseHoldData = await db.BeneficiaryIdentificationRegister.ToListAsync();
+            HouseHoldMembersData = await db.HouseHoldMembers.ToListAsync();
+
+            var username = userManagement.GetUserName();
+            Credentials = await db.ViewUserManagement.FirstOrDefaultAsync(o => o.UserName == username);
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    public void OnActionBegin(ActionEventArgs<Isvatheader> args)
+    {
+        try
+        {
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Cancel)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+            {
+                // if (args.Data.HhtotalScore == null)
+                // {
+                //     toastService.ShowError("Please answer all questions");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.HouseHoldMemberId == 0)
+                // {
+                //     toastService.ShowWarning("Please select the House hold member who was assessed");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdoname))
+                // {
+                //     toastService.ShowError("Please enter the name of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdocontact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AdministrationPhaseId == null)
+                // {
+                //     toastService.ShowError("Please select the Phase of Administration");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AssessmentDate == null)
+                // {
+                //     toastService.ShowError("Please select the Assessment Date");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.MaritalStatusId == null)
+                // {
+                //     toastService.ShowError("Please select the Marital status of the household head");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorName))
+                // {
+                //     toastService.ShowError("Please enter the Name of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorContact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorTitle))
+                // {
+                //     toastService.ShowError("Please enter the Title of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else
+                // {
+
+                // }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+        finally { StateHasChanged(); }
+    }
+    public void OnActionComplete(ActionEventArgs<Isvatheader> args)
+    {
+        try
+        {
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+            {
+                if (IsvatheaderGrid != null)
+                {
+                    IsvatheaderGrid.PreventRender(false);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+    }
+    public class IsvatheaderAdapter : DataAdaptor
+    {
+        public IToastService toastService;
+        IBimService Repo;
+        public IsvatheaderAdapter(IToastService ts, IBimService Repo)
+        {
+            toastService = ts;
+            this.Repo = Repo;
+        }
+        public override async Task<Object> ReadAsync(DataManagerRequest dataManagerRequest, string key = null)
+        {
+            var data = new List<Isvatheader>();
+            try
+            {
+                string? DistrictId = null; string? SubcountyId = null; string? HouseholdId = null; string? NatureofResidenceId = null; string? CategoryofResidenceId = null;
+
+                if (dataManagerRequest.Params != null && dataManagerRequest.Params.Count > 0)
+                {
+                    var val = dataManagerRequest.Params;
+                    if (val.FirstOrDefault(o => o.Key == "DistrictId").Value != null)
+                    {
+                        DistrictId = val.FirstOrDefault(o => o.Key == "DistrictId").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "SubcountyId").Value != null)
+                    {
+                        SubcountyId = val.FirstOrDefault(o => o.Key == "SubcountyId").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "HouseholdId").Value != null)
+                    {
+                        HouseholdId = val.FirstOrDefault(o => o.Key == "HouseholdId").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "NatureofResidenceId").Value != null)
+                    {
+                        NatureofResidenceId = val.FirstOrDefault(o => o.Key == "NatureofResidenceId").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "CategoryofResidenceId").Value != null)
+                    {
+                        CategoryofResidenceId = val.FirstOrDefault(o => o.Key == "CategoryofResidenceId").Value.ToString();
+                    }
+                }
+                if (!string.IsNullOrEmpty(DistrictId) || !string.IsNullOrEmpty(SubcountyId) || !string.IsNullOrEmpty(HouseholdId))
+                {
+                    data = await Repo.GetIsvat(DistrictId, SubcountyId, HouseholdId, NatureofResidenceId, CategoryofResidenceId);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+            IEnumerable GridData = data;
+            int _count = data.Count;
+            if (dataManagerRequest.Search != null && dataManagerRequest.Search.Count > 0)
+            {
+                // Searching
+                GridData = DataOperations.PerformSearching(GridData, dataManagerRequest.Search);
+            }
+            if (dataManagerRequest.Where != null && dataManagerRequest.Where.Count > 0)
+            {
+                // Filtering
+                GridData = DataOperations.PerformFiltering(GridData, dataManagerRequest.Where, dataManagerRequest.Where[0].Operator);
+            }
+            if (dataManagerRequest.Sorted?.Count > 0) // perform Sorting
+            {
+                GridData = DataOperations.PerformSorting(GridData, dataManagerRequest.Sorted);
+            }
+            if (dataManagerRequest.Skip != 0)
+            {
+                GridData = DataOperations.PerformSkip(GridData, dataManagerRequest.Skip); //Paging
+            }
+            if (dataManagerRequest.Take != 0)
+            {
+                GridData = DataOperations.PerformTake(GridData, dataManagerRequest.Take);
+            }
+            IDictionary<string, object> aggregates = new Dictionary<string, object>();
+            if (dataManagerRequest.Aggregates != null) // Aggregation
+            {
+                aggregates = DataUtil.PerformAggregation(GridData, dataManagerRequest.Aggregates);
+            }
+            if (dataManagerRequest.Group != null && dataManagerRequest.Group.Any()) //Grouping
+            {
+                foreach (var group in dataManagerRequest.Group)
+                {
+                    GridData = DataUtil.Group<Isvatheader>(GridData, group, dataManagerRequest.Aggregates, 0, dataManagerRequest.GroupByFormatter);
+                }
+            }
+            return dataManagerRequest.RequiresCounts ? new DataResult() { Result = GridData, Count = _count, Aggregates = aggregates } : (object)GridData;
+        }
+        public override async Task<Object> InsertAsync(DataManager dataManager, object value, string key)
+        {
+            try
+            {
+                var val = (value as Isvatheader);
+                await Repo.SaveIsvat(val);
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+            return value;
+        }
+        public override object Remove(DataManager dataManager, object value, string keyField, string key)
+        {
+            try
+            {
+                int data = (int)value;
+
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+
+            return value;
+        }
+        public override async Task<object> UpdateAsync(DataManager dataManager, object value, string keyField, string key)
+        {
+            try
+            {
+                var val = (value as Isvatheader);
+                await Repo.SaveIsvat(val);
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+            return value;
+        }
+    }
+}

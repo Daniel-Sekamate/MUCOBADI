@@ -1,0 +1,107 @@
+﻿@page "/scatterPage"
+@using Syncfusion.Blazor.Charts
+
+
+<SfChart>
+    <ChartSeriesCollection>
+        <ChartSeries DataSource="@SalesReports" XName="X" YName="Y" Type="ChartSeriesType.Scatter">
+        </ChartSeries>
+    </ChartSeriesCollection>
+</SfChart>
+
+@code {
+    public class ChartData
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public string Text { get; set; }
+    }
+
+    public List<ChartData> SalesReports = new List<ChartData>
+    {
+        new ChartData { X= 92.2, Y= 7.8, Text= "China" },
+        new ChartData { X= 74, Y= 6.5, Text= "India" },
+        new ChartData { X= 90.4, Y= 6.0, Text= "Indonesia" },
+        new ChartData { X= 99.4, Y= 2.2, Text= "US" },
+        new ChartData { X= 88.6, Y= 1.3, Text= "Brazil" },
+        new ChartData { X= 99, Y= 0.7, Text= "Germany" },
+        new ChartData { X= 72, Y= 2.0, Text= "Egypt" },
+        new ChartData { X= 99.6, Y= 3.4, Text= "Russia" },
+        new ChartData { X= 99, Y= 0.2, Text= "Japan" },
+        new ChartData { X= 86.1, Y= 4.0, Text= "Mexico" },
+        new ChartData { X= 92.6, Y= 6.6, Text= "Philippines" },
+        new ChartData { X= 61.3, Y= 1.45, Text= "Nigeria" },
+        new ChartData { X= 82.2, Y= 3.97, Text= "Hong Kong" },
+        new ChartData { X= 79.2, Y= 3.9, Text= "Netherland" },
+        new ChartData { X= 72.5, Y= 4.5, Text= "Jordan" },
+        new ChartData { X= 81, Y= 3.5, Text= "Australia" },
+        new ChartData { X= 66.8, Y= 3.9, Text= "Mongolia" },
+        new ChartData { X= 78.4, Y= 2.9, Text= "Taiwan" }
+    };
+}
+@*
+<SfChart DataSource="@MedalDetails" Title="Comparison of GDP per Capita and Human Development Index across EAC Partner States" Palettes="palettes">
+    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Title="Gross Domestic Product (GDP) per capita">
+        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+    </ChartPrimaryXAxis>
+    <ChartPrimaryYAxis Title="Human Development Index (HDI)">
+        <ChartAxisLabelStyle Size="10px" FontWeight="600"/>
+    </ChartPrimaryYAxis>
+    <ChartSeriesCollection>
+        <ChartSeries XName="X" YName="YValue" Type="ChartSeriesType.Scatter" Fill="blue" Opacity="0.5" Name="Uganda">
+            <ChartMarker Height="10" Width="10" Shape="ChartShape.Circle">
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries XName="X" YName="YValue1" Type="ChartSeriesType.Scatter" Fill="red" Opacity="0.5" Name="Kenya">
+            <ChartMarker Height="10" Width="10" Shape="ChartShape.Circle">
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries XName="X" YName="YValue2" Type="ChartSeriesType.Scatter" Fill="red" Opacity="0.5" Name="Tanzania">
+            <ChartMarker Height="10" Width="10" Shape="ChartShape.Circle">
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries XName="X" YName="YValue3" Type="ChartSeriesType.Scatter" Fill="red" Opacity="0.5" Name="South Sudan">
+            <ChartMarker Height="10" Width="10" Shape="ChartShape.Circle">
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries XName="X" YName="YValue4" Type="ChartSeriesType.Scatter" Fill="red" Opacity="0.5" Name="Burundi">
+            <ChartMarker Height="10" Width="10" Shape="ChartShape.Circle">
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries XName="X" YName="YValue5" Type="ChartSeriesType.Scatter" Fill="red" Opacity="0.5" Name="Congo">
+            <ChartMarker Height="10" Width="10" Shape="ChartShape.Circle">
+            </ChartMarker>
+        </ChartSeries>
+        <ChartSeries XName="X" YName="YValue6" Type="ChartSeriesType.Scatter" Fill="red" Opacity="0.5" Name="Rwanda">
+            <ChartMarker Height="10" Width="10" Shape="ChartShape.Circle">
+            </ChartMarker>
+        </ChartSeries>
+    </ChartSeriesCollection>
+    <ChartLegendSettings Visible="true" />
+</SfChart>
+
+@code {
+    public class ChartData
+    {
+        public double X { get; set; }
+        public double YValue { get; set; }
+        public double YValue1 { get; set; }
+        public double YValue2 { get; set; }
+        public double YValue3 { get; set; }
+        public double YValue4 { get; set; }
+        public double YValue5 { get; set; }
+        public double YValue6 { get; set; }
+    }
+
+    public List<ChartData> MedalDetails = new List<ChartData>
+    {
+        new ChartData { X= 20, YValue= 46, YValue1=56, YValue2=66, YValue3=76, YValue4=86, YValue5=96, YValue6=33 },
+        new ChartData { X= 40, YValue= 27, YValue1=17,YValue2=37, YValue3=47, YValue4=57, YValue5=63, YValue6=31 },
+        new ChartData { X= 50, YValue= 26, YValue1=36,YValue2=16, YValue3=70, YValue4=61, YValue5=91, YValue6=32 },
+        new ChartData { X= 70, YValue= 56,  YValue1=16,YValue2=10, YValue3=20, YValue4=30, YValue5=69, YValue6=69 },
+        new ChartData { X= 90, YValue= 12, YValue1=46,YValue2=6, YValue3=71, YValue4=84, YValue5=88, YValue6=101 },
+        new ChartData { X= 110, YValue= 26, YValue1=16,YValue2=64, YValue3=67, YValue4=44, YValue5=94, YValue6=47 },
+        new ChartData { X= 130, YValue= 26, YValue1=12,YValue2=24, YValue3=74, YValue4=65, YValue5=95, YValue6=76 },
+    };
+    public String[] palettes = new String[] { "#9c88ff", "#fbc531", "#4cd137", "#487eb0", "#ff4d4d", "#3d3d3d", "#33d9b2" };
+}*@

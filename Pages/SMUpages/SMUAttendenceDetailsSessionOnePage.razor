@@ -1,0 +1,156 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools;
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+<style>
+    .control-wrapper {
+        max-width: 250px;
+        margin: 0 auto;
+        padding: 20px 0px 0px;
+    }
+
+    .example-label {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+</style>
+@if (SmuAttendanceFormDetailDataSource != null)
+{
+   @*  <div class="col-lg-3 control-section">
+        <div class="control-wrapper">
+            <label class="example-label">Session One Date</label>
+            <SfDatePicker TValue="DateTime?" Placeholder="Choose a Date" ShowClearButton="true"></SfDatePicker>
+        </div>
+    </div> *@
+    <SfGrid @ref=@SmuAttendanceFormDetailGrid TValue="SmuAttendenceFormDetail"
+            DataSource="SmuAttendanceFormDetailDataSource" RowHeight="30"
+            AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+            AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridEvents TValue="SmuAttendenceFormDetail" CellSaved="OnCellSaved"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(SmuAttendenceFormDetail.AttendenceFormDetailId) HeaderText="AttendenceFormDetailId" AllowEditing="false"
+            Visible=false IsPrimaryKey="true" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(SmuAttendenceFormDetail.SerialNumber) HeaderText="S/N" AllowEditing="true" Visible="true" Width="30"></GridColumn>
+            <GridForeignColumn Field="@(nameof(SmuAttendenceFormDetail.ClientAttendenceId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Client Name" Width="100" ForeignKeyField="@(nameof(SmuClientRegistrationForm.ClientRegistrationFormId))" AllowEditing="false" ForeignKeyValue="@(nameof(SmuClientRegistrationForm.SmuClientName))" ForeignDataSource="@SmuClientRegistrationFormData"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(SmuAttendenceFormDetail.ClientAttendenceId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Phone Contact" Width="50" ForeignKeyField="@(nameof(SmuClientRegistrationForm.ClientRegistrationFormId))" AllowEditing="false" ForeignKeyValue="@(nameof(SmuClientRegistrationForm.ClientContact))" ForeignDataSource="@SmuClientRegistrationFormData"></GridForeignColumn>
+            <GridColumn Field=@nameof(SmuAttendenceFormDetail.ClientCode) HeaderText="Client Code" AllowEditing="true" Visible="true" Width="50"></GridColumn>
+            <GridForeignColumn Field="@(nameof(SmuAttendenceFormDetail.AttendedIdSessionOne))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Attended" Width="100" ForeignKeyField="@(nameof(SmuAttendanceKey.AttendenceKeyId))" AllowEditing="true"
+                               ForeignKeyValue="@(nameof(SmuAttendanceKey.AttendenceKey))" ForeignDataSource="@SmuAttendanceKeyData"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(SmuAttendenceFormDetail.KaguguIdSessionOne))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Kagugu" Width="100" ForeignKeyField="@(nameof(SmuKaguguScore.KaguguScoreId))" AllowEditing="true"
+                               ForeignKeyValue="@(nameof(SmuKaguguScore.KaguguScore))" ForeignDataSource="@SmuKaguguScoreData"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(SmuAttendenceFormDetail.ReasonSessionOne))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Reasons" Width="100" ForeignKeyField="@(nameof(SmuReasonsForSessionAbsence.ReasonForAbsenceId))" AllowEditing="true"
+                               ForeignKeyValue="@(nameof(SmuReasonsForSessionAbsence.ReasonForAbsenceDescription))" ForeignDataSource="@SmuReasonForAbsenceData"></GridForeignColumn>
+        </GridColumns>
+    </SfGrid>
+}
+
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+   
+    SfGrid<SmuAttendenceFormDetail>? SmuAttendanceFormDetailGrid{ get; set; }
+    [Parameter]
+    public List<SmuClientRegistrationForm>? SmuClientRegistrationFormData { get; set; }
+    [Parameter]
+    public int SelectedAttendanceHeaderId { get; set; }
+    [Parameter]
+    public List<SmuKaguguScore>? SmuKaguguScoreData { get; set; }
+    [Parameter]
+    public List<SmuReasonsForSessionAbsence>? SmuReasonForAbsenceData { get; set; }
+    [Parameter]
+    public List<SmuAttendanceKey>? SmuAttendanceKeyData { get; set; }
+    [Parameter]
+    public EventCallback<List<SmuAttendenceFormDetail>?> SmuAttendanceFormDetailCallBack { get; set; }
+    // [Parameter]
+    // public List<SmuAttendenceFormDetail>? SmuAttendanceFormDetailData { get; set; }
+    List<SmuAttendenceFormDetail>? SmuAttendanceFormDetailDataSource { get; set; }
+    public async Task OnCellSaved(CellSaveArgs<SmuAttendenceFormDetail> args)
+    {
+        if (args.Data.AttendedIdSessionOne != null 
+            && args.Data.KaguguIdSessionOne != null
+            && args.Data.ReasonSessionOne != null
+        )
+        {
+            //await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Data Not Got!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+            await this.SmuAttendanceFormDetailGrid?.EndEditAsync();
+            await SmuAttendanceFormDetailCallBack.InvokeAsync(SmuAttendanceFormDetailDataSource);
+        }
+    }
+    public async Task<List<SmuAttendenceFormDetail>?> returnData()
+    {
+        if (SmuAttendanceFormDetailGrid != null)
+        {
+            await SmuAttendanceFormDetailGrid.EndEditAsync();
+        }
+        return SmuAttendanceFormDetailDataSource;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuAttendanceFormDetailDataSource = new List<SmuAttendenceFormDetail>();
+            if (SelectedAttendanceHeaderId > 0)
+            {
+                try
+                {
+                    var _SmuAttendanceFormDetailData = await _ISMUTools.GetSmuAttendenceFormDetail(SelectedAttendanceHeaderId);
+                    if (_SmuAttendanceFormDetailData != null)
+                    {
+                        SmuAttendanceFormDetailDataSource = _SmuAttendanceFormDetailData;
+                        StateHasChanged();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+}

@@ -1,0 +1,167 @@
+﻿@* <h3>IsvatstartBusinessAnswerPage</h3> *@
+@using MUCOBADI.Models
+@inject IToastService toastService;
+
+@if (DataSource != null && DataSource.Count > 0)
+{
+    <SfGrid @ref=@HeaderGrid TValue="IsvatstartBusinessAnswer" DataSource="@DataSource"
+            AllowFiltering=false AllowGrouping=false AllowPaging=false AllowTextWrap=true ShowColumnChooser=true
+            GridLines="GridLine.Both" AllowSelection="true" Toolbar="@(new string[] {"Edit","Update","Cancel","ColumnChooser" })"
+            EnableStickyHeader=true ClipMode="ClipMode.EllipsisWithTooltip" EnableAltRow=true>
+        <GridGroupSettings Columns="@Initial"></GridGroupSettings>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridEvents CellSaved="DetailedCellSavedHandler" CellSelected="DetailedCellSelectHandler" TValue="IsvatstartBusinessAnswer"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field="@(nameof(IsvatstartBusinessAnswer.IsvatstartBusinessAnswerId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridForeignColumn Field="@(nameof(IsvatstartBusinessAnswer.StartBusinessQuestionId))" HeaderText="Question" Width="130" AllowEditing=false ForeignKeyField="@(nameof(AStartBusinessQuestion.StartBusinessQuestionId))" ForeignKeyValue="@(nameof(AStartBusinessQuestion.StartBusinessQuestionDesc))" ForeignDataSource="@StartBusinessQuestionData"></GridForeignColumn>
+            <GridColumn Field=@nameof(IsvatstartBusinessAnswer.StartBusinessQuestionAnswer) Visible="true" AllowFiltering="true" HeaderText="Answer" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Left" Width="140">
+                <EditTemplate Context="AnswerContext">
+                    @{
+                        <SfTextBox @bind-Value=@((AnswerContext as IsvatstartBusinessAnswer).StartBusinessQuestionAnswer) Multiline=true rowspan="8" Enabled=true Placeholder="type here ....." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                    }
+                </EditTemplate>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+
+@code {
+    [Parameter]
+    public List<AStartBusinessQuestion>? StartBusinessQuestionData { get; set; }
+    [Parameter]
+    public List<AYesNo>? YesNoData { get; set; }
+    [Parameter]
+    public List<IsvatstartBusinessAnswer>? IsvatstartBusinessAnswerData { get; set; }
+    [Parameter]
+    public int IsvatheaderId { get; set; }
+    [Parameter]
+    public EventCallback<List<IsvatstartBusinessAnswer>?> DetailToggle { get; set; }
+
+    public string[] Initial = (new string[] { "YesNoIdCategory", "YesNoIdClassification" });
+
+    List<IsvatstartBusinessAnswer>? DataSource { get; set; }
+    int? PreviousIsvatheaderId { get; set; }
+    public SfGrid<IsvatstartBusinessAnswer>? HeaderGrid;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (PreviousIsvatheaderId != IsvatheaderId)
+            {
+
+                if (IsvatstartBusinessAnswerData != null && IsvatstartBusinessAnswerData.Count > 0)
+                {
+                    if (StartBusinessQuestionData != null && StartBusinessQuestionData.Count > 0)
+                    {
+                        DataSource = new List<IsvatstartBusinessAnswer>();
+                        int CountId = -1;
+                        foreach (var item in StartBusinessQuestionData)
+                        {
+                            var exists = IsvatstartBusinessAnswerData.FirstOrDefault(o => o.StartBusinessQuestionId == item.StartBusinessQuestionId);
+                            if (exists != null)
+                            {
+                                DataSource.Add(new IsvatstartBusinessAnswer()
+                                    {
+                                        IsvatstartBusinessAnswerId = exists.IsvatstartBusinessAnswerId,
+                                        IsvatheaderId = exists.IsvatheaderId,
+                                        StartBusinessQuestionId = item.StartBusinessQuestionId,
+                                        StartBusinessQuestionAnswer = exists.StartBusinessQuestionAnswer,
+                                    });
+                            }
+                            else
+                            {
+                                DataSource.Add(new IsvatstartBusinessAnswer()
+                                    {
+                                        IsvatstartBusinessAnswerId = CountId,
+                                        IsvatheaderId = IsvatheaderId,
+                                        StartBusinessQuestionId = item.StartBusinessQuestionId,
+                                    });
+                            }
+                            CountId--;
+                        }
+                    }
+                }
+                else
+                {
+                    if (StartBusinessQuestionData != null && StartBusinessQuestionData.Count > 0)
+                    {
+                        DataSource = new List<IsvatstartBusinessAnswer>();
+                        int CountId = -1;
+                        foreach (var item in StartBusinessQuestionData)
+                        {
+                            DataSource.Add(new IsvatstartBusinessAnswer()
+                                {
+                                    IsvatstartBusinessAnswerId = CountId,
+                                    IsvatheaderId = IsvatheaderId,
+                                    StartBusinessQuestionId = item.StartBusinessQuestionId,
+                                });
+                            CountId--;
+                        }
+                    }
+                }
+                PreviousIsvatheaderId = IsvatheaderId;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            //  throw;
+        }
+        base.OnInitialized();
+    }
+
+    private async Task DetailedCellSavedHandler(CellSaveArgs<IsvatstartBusinessAnswer> args)
+    {
+        try
+        {
+            if (HeaderGrid != null)
+            {
+                var index = await HeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.IsvatstartBusinessAnswerId);
+                //await HeaderGrid.UpdateCellAsync(index, nameof(IsvatstartBusinessAnswer.ComplaintId), ComplaintId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            if (HeaderGrid != null)
+            {
+                await HeaderGrid.EndEditAsync();
+            }
+            if (DataSource != null)
+            {
+                await DetailToggle.InvokeAsync(DataSource);
+            }
+        }
+    }
+    private async Task DetailedCellSelectHandler(CellSelectEventArgs<IsvatstartBusinessAnswer> args)
+    {
+        if (HeaderGrid != null)
+        {
+            //get selected cell index
+            var CellIndexes = await HeaderGrid.GetSelectedRowCellIndexesAsync();
+
+            //get the row and cell index
+            var CurrentEditRowIndex = CellIndexes[0].Item1;
+            var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+            //get the available fields
+            var fields = await HeaderGrid.GetColumnFieldNamesAsync();
+            // edit the selected cell using the cell index and column name
+            await HeaderGrid.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+        }
+
+    }
+}

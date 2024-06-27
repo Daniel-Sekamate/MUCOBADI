@@ -73,7 +73,7 @@
                 <div style="padding:15px;">
                     <div class="form-row">
                         <div class="form-group col-md-12" hidden>
-                            <SfNumericTextBox ID="DistrictId" @bind-Value="@(FacilityData.DistrictId)" Enabled="false" Placeholder="District Id" Format="N0" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                            <SfNumericTextBox ID="FacilityId" @bind-Value="@(FacilityData.FacilityId)" Enabled="false" Placeholder="District Id" Format="N0" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
                         </div>
                         <div class="form-group col-md-12">
                             <SfDropDownList ID="DistrictId" @bind-Value="@(FacilityData.DistrictId)" TItem="ADistrict" AllowFiltering="true" TValue="int?" DataSource="@DistrictData" Placeholder="District" FloatLabelType="FloatLabelType.Always">

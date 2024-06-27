@@ -72,8 +72,8 @@
                                         </SfMultiSelect>
                                     </div>
                                     <div class="form-group col-md-3">
-                                        <BSButton Color="Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
-                                        <BSButton Color="Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <DataAnnotationsValidator />
@@ -273,7 +273,7 @@
                                                             </div>
                                                             <div class="form-group col-md-4">
                                                                 <p>HH Member</p>
-                                                                <SfDropDownList ID="HouseHoldMemberId" @bind-Value="@(HVatReviewData.HouseHoldMemberId)" Enabled="true" TItem="ViewHouseHoldMembers" TValue="int" DataSource="@HouseHoldMembersData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                <SfDropDownList ID="HouseHoldMemberId" @bind-Value="@(HVatReviewData.HouseHoldMemberId)" Enabled="true" TItem="ViewHouseHoldMembers" TValue="int?" DataSource="@HouseHoldMembersData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                     <DropDownListTemplates TItem="ViewHouseHoldMembers">
                                                                         <ItemTemplate>
                                                                             <div style="margin-left:10px;">

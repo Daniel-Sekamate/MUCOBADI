@@ -72,8 +72,8 @@
                                         </SfMultiSelect>
                                     </div>
                                     <div class="form-group col-md-3">
-                                        <BSButton Color="Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
-                                        <BSButton Color="Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <DataAnnotationsValidator />
@@ -257,13 +257,13 @@
                                                                                             </div>
                                                                                             <div class="form-group col-md-6">
                                                                                                 <p>Case Plan for</p>
-                                                                                                <SfDropDownList @bind-Value="@(CaseCareDetailReviewData.CasePlanId)" Enabled="true" TItem="ACasePlan" TValue="int" DataSource="@CasePlanData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                                                <SfDropDownList @bind-Value="@(CaseCareDetailReviewData.CasePlanId)" Enabled="true" TItem="ACasePlan" TValue="int?" DataSource="@CasePlanData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                                                     <DropDownListFieldSettings Value="@nameof(ACasePlan.CasePlanId)" Text="@nameof(ACasePlan.CasePlanDesc)"></DropDownListFieldSettings>
                                                                                                 </SfDropDownList>
                                                                                             </div>
                                                                                             <div class="form-group col-md-6">
                                                                                                 <p>NIN/Unique identifier</p>
-                                                                                                <SfDropDownList @bind-Value="@(CaseCareDetailReviewData.HouseHoldMemberId)" Enabled="true" TItem="ViewHouseHoldMembers" TValue="int" DataSource="@HouseHoldMembersData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                                                <SfDropDownList @bind-Value="@(CaseCareDetailReviewData.HouseHoldMemberId)" Enabled="true" TItem="ViewHouseHoldMembers" TValue="int?" DataSource="@HouseHoldMembersData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                                                     <DropDownListTemplates TItem="ViewHouseHoldMembers">
                                                                                                         <ItemTemplate>
                                                                                                             <div style="margin-left:10px;">
@@ -327,7 +327,7 @@
                                                                                                                         </div>
                                                                                                                         <div class="form-group col-md-6">
                                                                                                                             <p>Priority Area</p>
-                                                                                                                            <SfDropDownList @bind-Value="@(CaseCareDetailPlanReviewData.PriorityAreaId)" Enabled="true" TItem="APriorityArea" TValue="int" DataSource="@PriorityAreaData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                                                                            <SfDropDownList @bind-Value="@(CaseCareDetailPlanReviewData.PriorityAreaId)" Enabled="true" TItem="APriorityArea" TValue="int?" DataSource="@PriorityAreaData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                                                                                 <DropDownListFieldSettings Value="@nameof(APriorityArea.PriorityAreaId)" Text="@nameof(APriorityArea.PriorityAreaDesc)"></DropDownListFieldSettings>
                                                                                                                                 <DropDownListEvents TItem="APriorityArea" TValue="int" ValueChange="OnPriorityAreaChange"></DropDownListEvents>
                                                                                                                             </SfDropDownList>
@@ -1677,8 +1677,8 @@
                             id = (last.CaseCareSummaryId + 1);
                         }
                         m.CaseCareSummaryId = id;
-                        m.CaseCareId = val.Case_Care_Id;
-                        m.HouseHoldMemberId = val.HouseHoldMemberId;
+                        m.CaseCareId = val.Case_Care_Id.Value;
+                        m.HouseHoldMemberId = val.HouseHoldMemberId.Value;
                         m.RefferalServiceReceivedId = val.RefferalServiceReceivedId;
                         m.OrganisationName = val.OrganisationName;
                         m.AgencyContact = val.AgencyContact;
@@ -1725,8 +1725,8 @@
                             id = (last.CaseCareSummaryId + 1);
                         }
                         m.CaseCareSummaryId = id;
-                        m.CaseCareId = val.Case_Care_Id;
-                        m.HouseHoldMemberId = val.HouseHoldMemberId;
+                        m.CaseCareId = val.Case_Care_Id.Value;
+                        m.HouseHoldMemberId = val.HouseHoldMemberId.Value;
                         m.RefferalServiceReceivedId = val.RefferalServiceReceivedId;
                         m.OrganisationName = val.OrganisationName;
                         m.AgencyContact = val.AgencyContact;

@@ -9,9 +9,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\NewModels\**" />
+    <Compile Remove="Pages\NMN\**" />
+    <Content Remove="Models\NewModels\**" />
+    <Content Remove="Pages\NMN\**" />
+    <EmbeddedResource Remove="Models\NewModels\**" />
+    <EmbeddedResource Remove="Pages\NMN\**" />
+    <None Remove="Models\NewModels\**" />
+    <None Remove="Pages\NMN\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\BIM\BusinessPlanHeaderPage.razor" />
+    <Content Remove="Pages\BIM\BusinessTrackingLedgerPage.razor" />
+    <Content Remove="Pages\BIM\IsvatheaderPage.razor" />
     <Content Remove="Pages\Dashboards\Charts\BeneficiariesICare.razor" />
     <Content Remove="Pages\Dashboards\Charts\DashboardPageBackUp.razor" />
     <Content Remove="Pages\Dashboards\DashboardRazorPage.razor" />
+    <Content Remove="Pages\Dashboards\PartialViews\CardbanDashboardPage.razor" />
+    <Content Remove="Pages\Reports\Component.razor" />
+    <Content Remove="Pages\Reports\ProjectIndicatorReportsPage.razor" />
     <Content Remove="Pages\Utilities\StakeHolderTargets.razor" />
   </ItemGroup>
 
@@ -25,6 +42,31 @@
     <None Include="Pages\Account\LoginPage.razor" />
     <None Include="Pages\Account\RegisterUserPage.razor" />
     <None Include="Pages\Account\UserManagementPage.razor" />
+    <None Include="Pages\Reports\ProjectIndicatorReportsPage.razor" />
+    <None Include="Pages\SMUpages\SMUAssessmentGuidePH9QuestionsPage.razor" />
+    <None Include="Pages\SMUpages\SMUAttendenceDetailsSessionFivePage.razor" />
+    <None Include="Pages\SMUpages\SMUAttendenceDetailsSessionFourPage.razor" />
+    <None Include="Pages\SMUpages\SMUAttendenceDetailsSessionOnePage.razor" />
+    <None Include="Pages\SMUpages\SMUAttendenceDetailsSessionSixPage.razor" />
+    <None Include="Pages\SMUpages\SMUAttendenceDetailsSessionThreePage.razor" />
+    <None Include="Pages\SMUpages\SMUAttendenceDetailsSessionTwoPage.razor" />
+    <None Include="Pages\SMUpages\SMUAttendenceHeaderPage.razor" />
+    <None Include="Pages\SMUpages\SMUClientBioDataPage.razor" />
+    <None Include="Pages\SMUpages\SMUGroupPage.razor" />
+    <None Include="Pages\SMUpages\SMUInternalCopingStrategiesPage.razor" />
+    <None Include="Pages\SMUpages\SMUPH9QuestionPage.razor" />
+    <None Include="Pages\SMUpages\SMUPreAssessmentGuidePage.razor" />
+    <None Include="Pages\SMUpages\SMUPreGroupGuidePage.razor" />
+    <None Include="Pages\SMUpages\SMUPreGroupGuidePH9QuestionsPage.razor" />
+    <None Include="Pages\SMUpages\SMURegistrationPage.razor" />
+    <None Include="Pages\SMUpages\SMUSafetyPeopleToAskForHelpPage.razor" />
+    <None Include="Pages\SMUpages\SMUSafetyPeopleToProvideDistractionPage.razor" />
+    <None Include="Pages\SMUpages\SMUSafetyPlanningFormHeaderPage.razor" />
+    <None Include="Pages\SMUpages\SMUSafetyProfessionalsToContactDuringCrisisPage.razor" />
+    <None Include="Pages\SMUpages\SMUSafetyWarningSignsPage.razor" />
+    <None Include="Pages\SMUpages\SMUSucideAssementFormHeaderPage.razor" />
+    <None Include="Pages\SMUpages\SMUTerminantionGuidePH9QuestionsPage.razor" />
+    <None Include="Pages\SMUpages\SMUTerminationGuidePage.razor" />
     <None Include="Pages\TrackingTools\AVATPage.razor" />
     <None Include="Pages\TrackingTools\CaseCarePage.razor" />
     <None Include="Pages\TrackingTools\CommunityTraingRegisterPage.razor" />
@@ -155,19 +197,24 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MudBlazor" Version="6.0.2" />
     <PackageReference Include="Quartz" Version="3.4.0" />
+    <PackageReference Include="Syncfusion.Blazor.BulletChart" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Calendars" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Cards" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Charts" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Core" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Grid" Version="22.1.34" />
+    <PackageReference Include="Syncfusion.Blazor.HeatMap" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Inputs" Version="22.1.34" />
+    <PackageReference Include="Syncfusion.Blazor.Kanban" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Layouts" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Maps" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Navigations" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.PdfViewerServer.Windows" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="22.1.34" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="22.1.34" />
+    <PackageReference Include="Syncfusion.Blazor.TreeMap" Version="22.1.34" />
     <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="20.2.0.45" />
     <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="20.2.0.45" />
     <PackageReference Include="Syncfusion.EJ" Version="20.2.0.45" />
@@ -175,6 +222,19 @@
     <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.2.0.45" />
     <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="20.2.0.45" />
     <PackageReference Include="Syncfusion.XlsIORenderer.Net.Core" Version="20.2.0.45" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Reports\ProjectIndicatorReportsPage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Reports\ProjectIndicatorReportsPage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Context\" />
+    <Folder Include="wwwroot\dashboard\CardImages\" />
   </ItemGroup>
 
 </Project>

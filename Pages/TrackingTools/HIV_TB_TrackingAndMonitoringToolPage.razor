@@ -66,8 +66,8 @@
                                         </SfMultiSelect>
                                     </div>
                                     <div class="form-group col-md-3">
-                                        <BSButton Color="Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
-                                        <BSButton Color="Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <DataAnnotationsValidator />
@@ -161,7 +161,7 @@
                                                             <div class="form-group col-md-12" style="border-bottom-color:black; border-bottom-width:2px; border-bottom-style:solid;"></div>
                                                             <div class="form-group col-md-6">
                                                                 <p>Individual Code</p>
-                                                                <SfDropDownList @bind-Value="@(TrackingFormHeaderData.HouseHoldMemberId)" Enabled="true" TItem="ViewHouseHoldMembers" TValue="int" DataSource="@HouseHoldMemberData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                <SfDropDownList @bind-Value="@(TrackingFormHeaderData.HouseHoldMemberId)" Enabled="true" TItem="ViewHouseHoldMembers" TValue="int?" DataSource="@HouseHoldMemberData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                     <DropDownListTemplates TItem="ViewHouseHoldMembers">
                                                                         <ItemTemplate>
                                                                             <div style="margin-left:10px;">
@@ -186,7 +186,7 @@
                                                                         </ValueTemplate>
                                                                     </DropDownListTemplates>
                                                                     <DropDownListFieldSettings Value="@nameof(ViewHouseHoldMembers.HouseHoldMemberId)" Text="@nameof(ViewHouseHoldMembers.HouseHoldMemberCode)"></DropDownListFieldSettings>
-                                                                    <DropDownListEvents TItem="ViewHouseHoldMembers" TValue="int" ValueChange="OnHouseHoldMemberChange"></DropDownListEvents>
+                                                                    <DropDownListEvents TItem="ViewHouseHoldMembers" TValue="int?" ValueChange="OnHouseHoldMemberChange"></DropDownListEvents>
                                                                 </SfDropDownList>
                                                             </div>
                                                             <div class="form-group col-md-6">
@@ -227,8 +227,8 @@
                                                             </div>
                                                             <div class="form-group col-md-12" style="border-bottom-color:black; border-bottom-width:2px; border-bottom-style:solid;"></div>
                                                             <div class="form-group col-md-4">
-                                                                <p>HIV status after follow up</p>
-                                                                <SfDropDownList ID="HivstatusId" @bind-Value="@(TrackingFormHeaderData.HIVStatusId)" Enabled="true" TItem="AHivstatus" TValue="int" DataSource="@HivstatusData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                <p>1.1) HIV status after follow up</p>
+                                                                <SfDropDownList ID="HivstatusId" @bind-Value="@(TrackingFormHeaderData.HIVStatusId)" Enabled="true" TItem="AHivstatus" TValue="int?" DataSource="@HivstatusData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                     <DropDownListFieldSettings Value="@nameof(AHivstatus.HivstatusId)" Text="@nameof(AHivstatus.HivstatusDescription)"></DropDownListFieldSettings>
                                                                 </SfDropDownList>
                                                             </div>
@@ -280,37 +280,65 @@
                                                                 <p>Weight in KGs</p>
                                                                 <SfNumericTextBox @bind-Value="@TrackingFormHeaderData.Weight" Enabled="true" Placeholder="Enter the number of copies" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
                                                             </div>
+                                                             <div class="form-group col-md-4">
+                                                                <p>What are the reasons for treatment interruption</p>
+                                                                <SfMultiSelect @ref="ReasonForTreatmentInterruptionObj" TValue="int[]" TItem="AReasonForTreatmentInterruption" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ReasonForTreatmentInterruptionData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="--- Please select---" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                                                                    <MultiSelectFieldSettings Value="@nameof(AReasonForTreatmentInterruption.ReasonForTreatmentInterruptionId)" Text="@nameof(AReasonForTreatmentInterruption.ReasonForTreatmentInterruption)"></MultiSelectFieldSettings>
+                                                                    <MultiSelectEvents TValue="int[]" TItem="AReasonForTreatmentInterruption" ValueChange="OnReasonForTreatmentInterruptionChange" DataBound="OnReasonForTreatmentInterruptionBound"></MultiSelectEvents>
+                                                                </SfMultiSelect>
+                                                            </div>
+                                                             <div class="form-group col-md-4">
+                                                                <p>What are the Strategies for improving treatment continuity</p>
+                                                                <SfMultiSelect @ref="StrategiesForImprovingTreatmentContinuityObj" TValue="int[]" TItem="AStrategiesForImprovingTreatmentContinuity" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@StrategiesForImprovingTreatmentContinuityData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="--- Please select---" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                                                                    <MultiSelectFieldSettings Value="@nameof(AStrategiesForImprovingTreatmentContinuity.StrategiesForImprovingTreatmentContinuityId)" Text="@nameof(AStrategiesForImprovingTreatmentContinuity.StrategiesForImprovingTreatmentContinuity)"></MultiSelectFieldSettings>
+                                                                    <MultiSelectEvents TValue="int[]" TItem="AStrategiesForImprovingTreatmentContinuity" ValueChange="OnReasonForTreatmentInterruptionChange" DataBound="OnReasonForTreatmentInterruptionBound"></MultiSelectEvents>
+                                                                </SfMultiSelect>
+                                                            </div>
                                                             <div class="form-group col-md-12" style="border-bottom-color:black; border-bottom-width:2px; border-bottom-style:solid;"></div>
                                                             @if (TrackingFormHeaderData.HIVStatusId == 1)
                                                             {
-                                                                <div class="form-group col-md-4">
-                                                                    <p>Health facility where client receives care</p>
+                                                                <div class="form-group col-md-3">
+                                                                    <p>2.1 Health facility where client receives care</p>
                                                                     <SfDropDownList ID="FacilityId" @bind-Value="@(TrackingFormHeaderData.FacilityId)" Enabled="true" TItem="AFacility" TValue="int?" DataSource="@FacilityData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                         <DropDownListFieldSettings Value="@nameof(AFacility.FacilityId)" Text="@nameof(AFacility.FacilityName)"></DropDownListFieldSettings>
                                                                     </SfDropDownList>
                                                                 </div>
-                                                                <div class="form-group col-md-4">
+                                                                <div class="form-group col-md-3">
                                                                     <p>Duration on treatment (in months)</p>
                                                                     <SfNumericTextBox @bind-Value="@TrackingFormHeaderData.TreatmentDuration" Enabled="true" Placeholder="Enter the Duration on treatment" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
                                                                 </div>
-                                                                <div class="form-group col-md-4">
+                                                                <div class="form-group col-md-3">
                                                                     <p>Client Line of Treatment</p>
                                                                     <SfDropDownList ID="RegimenCategoryId" @bind-Value="@(TrackingFormHeaderData.RegimenCategoryId)" Enabled="true" TItem="ARegimenCategory" TValue="int?" DataSource="@RegimenCategoryData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                         <DropDownListFieldSettings Value="@nameof(ARegimenCategory.RegimenCategoryId)" Text="@nameof(ARegimenCategory.RegimenCategoryDescription)"></DropDownListFieldSettings>
                                                                     </SfDropDownList>
                                                                 </div>
-                                                                <div class="form-group col-md-4">
+                                                                <div class="form-group col-md-3">
                                                                     <p>Current Treatment Regimen</p>
                                                                     <SfDropDownList ID="RegimenId" @bind-Value="@(TrackingFormHeaderData.RegimenId)" Enabled="true" TItem="ARegimen" TValue="int?" DataSource="@RegimenData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                         <DropDownListFieldSettings Value="@nameof(ARegimen.RegimenId)" Text="@nameof(ARegimen.RegimenDescription)"></DropDownListFieldSettings>
                                                                     </SfDropDownList>
                                                                 </div>
+                                                                <div class="form-group col-md-2">
+                                                                    <p>2.2 Optimized</p>
+                                                                   <SfDropDownList ID="OptimizedYesNoId" @bind-Value="@(TrackingFormHeaderData.OptimizedYesNo)" Enabled="true" TItem="AYesNo" TValue="int?" DataSource="@YesNoData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                        <DropDownListFieldSettings Value="@nameof(AYesNo.YesNoId)" Text="@nameof(AYesNo.YesNoDescription)"></DropDownListFieldSettings>
+                                                                    </SfDropDownList>
+                                                                </div>
+                                                                <div class="form-group col-md-10">
+                                                                    <p>If no, what are the reasons for non-optimization</p>
+                                                                    <SfMultiSelect @ref="ReasonsForNonOptimizationObj" TValue="int[]" TItem="AReasonsForNonOptimization" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ReasonsForNonOptimizationData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="--- Please select---" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                                                                        <MultiSelectFieldSettings Value="@nameof(AReasonsForNonOptimization.ReasonsForNonOptimizationId)" Text="@nameof(AReasonsForNonOptimization.ReasonsForNonOptimization)"></MultiSelectFieldSettings>
+                                                                        <MultiSelectEvents TValue="int[]" TItem="AReasonsForNonOptimization" ValueChange="OnReasonForNonOptimizationChange" DataBound="OnReasonForNonOptimizationBound"></MultiSelectEvents>
+                                                                    </SfMultiSelect>
+                                                                </div>
                                                                 <div class="form-group col-md-4">
-                                                                    <p>Modality of Client care and treatment</p>
+                                                                    <p>2.3 Modality of Client care and treatment</p>
                                                                     <SfDropDownList @bind-Value="@(TrackingFormHeaderData.ClientCareModalityId)" Enabled="true" TItem="AClientCareModality" TValue="int?" DataSource="@ClientCareModalityData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
                                                                         <DropDownListFieldSettings Value="@nameof(AClientCareModality.ClientCareModalityId)" Text="@nameof(AClientCareModality.ClientCareModalityDesc)"></DropDownListFieldSettings>
                                                                     </SfDropDownList>
-                                                                </div>@if (TrackingFormHeaderData.ClientCareModalityId == 6)
+                                                                </div>
+                                                                @if (TrackingFormHeaderData.ClientCareModalityId == 6)
                                                                 {
                                                                     <div class="form-group col-md-4">
                                                                         <p>Other Modality of Client care and treatment</p>
@@ -384,13 +412,19 @@
                                                                                 </SfDropDownList>
                                                                             </div>
                                                                         <div class="form-group col-md-12" style="border-bottom-color:black; border-bottom-width:2px; border-bottom-style:solid;"></div>
-                                                                        <div class="form-group col-md-6">
+                                                                        <div class="form-group col-md-4">
                                                                             <p>Date when Last VL test was done</p>
                                                                             <SfDatePicker @bind-Value="@(TrackingFormHeaderData.LastViralloadTestDate)" Format="dd/MM/yyyy" Placeholder="Enter date of Virallaod test" FloatLabelType="FloatLabelType.Never" />
                                                                         </div>
-                                                                        <div class="form-group col-md-6">
+                                                                        <div class="form-group col-md-4">
                                                                             <p>Date when NEXT VL test will be done</p>
                                                                             <SfDatePicker @bind-Value="@(TrackingFormHeaderData.NextViralloadTestDate)" Format="dd/MM/yyyy" Placeholder="Enter date of Virallaod test" FloatLabelType="FloatLabelType.Never" />
+                                                                        </div>
+                                                                         <div class="form-group col-md-4">
+                                                                            <p>Supported to Disclose HIV status to Family</p>
+                                                                            <SfDropDownList @bind-Value="@(TrackingFormHeaderData.Supported_To_Disclose_HIV_Status_To_FamilyYesNoId)" Enabled="true" TItem="AYesNo" TValue="int?" DataSource="@YesNoData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                                                                    <DropDownListFieldSettings Value="@nameof(AYesNo.YesNoId)" Text="@nameof(AYesNo.YesNoDescription)"></DropDownListFieldSettings>
+                                                                              </SfDropDownList>
                                                                         </div>
                                                                     }
                                                                 }
@@ -955,7 +989,6 @@
                                             <GridForeignColumn Field=@nameof(spHIV_TB_TrackingFormGetAllResult.HIVStatusId) HeaderText="HIV status" ForeignKeyField="@nameof(AHivstatus.HivstatusId)" ForeignKeyValue="@nameof(AHivstatus.HivstatusDescription)" ForeignDataSource="@HivstatusData" Width="150"></GridForeignColumn>
                                             <GridForeignColumn Field=@nameof(spHIV_TB_TrackingFormGetAllResult.CientClassificationId) HeaderText="Clients Classification" ForeignKeyField="@nameof(ACientClassification.CientClassificationId)" ForeignKeyValue="@nameof(ACientClassification.CientClassificationDesc)" ForeignDataSource="@CientClassificationData" Width="150"></GridForeignColumn>
                                             <GridForeignColumn Field=@nameof(spHIV_TB_TrackingFormGetAllResult.FacilityId) HeaderText="Health facility" ForeignKeyField="@nameof(AFacility.FacilityId)" ForeignKeyValue="@nameof(AFacility.FacilityName)" ForeignDataSource="@FacilityData" Width="180"></GridForeignColumn>
-
                                         </GridColumns>
                                     </SfGrid>
                                 </div>
@@ -1019,6 +1052,9 @@
     SfMultiSelect<int[], ANotSuppressingReason> NotSuppressingReasonObj;
     SfMultiSelect<int[], ANonAdherence> NonAdherenceIdObj;
     SfMultiSelect<int[], APcrTest> PcrTestObj;
+    SfMultiSelect<int[], AStrategiesForImprovingTreatmentContinuity> StrategiesForImprovingTreatmentContinuityObj;
+    SfMultiSelect<int[], AReasonForTreatmentInterruption> ReasonForTreatmentInterruptionObj;
+    SfMultiSelect<int[], AReasonsForNonOptimization> ReasonsForNonOptimizationObj;
     List<AVillage> VillageData { get; set; }
     List<AParish> ParishData { get; set; }
     List<ASubcounty> SubcountyData { get; set; }
@@ -1049,6 +1085,9 @@
     List<AFollowupMeans> FollowupMeanData { get; set; }
     List<APersonContacted> PersonContactedData { get; set; }
     List<AServiceProvided> ServiceProvidedData { get; set; }
+    List<AReasonForTreatmentInterruption> ReasonForTreatmentInterruptionData { get; set; }
+    List<AReasonsForNonOptimization> ReasonsForNonOptimizationData{get;set;}
+    List<AStrategiesForImprovingTreatmentContinuity> StrategiesForImprovingTreatmentContinuityData {get;set;}
     List<ANotSuppressingReason> NotSuppressingReasonData { get; set; }
     List<ARegistrationStatus> RegistrationStatusData { get; set; }
     List<AKnownRiskFactors> KnownRiskFactorsData { get; set; }
@@ -1082,8 +1121,9 @@
             {
                 using (var db = new MUCOBADIContext())
                 {
-                    //SourceDocumentData = db.ASourceDocument.AsNoTracking().ToList();
-                    //DrugDispensingModelData = db.ADrugDispensingModel.AsNoTracking().ToList();
+                    StrategiesForImprovingTreatmentContinuityData = db.AStrategiesForImprovingTreatmentContinuity.AsNoTracking().ToList();
+                    ReasonsForNonOptimizationData = db.AReasonsForNonOptimization.AsNoTracking().ToList();
+                    ReasonForTreatmentInterruptionData = db.AReasonForTreatmentInterruption.AsNoTracking().ToList();
                     PcrTestData = db.APcrTest.AsNoTracking().AsNoTracking().ToList();
                     EidCascadeData = db.AEidCascade.AsNoTracking().ToList();
                     FeedingStatusData = db.AFeedingStatus.AsNoTracking().ToList();
@@ -1203,7 +1243,7 @@
         using (var db = new MUCOBADIContext())
         {
             var user = db.ViewUserManagement.FirstOrDefault(o => o.UserName == userManagement.GetUserName());
-           if (!user.RoleName.Contains("Super Administrator") && !user.RoleName.Contains("Administrator") && !user.RoleName.Contains("mel director") && !user.RoleName.Contains("mel manager") && !user.RoleName.Contains("cluster manager"))
+            if (!user.RoleName.Contains("Super Administrator") && !user.RoleName.Contains("Administrator") && !user.RoleName.Contains("mel director") && !user.RoleName.Contains("mel manager") && !user.RoleName.Contains("cluster manager"))
             {
                 var districtlist = userManagement.GetUserDistrict();
                 if (districtlist != null && districtlist.Count > 0)
@@ -1503,6 +1543,81 @@
     {
         TrackingFormHeaderGrid.CloseEdit();
     }
+    private void OnStrategiesForImprovingTreatmentContinuityChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]> args)
+    {
+        if (args.Value != null)
+        {
+            TrackingFormHeaderData.Strategies_For_Improving_Treatment_ContinuityId = string.Join(",", args.Value);
+        }
+        else
+        {
+            TrackingFormHeaderData.Strategies_For_Improving_Treatment_ContinuityId = null;
+        }
+    }
+    private void OnStrategiesForImprovingTreatmentContinuityBound(Syncfusion.Blazor.DropDowns.DataBoundEventArgs args)
+    {
+        if (!string.IsNullOrEmpty(TrackingFormHeaderData.ServiceProvidedId))
+        {
+            var a = TrackingFormHeaderData.Strategies_For_Improving_Treatment_ContinuityId.Split(',');
+            List<int> c = new List<int>();
+            foreach (var n in a)
+            {
+                int b = Convert.ToInt32(n.Trim());
+                c.Add(b);
+            }
+            StrategiesForImprovingTreatmentContinuityObj.Value = c.ToArray();
+        }
+    }
+    private void OnReasonForNonOptimizationChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]> args)
+    {
+        if (args.Value != null)
+        {
+            TrackingFormHeaderData.Reasons_For_Non_OptimizationId = string.Join(",", args.Value);
+        }
+        else
+        {
+            TrackingFormHeaderData.Reasons_For_Non_OptimizationId = null;
+        }
+    }
+    private void OnReasonForNonOptimizationBound(Syncfusion.Blazor.DropDowns.DataBoundEventArgs args)
+    {
+        if (!string.IsNullOrEmpty(TrackingFormHeaderData.ServiceProvidedId))
+        {
+            var a = TrackingFormHeaderData.Reasons_For_Non_OptimizationId.Split(',');
+            List<int> c = new List<int>();
+            foreach (var n in a)
+            {
+                int b = Convert.ToInt32(n.Trim());
+                c.Add(b);
+            }
+            ReasonsForNonOptimizationObj.Value = c.ToArray();
+        }
+    }
+    private void OnReasonForTreatmentInterruptionChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]> args)
+    {
+        if (args.Value != null)
+        {
+            TrackingFormHeaderData.Reason_For_Treatment_InterruptionId = string.Join(",", args.Value);
+        }
+        else
+        {
+            TrackingFormHeaderData.Reason_For_Treatment_InterruptionId = null;
+        }
+    }
+    private void OnReasonForTreatmentInterruptionBound(Syncfusion.Blazor.DropDowns.DataBoundEventArgs args)
+    {
+        if (!string.IsNullOrEmpty(TrackingFormHeaderData.ServiceProvidedId))
+        {
+            var a = TrackingFormHeaderData.Reason_For_Treatment_InterruptionId.Split(',');
+            List<int> c = new List<int>();
+            foreach (var n in a)
+            {
+                int b = Convert.ToInt32(n.Trim());
+                c.Add(b);
+            }
+            ReasonForTreatmentInterruptionObj.Value = c.ToArray();
+        }
+    }
     private void OnServiceProvidedChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]> args)
     {
         if (args.Value != null)
@@ -1515,7 +1630,6 @@
             TrackingFormHeaderData.OtherServiceProvided = null;
         }
     }
-
     private void OnServiceProvidedCategoryBound(Syncfusion.Blazor.DropDowns.DataBoundEventArgs args)
     {
         if (!string.IsNullOrEmpty(TrackingFormHeaderData.ServiceProvidedId))
@@ -1771,7 +1885,11 @@
                         m.ReviewedTitle = val.ReviewedTitle;
                         m.ReviewedContact = val.ReviewedContact;
                         m.ReviewDate = val.ReviewDate;
-
+                        m.OptimizedYesNo = val.OptimizedYesNo;
+                        m.ReasonForTreatmentInterruptionId = val.Reason_For_Treatment_InterruptionId;
+                        m.StrategiesForImprovingTreatmentContinuityId = val.Strategies_For_Improving_Treatment_ContinuityId;
+                        m.ReasonsForNonOptimizationId = val.Reasons_For_Non_OptimizationId;
+                        m.SupportedToDiscloseHivStatusToFamilyYesNoId = val.Supported_To_Disclose_HIV_Status_To_FamilyYesNoId;
                         //val.AddedBy = _userManagement.GetStaffName();
                         //val.AddedDate = DateTime.Now;
                         dbContext.HivTbTrackingForm.Add(m);
@@ -1837,6 +1955,11 @@
                         exist.ReviewedTitle = val.ReviewedTitle;
                         exist.ReviewedContact = val.ReviewedContact;
                         exist.ReviewDate = val.ReviewDate;
+                        exist.ReasonForTreatmentInterruptionId = val.Reason_For_Treatment_InterruptionId;
+                        exist.StrategiesForImprovingTreatmentContinuityId = val.Strategies_For_Improving_Treatment_ContinuityId;
+                        exist.ReasonsForNonOptimizationId = val.Reasons_For_Non_OptimizationId;
+                        exist.OptimizedYesNo = val.OptimizedYesNo;
+                        exist.SupportedToDiscloseHivStatusToFamilyYesNoId = val.Supported_To_Disclose_HIV_Status_To_FamilyYesNoId;
                         dbContext.Entry(exist).State = EntityState.Modified;
                         dbContext.SaveChanges();
                     }
@@ -1939,6 +2062,11 @@
                         exist.ReviewedTitle = val.ReviewedTitle;
                         exist.ReviewedContact = val.ReviewedContact;
                         exist.ReviewDate = val.ReviewDate;
+                        exist.OptimizedYesNo = val.OptimizedYesNo;
+                        exist.ReasonForTreatmentInterruptionId = val.Reason_For_Treatment_InterruptionId;
+                        exist.StrategiesForImprovingTreatmentContinuityId = val.Strategies_For_Improving_Treatment_ContinuityId;
+                        exist.ReasonsForNonOptimizationId = val.Reasons_For_Non_OptimizationId;
+                        exist.SupportedToDiscloseHivStatusToFamilyYesNoId = val.Supported_To_Disclose_HIV_Status_To_FamilyYesNoId;
                         db.Entry(exist).State = EntityState.Modified;
                         await db.SaveChangesAsync();
                     }
@@ -2379,7 +2507,11 @@
                                 m.ReviewedTitle = TrackingFormHeaderData.ReviewedTitle;
                                 m.ReviewedContact = TrackingFormHeaderData.ReviewedContact;
                                 m.ReviewDate = TrackingFormHeaderData.ReviewDate;
-
+                                m.ReasonForTreatmentInterruptionId = TrackingFormHeaderData.Reason_For_Treatment_InterruptionId;
+                                m.StrategiesForImprovingTreatmentContinuityId = TrackingFormHeaderData.Strategies_For_Improving_Treatment_ContinuityId;
+                                m.ReasonsForNonOptimizationId = TrackingFormHeaderData.Reasons_For_Non_OptimizationId;
+                                m.OptimizedYesNo = TrackingFormHeaderData.OptimizedYesNo;
+                                m.SupportedToDiscloseHivStatusToFamilyYesNoId = TrackingFormHeaderData.Supported_To_Disclose_HIV_Status_To_FamilyYesNoId;
                                 db.HivTbTrackingForm.Add(m);
                                 db.SaveChanges();
                             }
@@ -2491,7 +2623,11 @@
                             m.ReviewedTitle = TrackingFormHeaderData.ReviewedTitle;
                             m.ReviewedContact = TrackingFormHeaderData.ReviewedContact;
                             m.ReviewDate = TrackingFormHeaderData.ReviewDate;
-
+                            m.ReasonForTreatmentInterruptionId = TrackingFormHeaderData.Reason_For_Treatment_InterruptionId;
+                            m.StrategiesForImprovingTreatmentContinuityId = TrackingFormHeaderData.Strategies_For_Improving_Treatment_ContinuityId;
+                            m.ReasonsForNonOptimizationId = TrackingFormHeaderData.Reasons_For_Non_OptimizationId;
+                            m.OptimizedYesNo = TrackingFormHeaderData.OptimizedYesNo;
+                            m.SupportedToDiscloseHivStatusToFamilyYesNoId = TrackingFormHeaderData.Supported_To_Disclose_HIV_Status_To_FamilyYesNoId;
                             db.HivTbTrackingForm.Add(m);
                             db.SaveChanges();
                         }
@@ -2718,7 +2854,7 @@
             NewHouseHoldMemberData.DoB = new DateTime((DateTime.Now.Year - NewHouseHoldMemberData.Age.Value), 1, 1);
         }
     }
-    private void OnHouseHoldMemberChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, ViewHouseHoldMembers> args)
+    private void OnHouseHoldMemberChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int?, ViewHouseHoldMembers> args)
     {
         try
         {

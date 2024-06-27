@@ -1,0 +1,413 @@
+﻿@using MUCOBADI.DTOs.Dashboard;
+@using MUCOBADI.Data;
+@using Syncfusion.Blazor.Charts
+
+@if (DonutParameterDataSource != null && DonutParameterDataSource.Count > 0)
+{
+	<SfAccumulationChart EnableAnimation="true" EnableSmartLabels="true" Title="@TitleDescription">
+		<AccumulationChartLegendSettings Visible="true"></AccumulationChartLegendSettings>
+		<AccumulationChartSeriesCollection>
+			<AccumulationChartSeries DataSource="@DonutParameterDataSource" XName="xName" YName="yName"
+			     InnerRadius="20%" Radius="R">
+				<AccumulationDataLabelSettings Visible="true" Name="RR"></AccumulationDataLabelSettings>
+			</AccumulationChartSeries>
+		</AccumulationChartSeriesCollection>
+	</SfAccumulationChart>
+}
+else
+{
+	<p>No data available for the chart.</p>
+}
+@code {
+
+	[Parameter]
+	public List<DonutParameters>? DonutParameterDataSource { get; set; }
+	[Parameter]
+	public double CompletionPercentage { get; set; }
+	[Parameter]
+	public string TitleDescription { get; set; }
+	[Parameter]
+	public int IndicatorIdd { get; set; }
+	List<StakeholdersData> stakeholdersDatas { get; set; }
+	[Parameter]
+	public SearchPanel SearchModel { get; set; }
+	[Parameter]
+	public UtilitiesSearchPanel InputModel { get; set; }
+	public void QueryCellInfoHandler1(QueryCellInfoEventArgs<StakeholdersData> Args)
+	{
+		if (Args.Column.Field == nameof(StakeholdersData.PercentageAchived))
+		{
+			Args.Cell.AddStyle(new string[] { "background-color:#fdcb6e", "color:#2c3e50", "font-weight:bold" });
+		}
+	}
+	List<spInstitution_IndicatorsResult> IndicatorsResultData { get; set; }
+	string QuarterNo { get; set; }
+	string Qtr = null;
+	string PreviousQtr = null;
+	string Yr = null;
+	string ProjectId = null;
+	[Parameter]
+	public EventCallback<List<DonutParameters>> OnDataLoaded { get; set; }
+	[Parameter]
+	public EventCallback<List<DonutParameters>> On76DataLoaded { get; set; }
+	List<spDashboard_OVC_SERVResult> OvcServeData { get; set; }
+	public double total17 { get; set; }
+	public double total18 { get; set; }
+	public double achievedOVCSERV {get;set;}
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadDashboards();
+	}
+	public async Task LoadDashboards()
+	{
+		try
+		{
+			using (var _dbcontext = new SPToCoreContext())
+			{
+				stakeholdersDatas = new();
+				var currentMonth = DateTime.Now.Month;
+				var currentYear = DateTime.Now.Year;
+				string ProjectId = null;
+				string startDate = null;
+				string endDate = null;
+				int StartMonth = 1;
+				int EndMonth = 12;
+				var _financialYear = _dbcontext.AFinancialYear.FirstOrDefault(o => o.FinancialYearDesc.Trim() == currentYear.ToString());
+				var yearParameter = _financialYear.FinancialYearDesc.ToString();
+				if (InputModel.startDate.HasValue)
+				{
+					startDate = InputModel.startDate.Value.ToString("yyyy-MM-dd");
+
+				}
+				if (InputModel.endDate.HasValue)
+				{
+					endDate = InputModel.endDate.Value.ToString("yyyy-MM-dd");
+
+				}
+				if (currentMonth >= 1 && currentMonth <= 3)
+				{
+					QuarterNo = "TWO (JAN-MAR)";
+					startDate = currentYear + "-01-01";
+					endDate = currentYear + "-03-31";
+					Qtr = "2";
+					PreviousQtr = "1";
+					StartMonth = 1;
+					EndMonth = 3;
+				}
+				else if (currentMonth >= 4 && currentMonth <= 6)
+				{
+					QuarterNo = "THREE (APR-JUN)";
+					startDate = currentYear + "-04-01";
+					endDate = currentYear + "-06-30";
+					Qtr = "3";
+					PreviousQtr = "2";
+					StartMonth = 4;
+					EndMonth = 6;
+				}
+				else if (currentMonth >= 7 && currentMonth <= 9)
+				{
+					QuarterNo = "FOUR (JUL-SEP)";
+					startDate = currentYear + "-07-01";
+					endDate = currentYear + "-09-30";
+					Qtr = "4";
+					PreviousQtr = "3";
+					StartMonth = 7;
+					EndMonth = 9;
+				}
+				else if (currentMonth >= 10 && currentMonth <= 12)
+				{
+					QuarterNo = "ONE (OCT-DEC)";
+					startDate = currentYear + "-10-01";
+					endDate = currentYear + "-12-31";
+					Qtr = "1";
+					PreviousQtr = "4";
+					StartMonth = 10;
+					EndMonth = 12;
+				}
+				else
+				{
+					List<string> quarters = GetQuartersBetweenDates(Convert.ToDateTime(startDate), Convert.ToDateTime(endDate));
+					Qtr = string.Join(", ", quarters);
+
+				}
+				if (IndicatorIdd == 1)
+				{
+					ProjectId = "1,2";
+					//YLabels = new string[] { "ICARE", "SHE Leads" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 2)
+				{
+					ProjectId = "1,2";
+					//YLabels = new string[] { "SHE Leads", "ICARE" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 3)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 4)
+				{
+					ProjectId = "1,2,3,4";
+					//	YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 5)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 6)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 7)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 8)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 9)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 10)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 11)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 12)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 13)
+				{
+					ProjectId = "1,3";
+					//YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 14)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 15)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 16)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 17)
+				{
+					ProjectId = "1,4";
+					//YLabels = new string[] { "ICARE", "YAW" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 18)
+				{
+					ProjectId = "1,4";
+					//YLabels = new string[] { "ICARE", "YAW" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 19)
+				{
+					ProjectId = "4";
+					//YLabels = new string[] { "YAW" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 20)
+				{
+					ProjectId = "2";
+					//YLabels = new string[] { "SHE Leads" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 21)
+				{
+					ProjectId = "1,2";
+					//	YLabels = new string[] { "SHE Leads", "ICARE" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 22)
+				{
+					ProjectId = "4";
+					//	YLabels = new string[] { "YAW" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 23)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 24)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 25)
+				{
+					ProjectId = "1,2,3,4";
+					//YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 26)
+				{
+					ProjectId = "1,2,3,4";
+					//	YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				Random rand = new Random();
+				DonutParameterDataSource = new List<DonutParameters>();
+				var _DonutParameterData = new DonutParameters();
+				rand = new Random();
+				var _data = IndicatorsResultData.Select(o => new
+				{
+					o.Total,
+					o.Female_Under_One_Year,
+					o.Male_Under_One_Year,
+					o.Female_1_4,
+					o.Male_1_4,
+					o.Female_5_9,
+					o.Male_5_9,
+					o.Female_10_14,
+					o.Male_10_14,
+					o.Female_15_17,
+					o.Male_15_17,
+					o.Female_18_24,
+					o.Male_18_24,
+					o.Female_25_Plus,
+					o.Male_25_Plus,
+					o.FemaleSum,
+					o.MaleSum,
+					o.OverallSum
+				}).Distinct().ToList();
+				var IndividualReached = _data.Sum(o=> o.OverallSum);
+				foreach (var item in _data)
+				{
+					var totalOverallFemale = item.FemaleSum;
+					var projectName = item.Total;
+					var totalAchieved = item.MaleSum + item.FemaleSum;
+					var totalNumber10_17 = item.Female_10_14 + item.Male_10_14 + item.Female_15_17 + item.Male_15_17;
+					string percentage10_17 = null;
+					if (IndividualReached > 0)
+					{
+						percentage10_17 = Convert.ToString(Math.Round((((double)totalNumber10_17 / (double)IndividualReached) * 100), 1));
+					}
+					DonutParameterDataSource.Add(new DonutParameters
+								{
+									xName = projectName,
+									yName = totalNumber10_17.Value,
+									R = percentage10_17,
+									RR = percentage10_17
+								});
+					await OnDataLoaded.InvokeAsync(DonutParameterDataSource);
+				}
+				//MUCO 76
+				DonutParameterDataSource = new List<DonutParameters>();
+				var _DonutParameters = new DonutParameters();
+				OvcServeData = await _dbcontext.spDashboard_OVC_SERVAsync(null, null, _financialYear.FinancialYearId.ToString(), null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate));
+				var _data76 = OvcServeData.Select(o => new { o.FinancialYearDesc }).Distinct().ToList();
+				//foreach (var _item in _data76)
+				//{
+				//	if (OvcServeData != null && OvcServeData.Count > 0)
+				//	{
+				//		var ovcserveageGroup17 = OvcServeData.Where(o=> o.FinancialYearDesc.ToString() == _item.FinancialYearDesc.ToString() && o.ProgramParticipationId == 1 && o.Age_Category == "0-17 Years").ToList();
+				//		if (ovcserveageGroup17 != null)
+				//		{
+				//			total17 = ovcserveageGroup17.Count();
+				//		}
+				//		//Active 18
+				//		var ovcserveageGroup18 = OvcServeData.Where(o=>o.FinancialYearDesc.ToString() == _item.FinancialYearDesc.ToString() && o.ProgramParticipationId == 1 && o.Age_Category == "18+ Years").ToList();
+				//		if (ovcserveageGroup18 != null)
+				//		{
+				//			total18 = ovcserveageGroup18.Count();
+				//		}
+				//		achievedOVCSERV = total17 + total18;
+				//		foreach (var x in _data)
+				//		{
+				//			string projectPercentage = null;
+				//			double totalValue = x.OverallSum.Value;
+				//			if(achievedOVCSERV > 0)
+				//			{
+				//				projectPercentage = Convert.ToString(Math.Round((((double)totalValue / (double)achievedOVCSERV) * 100), 1));
+				//			}
+				//			_DonutParameters.Add(new DonutParameters
+				//			//DonutParameterDataSource.Add(new DonutParameters
+				//				{
+				//				xName = x.Total,
+				//				yName = totalValue,
+				//				R = projectPercentage,
+				//				RR = projectPercentage
+				//				});
+				//			//await On76DataLoaded.InvokeAsync(DonutParameterDataSource);
+				//		}
+				//	}
+				//}
+			}
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	}
+	static string GetQuarter(DateTime date)
+	{
+		int month = date.Month;
+		if (month >= 10 || month <= 12)
+			return "1";
+		else if (month >= 1 && month <= 3)
+			return "2";
+		else if (month >= 4 && month <= 6)
+			return "3";
+		else // month is >= 7 and <= 9
+			return "4";
+	}
+	static List<string> GetQuartersBetweenDates(DateTime startDate, DateTime endDate)
+	{
+		List<string> quarters = new List<string>();
+		// Iterate through months between start and end dates
+		DateTime currentDate = startDate;
+		while (currentDate <= endDate)
+		{
+			string quarter = GetQuarter(currentDate);
+			if (!quarters.Contains(quarter))
+			{
+				quarters.Add(quarter);
+			}
+			// Move to the next month
+			currentDate = currentDate.AddMonths(1);
+		}
+		return quarters;
+	}
+}

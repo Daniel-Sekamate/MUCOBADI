@@ -13,6 +13,7 @@ namespace MUCOBADI.Models
             BeneficiaryEnrolmentRegisterDetails = new HashSet<BeneficiaryEnrolmentRegisterDetails>();
             BeneficiaryEnrolmentRegisterHeader = new HashSet<BeneficiaryEnrolmentRegisterHeader>();
             BeneficiaryLinkageTrackingToolNew = new HashSet<BeneficiaryLinkageTrackingToolNew>();
+            BusinessPlanHeader = new HashSet<BusinessPlanHeader>();
             CaseCare = new HashSet<CaseCare>();
             CaseCareDetail = new HashSet<CaseCareDetail>();
             CaseCareSummary = new HashSet<CaseCareSummary>();
@@ -23,6 +24,8 @@ namespace MUCOBADI.Models
             HivTbTrackingForm = new HashSet<HivTbTrackingForm>();
             HivTbTrackingFormExposedInfants = new HashSet<HivTbTrackingFormExposedInfants>();
             HomeVisitServiceReportingToolDetail = new HashSet<HomeVisitServiceReportingToolDetail>();
+            Isvatheader = new HashSet<Isvatheader>();
+            IsvatincomeEarner = new HashSet<IsvatincomeEarner>();
             MonthlyCaseTrackingRegisterDetail = new HashSet<MonthlyCaseTrackingRegisterDetail>();
             OvcSchoolAttendencyDetails = new HashSet<OvcSchoolAttendencyDetails>();
             ReferralFormCareGiverHouseHoldMember = new HashSet<ReferralForm>();
@@ -83,6 +86,7 @@ namespace MUCOBADI.Models
         public virtual ICollection<BeneficiaryEnrolmentRegisterDetails> BeneficiaryEnrolmentRegisterDetails { get; set; }
         public virtual ICollection<BeneficiaryEnrolmentRegisterHeader> BeneficiaryEnrolmentRegisterHeader { get; set; }
         public virtual ICollection<BeneficiaryLinkageTrackingToolNew> BeneficiaryLinkageTrackingToolNew { get; set; }
+        public virtual ICollection<BusinessPlanHeader> BusinessPlanHeader { get; set; }
         public virtual ICollection<CaseCare> CaseCare { get; set; }
         public virtual ICollection<CaseCareDetail> CaseCareDetail { get; set; }
         public virtual ICollection<CaseCareSummary> CaseCareSummary { get; set; }
@@ -93,6 +97,8 @@ namespace MUCOBADI.Models
         public virtual ICollection<HivTbTrackingForm> HivTbTrackingForm { get; set; }
         public virtual ICollection<HivTbTrackingFormExposedInfants> HivTbTrackingFormExposedInfants { get; set; }
         public virtual ICollection<HomeVisitServiceReportingToolDetail> HomeVisitServiceReportingToolDetail { get; set; }
+        public virtual ICollection<Isvatheader> Isvatheader { get; set; }
+        public virtual ICollection<IsvatincomeEarner> IsvatincomeEarner { get; set; }
         public virtual ICollection<MonthlyCaseTrackingRegisterDetail> MonthlyCaseTrackingRegisterDetail { get; set; }
         public virtual ICollection<OvcSchoolAttendencyDetails> OvcSchoolAttendencyDetails { get; set; }
         public virtual ICollection<ReferralForm> ReferralFormCareGiverHouseHoldMember { get; set; }

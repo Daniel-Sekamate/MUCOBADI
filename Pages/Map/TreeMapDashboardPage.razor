@@ -1,0 +1,46 @@
+﻿@page "/treeMap"
+@using Syncfusion.Blazor.TreeMap
+<div class="row">
+    <div class="col-md-8">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfTreeMap DataSource="GrowthReport"
+                           WeightValuePath="GDP"
+                           TValue="Country"
+                           RangeColorValuePath="GDP">
+                    <TreeMapTitleSettings Text="Trade Values for Top-10 Agricultural commodities within EAC">
+                        
+                    </TreeMapTitleSettings>
+                    <TreeMapLeafItemSettings LabelPath="Name" Fill="lightgray">
+                        <TreeMapLeafColorMappings>
+                            <TreeMapLeafColorMapping StartRange="0" EndRange="3000" Color="@(new string[] { "Orange" })"></TreeMapLeafColorMapping>
+                            <TreeMapLeafColorMapping StartRange="3000" EndRange="20000" Color="@(new string[] { "Green" })"></TreeMapLeafColorMapping>
+                        </TreeMapLeafColorMappings>
+                    </TreeMapLeafItemSettings>
+                    <TreeMapLegendSettings Visible="true"></TreeMapLegendSettings>
+                    <TreeMapTooltipSettings Visible="true"></TreeMapTooltipSettings>
+                </SfTreeMap>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public class Country
+    {
+        public string Name { get; set; }
+        public double GDP { get; set; }
+    }
+    public List<Country> GrowthReport = new List<Country> {
+        new Country  {Name="Maize", GDP=17946 },
+        new Country  {Name="Milk", GDP=10866 },
+        new Country  {Name="Matooke", GDP=4123 },
+        new Country  {Name="Millet", GDP=3355 },
+        new Country  {Name="Beans", GDP=2848 },
+        new Country  {Name="Rice", GDP=2421 },
+        new Country  {Name="Cassava", GDP=2073 },
+        new Country  {Name="Cotton", GDP=1814 },
+        new Country  {Name="Coffee", GDP=1774 },
+        new Country  {Name="Fish", GDP=1550 }
+    };
+}

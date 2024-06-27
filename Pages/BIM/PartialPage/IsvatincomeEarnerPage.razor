@@ -1,0 +1,329 @@
+﻿@using MUCOBADI.Models
+@inject IToastService toastService;
+@* <h3>IsvatincomeEarnerPage</h3>*@
+
+@if (DataSource != null)
+{
+    <SfGrid @ref="ChildGrid" TValue="IsvatincomeEarner" DataSource=@DataSource AllowGrouping="false" ShowColumnChooser="true" AllowTextWrap="true"
+            AllowPaging="true" AllowFiltering="true" GridLines="GridLine.Both" AllowSelection="true"
+            Toolbar="@(new string[] {"Edit","Delete","Update","Cancel","ColumnChooser"})">
+        @*<GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>*@
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridEvents OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="IsvatincomeEarner"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+            <Template Context="ReviewHeaderContext">
+                @{
+                    RowViewData = (ReviewHeaderContext as IsvatincomeEarner);
+                    if(RowViewData != null)
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2>
+                                    Details of OVC Household Members
+                                </h2>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Caregiver ID and Name</label>
+                                <SfDropDownList @bind-Value="@(RowViewData.HouseHoldMemberId)" Enabled="false" TItem="HouseHoldMembers" TValue="int?" DataSource="@HouseHoldMembersData"
+                                                Placeholder="Please select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true">
+                                    <DropDownListTemplates TItem="HouseHoldMembers">
+                                        <ItemTemplate>
+                                            <label>@((context as HouseHoldMembers).HouseHoldMemberCode) @((context as HouseHoldMembers).Surname) @((context as HouseHoldMembers).Givenname)</label>
+                                        </ItemTemplate>
+                                        <ValueTemplate>
+                                            @((context as HouseHoldMembers).HouseHoldMemberCode)  @((context as HouseHoldMembers).Surname) @((context as HouseHoldMembers).Givenname)
+                                        </ValueTemplate>
+                                    </DropDownListTemplates>
+                                    <DropDownListFieldSettings Value="@nameof(HouseHoldMembers.HouseHoldMemberId)" Text="@nameof(HouseHoldMembers.Surname)"></DropDownListFieldSettings>
+                                </SfDropDownList>
+                            </div>
+                            @if(MemberDetail != null)
+                            {
+                                <div class="col-md-4">
+                                    <label> Name of Individual  </label>
+                                    <p>@MemberDetail.Surname @MemberDetail.Givenname</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Age</label>
+                                    <p>@MemberDetail.Age</p>
+                                </div>
+                            }
+                            <div class="col-md-4">
+                                <label>
+                                    Income Earner
+                                </label>
+                                <SfDropDownList @bind-Value="@(RowViewData.IncomeEarnerYesNoId)" Enabled="true" TItem="AYesNo" TValue="int?" DataSource="@YesNoData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                    <DropDownListFieldSettings Value="@nameof(AYesNo.YesNoId)" Text="@nameof(AYesNo.YesNoDescription)"></DropDownListFieldSettings>
+                                </SfDropDownList>
+                            </div>
+                            <div class="col-md-12">
+                                <h2>
+                                    Household Asset & Income Ownership
+                                </h2>
+                            </div>
+                            <div class="col-md-12">
+                                <IsvatincomeOwnershipPage @ref=@OwnershipPage AssetIncomeData="@AssetIncomeData" YesNoData="@YesNoData" IsvatincomeOwnershipData="@(RowViewData.IsvatincomeOwnership.ToList())"
+                                                          IsvatincomeEarnerId="@RowViewData.IsvatincomeEarnerId" DetailToggle="@incomeOwnershipReturnToggle" />
+                            </div>
+                        </div>
+                    }
+                }
+            </Template>
+            <FooterTemplate>
+        <SfButton CssClass="e-btn e-success" OnClick="SaveFormBtnClick"> Save Form</SfButton>
+        <SfButton CssClass="e-btn e-danger" OnClick="@( async()=>{ if(ChildGrid != null){await ChildGrid.CloseEditAsync();}})"> Cancel</SfButton>
+        </FooterTemplate>
+        </GridEditSettings>
+        <GridColumns>
+            <GridColumn HeaderText="Manage Records" Width="80">
+                <GridCommandColumns>
+                    <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() { CssClass="e-icons e-view-details",Content="View" })" Title="View"></GridCommandColumn>
+                </GridCommandColumns>
+            </GridColumn>
+            <GridColumn Field="@(nameof(IsvatincomeEarner.IsvatincomeEarnerId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridForeignColumn Field="@(nameof(IsvatincomeEarner.HouseHoldMemberId))" HeaderText="Individual ID" Width="160" ForeignKeyField="@(nameof(HouseHoldMembers.HouseHoldMemberId))" ForeignKeyValue="@(nameof(HouseHoldMembers.HouseHoldMemberCode))" ForeignDataSource="@HouseHoldMembersData"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(IsvatincomeEarner.HouseHoldMemberId))" HeaderText="Name of Individual" Width="160" ForeignKeyField="@(nameof(HouseHoldMembers.HouseHoldMemberId))" ForeignKeyValue="@(nameof(HouseHoldMembers.Surname))" ForeignDataSource="@HouseHoldMembersData"></GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(IsvatincomeEarner.HouseHoldMemberId))" HeaderText="Age" Width="120" ForeignKeyField="@(nameof(HouseHoldMembers.HouseHoldMemberId))" ForeignKeyValue="@(nameof(HouseHoldMembers.Age))" ForeignDataSource="@HouseHoldMembersData"></GridForeignColumn>
+            @* <GridForeignColumn Field="@(nameof(IsvatincomeEarner.HouseHoldMemberId))" HeaderText="Sex" Width="160" ForeignKeyField="@(nameof(HouseHoldMembers.HouseHoldMemberId))" ForeignKeyValue="@(nameof(HouseHoldMembers.FullName))" ForeignDataSource="@HouseHoldMembersData"></GridForeignColumn> *@
+            <GridForeignColumn Field="@(nameof(IsvatincomeEarner.IncomeEarnerYesNoId))" HeaderText="Income Earner" Width="130" ForeignKeyField="@(nameof(AYesNo.YesNoId))" ForeignKeyValue="@(nameof(AYesNo.YesNoDescription))" ForeignDataSource="@YesNoData"></GridForeignColumn>
+        </GridColumns>
+    </SfGrid>
+}
+
+
+
+@code {
+    [Parameter]
+    public List<HouseHoldMembers>? HouseHoldMembersData { get; set; }
+    [Parameter]
+    public List<AYesNo>? YesNoData { get; set; }
+    [Parameter]
+    public List<IsvatincomeEarner>? IsvatincomeEarnerData { get; set; }
+    [Parameter]
+    public EventCallback<List<IsvatincomeEarner>?> IncomeEarnerToggle { get; set; }
+    [Parameter]
+    public List<AAssetIncome>? AssetIncomeData { get; set; }
+    [Parameter]
+    public int IsvatheaderId { get; set; }
+
+
+    List<IsvatincomeEarner>? DataSource { get; set; }
+    IsvatincomeEarner? RowViewData { get; set; }
+    SfGrid<IsvatincomeEarner>? ChildGrid;
+    int PreviousIsvatheaderId { get; set; }
+    int IsvatincomeEarnerId { get; set; } = -1;
+
+    HouseHoldMembers? MemberDetail { get; set; }
+    IsvatincomeOwnershipPage? OwnershipPage { get; set; }
+
+    async Task SaveFormBtnClick()
+    {
+        try
+        {
+            if(OwnershipPage != null && OwnershipPage.HeaderGrid != null)
+            {
+                await OwnershipPage.HeaderGrid.EndEditAsync();
+            }
+
+            if(ChildGrid != null)
+            {
+                await ChildGrid.EndEditAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+    }
+
+    private void incomeOwnershipReturnToggle(List<IsvatincomeOwnership>? data)
+    {
+        try
+        {
+            if (RowViewData != null && data != null)
+            {
+                if (RowViewData.IsvatincomeOwnership == null)
+                {
+                    RowViewData.IsvatincomeOwnership = new List<IsvatincomeOwnership>();
+                }
+                RowViewData.IsvatincomeOwnership = data;
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        try
+        {
+            if (IsvatincomeEarnerData != null && IsvatincomeEarnerData.Any())
+            {
+                var _IsvatincomeEarnerData = IsvatincomeEarnerData.Where(o => o.IsvatincomeEarnerId < 0).ToList();
+                if (_IsvatincomeEarnerData.Any())
+                {
+                    int LastId = _IsvatincomeEarnerData.OrderBy(o => o.IsvatincomeEarnerId).ToList().FirstOrDefault().IsvatincomeEarnerId;
+                    IsvatincomeEarnerId = LastId--;
+                }
+
+
+                DataSource = new List<IsvatincomeEarner>();
+                if (HouseHoldMembersData != null && HouseHoldMembersData.Any())
+                {
+                    foreach (var item in HouseHoldMembersData)
+                    {
+                        var exists = IsvatincomeEarnerData.FirstOrDefault(o => o.HouseHoldMemberId == item.HouseHoldMemberId);
+                        if (exists != null)
+                        {
+                            DataSource.Add(exists);
+                        }
+                        else
+                        {
+                            DataSource.Add(new IsvatincomeEarner() { HouseHoldMemberId = item.HouseHoldMemberId, IsvatincomeEarnerId = IsvatincomeEarnerId, IsvatheaderId = IsvatheaderId });
+                            IsvatincomeEarnerId--;
+                        }
+                    }
+                }
+                else
+                {
+                    DataSource.AddRange(IsvatincomeEarnerData);
+                }
+            }
+            else
+            {
+                if (HouseHoldMembersData != null && HouseHoldMembersData.Any())
+                {
+                    DataSource = new List<IsvatincomeEarner>();
+                    foreach (var item in HouseHoldMembersData)
+                    {
+                        DataSource.Add(new IsvatincomeEarner() { HouseHoldMemberId = item.HouseHoldMemberId, IsvatincomeEarnerId = IsvatincomeEarnerId, IsvatheaderId = IsvatheaderId });
+                        IsvatincomeEarnerId--;
+                    }
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // throw;
+        }
+    }
+
+
+    public void OnActionBegin(ActionEventArgs<IsvatincomeEarner> args)
+    {
+        try
+        {
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+            {
+                MemberDetail = new HouseHoldMembers();
+                if (HouseHoldMembersData != null && HouseHoldMembersData.Any())
+                {
+                    MemberDetail = HouseHoldMembersData.FirstOrDefault(o => o.HouseHoldMemberId == args.RowData.HouseHoldMemberId);
+                }
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+            {
+                MemberDetail = new HouseHoldMembers();
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Cancel)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+            {
+                // if (args.Data.HhtotalScore == null)
+                // {
+                //     toastService.ShowError("Please answer all questions");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.HouseHoldMemberId == 0)
+                // {
+                //     toastService.ShowWarning("Please select the House hold member who was assessed");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdoname))
+                // {
+                //     toastService.ShowError("Please enter the name of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdocontact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AdministrationPhaseId == null)
+                // {
+                //     toastService.ShowError("Please select the Phase of Administration");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AssessmentDate == null)
+                // {
+                //     toastService.ShowError("Please select the Assessment Date");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.MaritalStatusId == null)
+                // {
+                //     toastService.ShowError("Please select the Marital status of the household head");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorName))
+                // {
+                //     toastService.ShowError("Please enter the Name of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorContact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorTitle))
+                // {
+                //     toastService.ShowError("Please enter the Title of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else
+                // {
+
+                // }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+        finally { StateHasChanged(); }
+    }
+    public async void OnActionComplete(ActionEventArgs<IsvatincomeEarner> args)
+    {
+        try
+        {
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+            {
+                if (ChildGrid != null)
+                {
+                    ChildGrid.PreventRender(false);
+                }
+            }
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Refresh))
+            {
+                await IncomeEarnerToggle.InvokeAsync(DataSource);
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+    }
+}
+

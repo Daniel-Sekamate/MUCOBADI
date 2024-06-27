@@ -1,0 +1,42 @@
+﻿@page "/mapChart"
+@using Syncfusion.Blazor.Maps
+<div class="row">
+    <div class="col-md-6">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfMaps Format="n0">
+                    <MapsLayers>
+                        <MapsLayer ShapeData='new {dataOptions= "https://cdn.syncfusion.com/maps/map-data/africa.json"}' DataSource="CountryData"
+                                   ShapePropertyPath='new string[] {"name"}' ShapeDataPath="Country" TValue="MapDataSource">
+                            <MapsShapeSettings Fill="#E5E5E5" ColorValuePath="Membership">
+                                <MapsShapeColorMappings>
+                                    <MapsShapeColorMapping Value="Permanent" Color='new string[] {"#D84444"}' />
+                                    <MapsShapeColorMapping Value="Non-Permanent" Color='new string[] {"#316DB5"}' />
+                                </MapsShapeColorMappings>
+                            </MapsShapeSettings>
+                            <MapsLayerTooltipSettings Visible="true" ValuePath="Population"></MapsLayerTooltipSettings>
+                        </MapsLayer>
+                    </MapsLayers>
+                </SfMaps>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public class MapDataSource
+    {
+        public string Country { get; set; }
+        public string Membership { get; set; }
+        public double Population { get; set; }
+    };
+    public List<MapDataSource> CountryData = new List<MapDataSource>{
+        new MapDataSource {  Country= "Uganda", Membership= "Permanent", Population=20000 },
+        new MapDataSource { Country= "Kenya",Membership= "Permanent", Population=30000  },
+        new MapDataSource { Country= "Tanzania",Membership= "Permanent", Population=40000 },
+        new MapDataSource { Country= "Rwanda",Membership= "Non-Permanent", Population=50000 },
+        new MapDataSource { Country= "Burundi",Membership= "Non-Permanent", Population=60000 },
+        new MapDataSource { Country= "South Sudan",Membership= "Non-Permanent", Population=70000 }
+    };
+}

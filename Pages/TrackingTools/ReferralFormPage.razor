@@ -73,8 +73,8 @@
                                             </SfMultiSelect>
                                         </div>
                                         <div class="form-group col-md-3">
-                                            <BSButton Color="Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
-                                            <BSButton Color="Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                                            <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
+                                            <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
                                         </div>
                                         <div class="form-group col-md-12">
                                             <DataAnnotationsValidator />
@@ -196,7 +196,7 @@
                                                                             </ValueTemplate>
                                                                         </DropDownListTemplates>
                                                                         <DropDownListFieldSettings Value="@nameof(ViewHouseHoldMembers.HouseHoldMemberId)" Text="@nameof(ViewHouseHoldMembers.HouseHoldMemberCode)"></DropDownListFieldSettings>
-                                                                        <DropDownListEvents TItem="ViewHouseHoldMembers" TValue="int" ValueChange="OnHouseHoldMemberChange"></DropDownListEvents>
+                                                                        <DropDownListEvents TItem="ViewHouseHoldMembers" TValue="int?" ValueChange="OnHouseHoldMemberChange"></DropDownListEvents>
                                                                     </SfDropDownList>
                                                                 </div>
                                                                 <div class="form-group col-md-4">
@@ -213,9 +213,9 @@
                                                                 </div>
                                                                 <div class="form-group col-md-12">
                                                                     <p>Nature of the case reported and/or referred:</p>
-                                                                    <SfMultiSelect @ref="CaseNatureReportedObj" TValue="int[]" TItem="ACaseNatureReported" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@CaseNatureReportedData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Case" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                                                                    <SfMultiSelect @ref="CaseNatureReportedObj" TValue="int?[]" TItem="ACaseNatureReported" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@CaseNatureReportedData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Case" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
                                                                         <MultiSelectFieldSettings Value="@nameof(ACaseNatureReported.CaseNatureReportedId)" Text="@nameof(ACaseNatureReported.CaseNatureReportedDesc)"></MultiSelectFieldSettings>
-                                                                        <MultiSelectEvents TValue="int[]" TItem="ACaseNatureReported" ValueChange="OnCaseNatureReportedChange" DataBound="OnCaseNatureReportedDataBound"></MultiSelectEvents>
+                                                                        <MultiSelectEvents TValue="int?[]" TItem="ACaseNatureReported" ValueChange="OnCaseNatureReportedChange" DataBound="OnCaseNatureReportedDataBound"></MultiSelectEvents>
                                                                     </SfMultiSelect>
                                                                     @*<SfTextBox Multiline="true" @bind-Value="@(ReferralFormReviewData.NatureofCaseReported)" Enabled="true" Placeholder="Pleses enter the case" FloatLabelType="FloatLabelType.Never"></SfTextBox>*@
                                                                 </div>
@@ -288,9 +288,9 @@
                                                                 </div>
                                                                 <div class="form-group col-md-6">
                                                                     <p> Service(s)provided before referral</p>
-                                                                    <SfMultiSelect @ref="ServiceProvidedObj" TValue="int[]" TItem="AReferralServices" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ServiceProvidedData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="--- Please select---" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                                                                    <SfMultiSelect @ref="ServiceProvidedObj" TValue="int?[]" TItem="AReferralServices" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ServiceProvidedData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="--- Please select---" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
                                                                         <MultiSelectFieldSettings Value="@nameof(AReferralServices.ReferralServiceId)" Text="@nameof(AReferralServices.ReferralServiceDesc)"></MultiSelectFieldSettings>
-                                                                        <MultiSelectEvents TValue="int[]" TItem="AReferralServices" ValueChange="OnServiceProvidedChange" DataBound="OnServiceProvidedCategoryBound"></MultiSelectEvents>
+                                                                        <MultiSelectEvents TValue="int?[]" TItem="AReferralServices" ValueChange="OnServiceProvidedChange" DataBound="OnServiceProvidedCategoryBound"></MultiSelectEvents>
                                                                     </SfMultiSelect>
                                                                 </div>
                                                                 <div class="form-group col-md-6">
@@ -372,9 +372,9 @@
                                                                 </div>
                                                                 <div class="form-group col-md-4">
                                                                     <p>Service(s) provided by the referral agency</p>
-                                                                    <SfMultiSelect @ref="ServicePointServiceProvidedObj" TValue="int[]" TItem="AReferralServices" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ServiceProvidedData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="--- Please select---" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                                                                    <SfMultiSelect @ref="ServicePointServiceProvidedObj" TValue="int?[]" TItem="AReferralServices" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ServiceProvidedData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="--- Please select---" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
                                                                         <MultiSelectFieldSettings Value="@nameof(AReferralServices.ReferralServiceId)" Text="@nameof(AReferralServices.ReferralServiceDesc)"></MultiSelectFieldSettings>
-                                                                        <MultiSelectEvents TValue="int[]" TItem="AReferralServices" ValueChange="OnServicePointServiceProvidedChange" DataBound="OnServicePointServiceProvidedCategoryBound"></MultiSelectEvents>
+                                                                        <MultiSelectEvents TValue="int?[]" TItem="AReferralServices" ValueChange="OnServicePointServiceProvidedChange" DataBound="OnServicePointServiceProvidedCategoryBound"></MultiSelectEvents>
                                                                     </SfMultiSelect>
                                                                 </div>
                                                                 @if(ServicePointServiceProvidedObj != null && ServicePointServiceProvidedObj.Value != null && ServicePointServiceProvidedObj.Value.Any(o=> o == 16))
@@ -583,9 +583,9 @@
         string HouseHoldAge { get; set; }
         string HouseHoldSex { get; set; }
 
-        SfMultiSelect<int[], AReferralServices> ServiceProvidedObj;
-        SfMultiSelect<int[], AReferralServices> ServicePointServiceProvidedObj;
-        SfMultiSelect<int[], ACaseNatureReported> CaseNatureReportedObj;
+        SfMultiSelect<int?[], AReferralServices> ServiceProvidedObj;
+        SfMultiSelect<int?[], AReferralServices> ServicePointServiceProvidedObj;
+        SfMultiSelect<int?[], ACaseNatureReported> CaseNatureReportedObj;
 
         List<ViewHouseHoldMembers> HouseHoldMembersData { get; set; }
         List<AYesNo> YesNoData { get; set; }
@@ -1103,7 +1103,7 @@
             if (!string.IsNullOrEmpty(ReferralFormReviewData.ServicesProvidedBeforeReferal))
             {
                 var a = ReferralFormReviewData.ServicesProvidedBeforeReferal.Split(',');
-                List<int> c = new List<int>();
+                List<int?> c = new List<int?>();
                 foreach (var n in a)
                 {
                     int b = Convert.ToInt32(n.Trim());
@@ -1112,7 +1112,7 @@
                 ServiceProvidedObj.Value = c.ToArray();
             }
         }
-        private void OnServiceProvidedChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]> args)
+        private void OnServiceProvidedChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int?[]> args)
         {
             if (args.Value!=null)
             {
@@ -1123,7 +1123,7 @@
                 ReferralFormReviewData.ServicesProvidedBeforeReferal = null;
             }
         }
-        private void OnServicePointServiceProvidedChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]> args)
+        private void OnServicePointServiceProvidedChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int?[]> args)
         {
             if (args.Value != null)
             {
@@ -1139,7 +1139,7 @@
             if (!string.IsNullOrEmpty(ReferralFormReviewData.ServicePointServicesProvided))
             {
                 var a = ReferralFormReviewData.ServicePointServicesProvided.Split(',');
-                List<int> c = new List<int>();
+                List<int?> c = new List<int?>();
                 foreach (var n in a)
                 {
                     int b = Convert.ToInt32(n.Trim());
@@ -1148,7 +1148,7 @@
                 ServicePointServiceProvidedObj.Value = c.ToArray();
             }
         }
-        private void OnHouseHoldMemberChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, ViewHouseHoldMembers> args)
+        private void OnHouseHoldMemberChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int?, ViewHouseHoldMembers> args)
         {
             try
             {
@@ -1169,7 +1169,7 @@
             finally { StateHasChanged(); }
         }
 
-        private void OnCaseNatureReportedChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int[]> args)
+        private void OnCaseNatureReportedChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int?[]> args)
         {
             if (args.Value != null)
             {
@@ -1185,7 +1185,7 @@
             if (!string.IsNullOrEmpty(ReferralFormReviewData.CaseNatureReportedId))
             {
                 var a = ReferralFormReviewData.CaseNatureReportedId.Split(',');
-                List<int> c = new List<int>();
+                List<int?> c = new List<int?>();
                 foreach (var n in a)
                 {
                     int b = Convert.ToInt32(n.Trim());

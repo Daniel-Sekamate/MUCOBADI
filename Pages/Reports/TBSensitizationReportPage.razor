@@ -1,0 +1,804 @@
+﻿@page "/TBSensitizationReportPage"
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@inject IWebHostEnvironment hostingEnv;
+@using Syncfusion.XlsIO;
+@using Syncfusion.XlsIO.Implementation;
+@using Syncfusion.XlsIORenderer;
+@inject Microsoft.JSInterop.IJSRuntime JS
+@inject MUCOBADIContext db;
+@inject SPToCoreContext spdb;
+
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+</style>
+<ol class="breadcrumb" style="margin-top:5px;">
+    <li class="breadcrumb-item active" style="color: brown;"> <strong>USAID/ICARE Community TB Sensitization and Screening Report </strong></li>
+</ol>
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12">
+        <EditForm Model="@InputModel" OnValidSubmit="@SearchRecords">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <p>District</p>
+                    <SfMultiSelect @bind-Value="@InputModel.DistrictId" Enabled="@isEnabled" TValue="int?[]" TItem="ADistrict" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@_DistrictData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search District" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></MultiSelectFieldSettings>
+                        <MultiSelectEvents TValue="int?[]" TItem="ADistrict" ValueChange="OnDistrictChange"></MultiSelectEvents>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>Sub-County</p>
+                    <SfMultiSelect @bind-Value="@InputModel.SubcountyId" TValue="int?[]" TItem="ASubcounty" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@_SubcountyData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Sub-county" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(ASubcounty.SubcountyId)" Text="@nameof(ASubcounty.SubcountyDescription)"></MultiSelectFieldSettings>
+                        <MultiSelectEvents TValue="int?[]" TItem="ASubcounty" ValueChange="OnSubcountyChange"></MultiSelectEvents>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>Parish</p>
+                    <SfMultiSelect @bind-Value="@InputModel.ParishId" TValue="int?[]" TItem="AParish" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@_ParishData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Parish" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AParish.ParishId)" Text="@nameof(AParish.ParishDescription)"></MultiSelectFieldSettings>
+                        <MultiSelectEvents TValue="int?[]" TItem="AParish" ValueChange="OnParishChange"></MultiSelectEvents>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>Village</p>
+                    <SfMultiSelect @bind-Value="@InputModel.VillageId" TValue="int?[]" TItem="AVillage" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@_VillageData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Village" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AVillage.VillageId)" Text="@nameof(AVillage.VillageDescription)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>Reporting Period Start date</p>
+                    <SfDatePicker @bind-Value="@InputModel.Startdate" TValue="DateTime?" Format="dd/MM/yyyy" Placeholder="Please select date" FloatLabelType="FloatLabelType.Never"></SfDatePicker>
+                </div>
+                <div class="form-group col-md-3">
+                    <p>Reporting Period End date</p>
+                    <SfDatePicker @bind-Value="@InputModel.Enddate" TValue="DateTime?" Format="dd/MM/yyyy" Placeholder="Please select date" FloatLabelType="FloatLabelType.Never"></SfDatePicker>
+                </div>
+                <div class="form-group col-md-3">
+                    <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Download Report</BSButton>
+                    <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                </div>
+                <div class="form-group col-md-12">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                </div>
+                @if (!string.IsNullOrEmpty(outComeResult))
+                {
+                    <div class="form-group col-md-12">
+                        @if (outComeResult.Contains("No Record"))
+                        {
+                            <p class="alert alert-danger" style="padding:10px;">@outComeResult</p>
+                        }
+                        else if (outComeResult.Contains("Warning"))
+                        {
+                            <p class="alert alert-warning" style="padding:10px;">@outComeResult</p>
+                        }
+                        else
+                        {
+                            <p class="alert alert-success" style="padding:10px;">@outComeResult</p>
+                        }
+                    </div>
+                }
+                <div class="form-group col-md-12">
+                    <SfSpinner @ref="ReportSpinner" Label="downloading the report please wait..." Size="70" Visible="false"></SfSpinner>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+@code {
+    #region Toasters
+    public static string ToastContent { get; set; }
+    SfToast ToastObj;
+    SfToast DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+{
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    private SearchPanel InputModel = new();
+    SfSpinner ReportSpinner;
+
+    List<AVillage> _VillageData { get; set; }
+    List<AParish> _ParishData { get; set; }
+    List<ASubcounty> _SubcountyData { get; set; }
+    List<ADistrict> _DistrictData { get; set; }
+
+    List<ARequestedTestType> RequestedTestTypeData { get; set; }
+    List<ATbScreeningVenue> ScreeningVenueData { get; set; }
+    List<AYesNo> YesNoData { get; set; }
+    List<AGender> GenderData { get; set; }
+    List<AActivityType> ActivityTypeData { get; set; }
+    List<ADistrict> DistrictData { get; set; }
+    List<ASubcounty> SubcountyData { get; set; }
+    List<AVillage> VillageData { get; set; }
+    List<AParish> ParishData { get; set; }
+
+    bool isEnabled { get; set; } = false;
+    string outComeResult { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await base.OnInitializedAsync();
+            if (!userManagement.IsSignedIn())
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                SubcountyData = db.ASubcounty.AsNoTracking().ToList();
+                ParishData = db.AParish.AsNoTracking().ToList();
+                GenderData = db.AGender.AsNoTracking().ToList();
+                VillageData = db.AVillage.AsNoTracking().ToList();
+                RequestedTestTypeData = db.ARequestedTestType.AsNoTracking().ToList();
+                DistrictData = db.ADistrict.AsNoTracking().ToList();
+                ScreeningVenueData = db.ATbScreeningVenue.AsNoTracking().ToList();
+                YesNoData = db.AYesNo.AsNoTracking().ToList();
+                ActivityTypeData = db.AActivityType.AsNoTracking().ToList();
+                _DistrictData = db.ADistrict.AsNoTracking().ToList();
+                //QuarterData = db.AQuarter.AsNoTracking().ToList();
+                //int current_year = DateTime.Now.Year;
+                //var firstHomeVisitdata = db.BeneficiaryIdentificationRegister.Where(o=> o.DateofIdentification.HasValue==true).OrderBy(o => o.DateofIdentification).AsNoTracking().ToList().FirstOrDefault();
+                //if (firstHomeVisitdata != null)
+                //{
+                //    int firstyear = firstHomeVisitdata.DateofIdentification.Value.Year;
+                //    for (int i = 0; i <= (current_year - firstyear); i++)
+                //    {
+
+                //        if ((current_year - (firstyear + i)) > 0)
+                //        {
+                //            FianacialYearData.Add(new FianacialYear { FinancialYear = (firstyear + i), FinancialYearDesc = (firstyear + i).ToString() });
+                //        }
+                //    }
+                //}
+                //FianacialYearData.Add(new FianacialYear { FinancialYear = current_year, FinancialYearDesc = current_year.ToString() });
+                InputModel = new();
+                var user = db.ViewUserManagement.FirstOrDefault(o => o.UserName == userManagement.GetUserName());
+                if (!user.RoleName.Contains("Super Administrator") && !user.RoleName.Contains("Administrator") && !user.RoleName.Contains("mel director") && !user.RoleName.Contains("mel manager") && !user.RoleName.Contains("cluster manager"))
+                {
+                    var districtlist = userManagement.GetUserDistrict();
+                    if (districtlist != null && districtlist.Count > 0)
+                    {
+                        List<int?> m = new List<int?>();
+                        foreach (var n in districtlist)
+                        {
+                            m.Add(n);
+                        }
+
+                        InputModel.DistrictId = m.ToArray();
+                        _SubcountyData = db.ASubcounty.AsNoTracking().ToList().Where(o => districtlist.Any(a => a == o.DistrictId)).ToList();
+                    }
+                    var subcountyList = userManagement.GetUserSubcounty();
+                    if (subcountyList != null && subcountyList.Count > 0)
+                    {
+                        List<int?> m = new List<int?>();
+                        foreach (var n in subcountyList)
+                        {
+                            m.Add(n);
+                        }
+                        InputModel.SubcountyId = m.ToArray();
+                        _ParishData = db.AParish.AsNoTracking().ToList().Where(o => subcountyList.Any(a => a == o.SubcountyId)).ToList();
+                    }
+                }
+                else
+                {
+                    isEnabled = true;
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await ToastObj.ShowAsync(new ToastModel { Title = "Error!", Content = ex.Message.ToString(), CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+    }
+
+    private void ClearSearchBtnClick()
+    {
+        InputModel = new();
+        var user = db.ViewUserManagement.FirstOrDefault(o => o.UserName == userManagement.GetUserName());
+        if (!user.RoleName.Contains("Super Administrator") && !user.RoleName.Contains("Administrator") && !user.RoleName.Contains("mel director") && !user.RoleName.Contains("mel manager") && !user.RoleName.Contains("cluster manager"))
+        {
+            var districtlist = userManagement.GetUserDistrict();
+            if (districtlist != null && districtlist.Count > 0)
+            {
+                List<int?> m = new List<int?>();
+                foreach (var n in districtlist)
+                {
+                    m.Add(n);
+                }
+
+                InputModel.DistrictId = m.ToArray();
+                _SubcountyData = db.ASubcounty.AsNoTracking().ToList().Where(o => districtlist.Any(a => a == o.DistrictId)).ToList();
+            }
+            var subcountyList = userManagement.GetUserSubcounty();
+            if (subcountyList != null && subcountyList.Count > 0)
+            {
+                List<int?> m = new List<int?>();
+                foreach (var n in subcountyList)
+                {
+                    m.Add(n);
+                }
+                InputModel.SubcountyId = m.ToArray();
+                _ParishData = db.AParish.AsNoTracking().ToList().Where(o => subcountyList.Any(a => a == o.SubcountyId)).ToList();
+            }
+        }
+        else
+        {
+            isEnabled = true;
+        }
+    }
+    private async Task SearchRecords()
+    {
+        try
+        {
+            await ReportSpinner.ShowAsync();
+            outComeResult = null;
+            if (InputModel.Startdate == null || InputModel.Enddate == null)
+            {
+                outComeResult = "Please select the reporting period (both start date & End date)";
+            }
+            else
+            {
+                var data = (await db.CommunityTbSensitization.ToListAsync()).Where(o =>
+                    ((InputModel.DistrictId == null || InputModel.DistrictId.Length == 0) || (o.DistrictId != null && InputModel.DistrictId.Any(a => a == o.DistrictId) == true)) &&
+                ((InputModel.SubcountyId == null || InputModel.SubcountyId.Length == 0) || (o.SubCountyId != null && InputModel.SubcountyId.Any(a => a == o.SubCountyId) == true)) &&
+                ((InputModel.ParishId == null || InputModel.ParishId.Length == 0) || (o.ParishId != null && InputModel.ParishId.Any(a => a == o.ParishId) == true)) &&
+                ((InputModel.VillageId == null || InputModel.VillageId.Length == 0) || (o.VillageId != null && InputModel.VillageId.Any(a => a == o.VillageId) == true)) &&
+                ((InputModel.Startdate.HasValue == false && InputModel.Enddate.HasValue == false)
+                || (o.ActivityDate.HasValue == true && InputModel.Startdate.Value.Date == o.ActivityDate.Value.Date && InputModel.Enddate.HasValue == false)
+                || (o.ActivityDate.HasValue == true && InputModel.Enddate.Value.Date == o.ActivityDate.Value.Date && InputModel.Startdate.HasValue == false)
+                || (o.ActivityDate.HasValue == true && o.ActivityDate.Value.Date >= InputModel.Startdate.Value.Date && o.ActivityDate.Value.Date <= InputModel.Enddate.Value.Date))
+                ).ToList();
+
+                if (data.Count > 0)
+                {
+                    using (ExcelEngine excelEngine = new ExcelEngine())
+                    {
+                        IApplication application = excelEngine.Excel;
+                        application.DefaultVersion = ExcelVersion.Excel2013;
+                        IWorkbook workbook = application.Workbooks.Create(1);
+                        IWorksheet worksheet = workbook.Worksheets[0];
+                        worksheet.Name = "Community TB Sensitization and Screening Report";
+
+                        #region Styles
+                        var headerStyle = workbook.Styles.Add("headerStyle");
+
+                        headerStyle.BeginUpdate();
+                        headerStyle.Color = Syncfusion.Drawing.Color.Black; //Syncfusion.Drawing.Color.FromArgb(255, 0, 0);
+                        headerStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                        headerStyle.Font.Bold = true;
+                        headerStyle.Font.FontName = "Arial";
+                        headerStyle.Font.Size = 8f;
+                        headerStyle.Font.Color = ExcelKnownColors.White;
+
+                        headerStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        headerStyle.Borders.Color = ExcelKnownColors.White;
+                        headerStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        headerStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        headerStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        //headerStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thick;
+
+                        headerStyle.WrapText = true;
+
+                        headerStyle.EndUpdate();
+
+                        var Style = workbook.Styles.Add("bodyStyle");
+
+                        Style.BeginUpdate();
+                        Style.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                        Style.VerticalAlignment = ExcelVAlign.VAlignTop;
+                        Style.Font.Bold = false;
+                        Style.Font.FontName = "Arial";
+                        Style.Font.Size = 8f;
+                        Style.Font.Color = ExcelKnownColors.Black;
+                        Style.WrapText = true;
+                        Style.Borders.Color = ExcelKnownColors.Black;
+                        Style.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        Style.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        Style.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        Style.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                        Style.EndUpdate();
+
+
+                        var CategoryStyle = workbook.Styles.Add("CategoryStyle");
+
+                        CategoryStyle.BeginUpdate();
+                        CategoryStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 195, 0);
+                        /*CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88);*/ //AUBERGINE
+                        CategoryStyle.Font.Bold = true;
+                        CategoryStyle.Font.FontName = "Arial";
+                        CategoryStyle.Font.Size = 10f;
+                        CategoryStyle.Font.Color = ExcelKnownColors.White;
+                        CategoryStyle.WrapText = true;
+                        CategoryStyle.Borders.Color = ExcelKnownColors.White;
+                        CategoryStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        CategoryStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        CategoryStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        CategoryStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                        CategoryStyle.EndUpdate();
+
+                        var CategoryTotalStyle = workbook.Styles.Add("CategoryTotalStyle");
+
+                        CategoryTotalStyle.BeginUpdate();
+                        CategoryTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        CategoryTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                        CategoryTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                        CategoryTotalStyle.Font.Bold = true;
+                        CategoryTotalStyle.Font.FontName = "Arial";
+                        CategoryTotalStyle.Font.Size = 8f;
+                        CategoryTotalStyle.Font.Color = ExcelKnownColors.White;
+                        CategoryTotalStyle.WrapText = true;
+                        CategoryTotalStyle.Borders.Color = ExcelKnownColors.White;
+                        CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        CategoryTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                        CategoryTotalStyle.EndUpdate();
+
+                        var DivisionStyle = workbook.Styles.Add("DivisionStyle");
+
+                        DivisionStyle.BeginUpdate();
+                        DivisionStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        DivisionStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 0, 0); //RED
+                        DivisionStyle.Font.Bold = true;
+                        DivisionStyle.Font.FontName = "Arial";
+                        DivisionStyle.Font.Size = 8f;
+                        DivisionStyle.Font.Color = ExcelKnownColors.White;
+                        DivisionStyle.WrapText = true;
+                        DivisionStyle.Borders.Color = ExcelKnownColors.White;
+                        DivisionStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        DivisionStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        DivisionStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        DivisionStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                        DivisionStyle.EndUpdate();
+
+                        var DivisionTotalStyle = workbook.Styles.Add("DivisionTotalStyle");
+
+                        DivisionTotalStyle.BeginUpdate();
+                        DivisionTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        DivisionTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                        DivisionTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                        DivisionTotalStyle.Font.Bold = true;
+                        DivisionTotalStyle.Font.FontName = "Arial";
+                        DivisionTotalStyle.Font.Size = 8f;
+                        DivisionTotalStyle.Font.Color = ExcelKnownColors.White;
+                        DivisionTotalStyle.WrapText = true;
+                        DivisionTotalStyle.Borders.Color = ExcelKnownColors.White;
+                        DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        DivisionTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                        DivisionTotalStyle.EndUpdate();
+
+
+                        var TopicStyle = workbook.Styles.Add("TopicStyle");
+
+                        TopicStyle.BeginUpdate();
+                        TopicStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        TopicStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88); //AUBERGINE
+                        TopicStyle.Font.Bold = true;
+                        TopicStyle.Font.FontName = "Arial";
+                        TopicStyle.Font.Size = 8f;
+                        TopicStyle.Font.Color = ExcelKnownColors.White;
+                        TopicStyle.WrapText = true;
+                        TopicStyle.Borders.Color = ExcelKnownColors.White;
+                        TopicStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        TopicStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        TopicStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        TopicStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                        TopicStyle.EndUpdate();
+
+                        var TopicTotalStyle = workbook.Styles.Add("TopicTotalStyle");
+
+                        TopicTotalStyle.BeginUpdate();
+                        TopicTotalStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        TopicTotalStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                        TopicTotalStyle.Color = Syncfusion.Drawing.Color.Black;
+                        TopicTotalStyle.Font.Bold = true;
+                        TopicTotalStyle.Font.FontName = "Arial";
+                        TopicTotalStyle.Font.Size = 8f;
+                        TopicTotalStyle.Font.Color = ExcelKnownColors.White;
+                        TopicTotalStyle.WrapText = true;
+                        TopicTotalStyle.Borders.Color = ExcelKnownColors.White;
+                        TopicTotalStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                        TopicTotalStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                        TopicTotalStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                        TopicTotalStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                        TopicTotalStyle.EndUpdate();
+                        #endregion
+                        int row = 1;
+                        worksheet.Range["A" + row].Text = "Community TB Sensitization and Screening Report";
+                        worksheet.Range["A" + row + ":M" + row].CellStyle = CategoryStyle;
+                        worksheet.Range["A" + row + ":M" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        worksheet.Range["A" + row + ":M" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                        worksheet.Range["A" + row].RowHeight = 30;
+                        worksheet.Range["A" + row + ":M" + row].Merge();
+                        row++;
+                        row++;
+                        worksheet.Range["N" + row].Text = "TB Symptom Check";
+                        worksheet.Range["N" + row + ":V" + row].Merge();
+                        worksheet.Range["N" + row + ":V" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                        worksheet.Range["N" + row + ":V" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                        worksheet.Range["N" + row + ":V" + row].CellStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 255, 0);
+                        worksheet.Range["N" + row + ":V" + row].CellStyle.Font.Size = 12f;
+                        worksheet.Range["N" + row + ":V" + row].CellStyle.Font.Bold = true;
+                        worksheet.Range["N" + row + ":V" + row].CellStyle.Font.Color = ExcelKnownColors.Black;
+
+                        row++;
+                        #region Header row
+                        worksheet.Range["A" + row].Text = "SN";
+                        worksheet.Range["A" + row].ColumnWidth = 10;
+
+                        worksheet.Range["B" + row].Text = "Client's Name";
+                        worksheet.Range["B" + row].ColumnWidth = 20;
+
+                        worksheet.Range["C" + row].Text = "DOB";
+                        worksheet.Range["C" + row].ColumnWidth = 15;
+
+                        worksheet.Range["D" + row].Text = "Age";
+                        worksheet.Range["D" + row].ColumnWidth = 15;
+
+                        worksheet.Range["E" + row].Text = "Phone Number";
+                        worksheet.Range["E" + row].ColumnWidth = 15;
+
+                        worksheet.Range["F" + row].Text = "Type of activity";
+                        worksheet.Range["F" + row].ColumnWidth = 20;
+
+                        worksheet.Range["G" + row].Text = "Venue of activity";
+                        worksheet.Range["G" + row].ColumnWidth = 20;
+
+                        worksheet.Range["H" + row].Text = "Activity Date";
+                        worksheet.Range["H" + row].ColumnWidth = 20;
+
+                        worksheet.Range["I" + row].Text = " District";
+                        worksheet.Range["I" + row].ColumnWidth = 20;
+
+                        worksheet.Range["J" + row].Text = " Subounty";
+                        worksheet.Range["J" + row].ColumnWidth = 20;
+
+                        worksheet.Range["K" + row].Text = "Parish";
+                        worksheet.Range["K" + row].ColumnWidth = 20;
+
+                        worksheet.Range["L" + row].Text = "Village";
+                        worksheet.Range["L" + row].ColumnWidth = 20;
+
+                        worksheet.Range["M" + row].Text = "Sensitised on TB?";
+                        worksheet.Range["M" + row].ColumnWidth = 15;
+
+                        worksheet.Range["N" + row].Text = "Cough? ";
+                        worksheet.Range["N" + row].ColumnWidth = 15;
+
+                        worksheet.Range["O" + row].Text = "If cough, howlong?";
+                        worksheet.Range["O" + row].ColumnWidth = 15;
+
+                        worksheet.Range["P" + row].Text = "coughing up blood?";
+                        worksheet.Range["P" + row].ColumnWidth = 15;
+
+                        worksheet.Range["Q" + row].Text = "Fever? ";
+                        worksheet.Range["Q" + row].ColumnWidth = 15;
+
+                        worksheet.Range["R" + row].Text = "If fever, how long? (In days)";
+                        worksheet.Range["R" + row].ColumnWidth = 15;
+
+                        worksheet.Range["S" + row].Text = "Weight loss / Poor weight gain";
+                        worksheet.Range["S" + row].ColumnWidth = 15;
+
+                        worksheet.Range["T" + row].Text = "Excessive Night sweats?";
+                        worksheet.Range["T" + row].ColumnWidth = 15;
+
+                        worksheet.Range["U" + row].Text = "Other? (Yes / No)";
+                        worksheet.Range["U" + row].ColumnWidth = 15;
+
+                        worksheet.Range["V" + row].Text = "If yes, specify";
+                        worksheet.Range["V" + row].ColumnWidth = 15;
+
+                        worksheet.Range["W" + row].Text = "Is a client on a presumptive TB case? ";
+                        worksheet.Range["W" + row].ColumnWidth = 15;
+
+                        worksheet.Range["X" + row].Text = "If client is on a presumptive case, Is sample sent for testing? Record the type of test requested";
+                        worksheet.Range["X" + row].ColumnWidth = 15;
+
+                        worksheet.Range["Y" + row].Text = "Client refered for evaluation ";
+                        worksheet.Range["Y" + row].ColumnWidth = 15;
+
+                        worksheet.Range["A" + row + ":Y" + row].CellStyle = headerStyle;
+                        worksheet.Range["A" + row + ":Y" + row].WrapText = true;
+                        #endregion Header row
+                        row++;
+                        int count = 1;
+                        foreach (var item in data)
+                        {
+                            worksheet.Range["A" + row].Number = count;
+
+                            worksheet.Range["B" + row].Text = item.ClientName;
+
+                            int? age = item.Age;
+                            if(item.Dob.HasValue == true)
+                            {
+                                worksheet.Range["C" + row].Text = item.Dob.Value.ToString("dd/MM/yyyy");
+                                age = (DateTime.Now.Year - item.Dob.Value.Year);
+                            }
+
+
+                            worksheet.Range["D" + row].Text = $"{age}";
+
+                            worksheet.Range["E" + row].Text = item.PhoneNumber;
+
+                            string ActivityType = string.Empty;
+                            if(ActivityTypeData != null)
+                            {
+                                var _ActivityType = ActivityTypeData.FirstOrDefault(o => o.ActivityTypeId == item.ActivityTypeId);
+                                if (_ActivityType != null)
+                                {
+                                    ActivityType = _ActivityType.ActivityTypeDesc;
+                                }
+                            }
+                            worksheet.Range["F" + row].Text = ActivityType;
+
+                            string ActivityVenue = string.Empty;
+                            if (ScreeningVenueData != null)
+                            {
+                                var _data = ScreeningVenueData.FirstOrDefault(o => o.TbScreeningVenueId == item.TbScreeningVenueId);
+                                if (_data != null)
+                                {
+                                    ActivityVenue = _data.TbScreeningVenueDesc;
+                                }
+                            }
+
+                            worksheet.Range["G" + row].Text = ActivityVenue;
+
+                            if (item.ActivityDate.HasValue)
+                            {
+                                worksheet.Range["H" + row].Text = item.ActivityDate.Value.ToString("dd/MM/yyyy");
+                            }
+
+                            string districtName = string.Empty;
+                            if (DistrictData != null)
+                            {
+                                var _data = DistrictData.FirstOrDefault(o => o.DistrictId == item.DistrictId);
+                                if (_data != null)
+                                {
+                                    districtName = _data.DistrictDescription;
+                                }
+                            }
+
+                            worksheet.Range["I" + row].Text = districtName;
+
+                            string SubcountyName = string.Empty;
+                            if (SubcountyData != null)
+                            {
+                                var _data = SubcountyData.FirstOrDefault(o => o.SubcountyId == item.SubCountyId);
+                                if (_data != null)
+                                {
+                                    SubcountyName = _data.SubcountyDescription;
+                                }
+                            }
+                            worksheet.Range["J" + row].Text = SubcountyName;
+
+                            string ParishName = string.Empty;
+                            if (ParishData != null)
+                            {
+                                var _data = ParishData.FirstOrDefault(o => o.ParishId == item.ParishId);
+                                if (_data != null)
+                                {
+                                    ParishName = _data.ParishDescription;
+                                }
+                            }
+                            worksheet.Range["K" + row].Text = ParishName;
+
+                            string VillageName = string.Empty;
+                            if (VillageData != null)
+                            {
+                                var _data = VillageData.FirstOrDefault(o => o.VillageId == item.VillageId);
+                                if (_data != null)
+                                {
+                                    VillageName = _data.VillageDescription;
+                                }
+                            }
+                            worksheet.Range["L" + row].Text = VillageName;
+
+                            string TbSensitised = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.IsSensitisedOnTb);
+                                if (_data != null)
+                                {
+                                    TbSensitised = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["M" + row].Text = TbSensitised;
+
+                            string Iscoughing = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.IsCoughing);
+                                if (_data != null)
+                                {
+                                    Iscoughing = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["N" + row].Text = Iscoughing;
+
+                            if (item.DaysCoughing.HasValue)
+                            {
+                                worksheet.Range["O" + row].Number = item.DaysCoughing.Value;
+                            }
+
+                            string IscoughingBlood = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.IsCoughingUpBlood);
+                                if (_data != null)
+                                {
+                                    IscoughingBlood = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["P" + row].Text = IscoughingBlood;
+
+                            string Fever = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.HasFever);
+                                if (_data != null)
+                                {
+                                    Fever = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["Q" + row].Text = Fever;
+
+                            if (item.DaysWithFever.HasValue)
+                            {
+                                worksheet.Range["R" + row].Number = item.DaysWithFever.Value;
+                            }
+                            
+                            string WeightLoss = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.WeightLoss);
+                                if (_data != null)
+                                {
+                                    WeightLoss = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["S" + row].Text = WeightLoss;
+
+                            string ExcessiveSweating = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.ExcessiveNightSweats);
+                                if (_data != null)
+                                {
+                                    ExcessiveSweating = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["T" + row].Text = ExcessiveSweating;
+
+                            string OtherSynptoms = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.OtherSymptoms);
+                                if (_data != null)
+                                {
+                                    OtherSynptoms = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["U" + row].Text = OtherSynptoms;
+
+                            worksheet.Range["V" + row].Text = item.OtherSymptomDesc;
+
+                            string ClientOnPresumptiveTb = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.IsaclientapresumptiveTbcase);
+                                if (_data != null)
+                                {
+                                    ClientOnPresumptiveTb = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["W" + row].Text = ClientOnPresumptiveTb;
+                            
+                            string TestRequested = string.Empty;
+                            if (RequestedTestTypeData != null)
+                            {
+                                var _data = RequestedTestTypeData.FirstOrDefault(o => o.RequestedTestTypeId == item.RequestedTestTypeId);
+                                if (_data != null)
+                                {
+                                    TestRequested = _data.RequestedTestTypeDesc;
+                                }
+                            }
+                            worksheet.Range["X" + row].Text = TestRequested;
+
+                            string ReferredForEvaluation = string.Empty;
+                            if (YesNoData != null)
+                            {
+                                var _data = YesNoData.FirstOrDefault(o => o.YesNoId == item.ClientReferedForEvaluation);
+                                if (_data != null)
+                                {
+                                    ReferredForEvaluation = _data.YesNoDescription;
+                                }
+                            }
+                            worksheet.Range["Y" + row].Text = ReferredForEvaluation;
+
+                            worksheet.Range["A" + row + ":Y" + row].CellStyle = Style;
+                            worksheet.Range["A" + row + ":Y" + row].WrapText = true;
+                            row++;
+                            count++;
+                        }
+
+
+                        MemoryStream ms = new MemoryStream();
+                        // Save and close the document.
+                        workbook.SaveAs(ms);
+                        //Reset the memory stream position.
+                        ms.Position = 0;
+                        await JS.SaveAs("Community TB Sensitization and Screening Report.xlsx", ms.ToArray());
+                        ms.Dispose();
+                        workbook.Close();
+                        //excelEngine.Dispose();
+                        outComeResult = "Success:- The report was successfully downloaded.";
+                    }
+                }
+                else
+                {
+                    outComeResult = "No Record:- There were no records found for this search";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await ToastObj.ShowAsync(new ToastModel { Title = "Error!", Content = ex.Message.ToString(), CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        finally
+        {
+            await ReportSpinner.HideAsync();
+        }
+    }
+    public void OnDistrictChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int?[]> args)
+    {
+        if (args.Value != null)
+        {
+            _SubcountyData = db.ASubcounty.Where(o => args.Value.Any(a => a == o.DistrictId) == true).AsNoTracking().ToList();
+        }
+    }
+    public void OnSubcountyChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int?[]> args)
+    {
+        if (args.Value != null)
+        {
+            _ParishData = db.AParish.Where(o => args.Value.Any(a => a == o.SubcountyId) == true).AsNoTracking().ToList();
+        }
+    }
+    public void OnParishChange(Syncfusion.Blazor.DropDowns.MultiSelectChangeEventArgs<int?[]> args)
+    {
+        if (args.Value != null)
+        {
+            _VillageData = db.AVillage.Where(o => args.Value.Any(a => a == o.ParishId) == true).AsNoTracking().ToList();
+        }
+    }
+}

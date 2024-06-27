@@ -1,0 +1,172 @@
+﻿@using MUCOBADI.Models
+@inject IToastService toastService;
+@* <h3>BusinessTrackingLedgerSuePage</h3> *@
+@if (DataSource != null)
+{
+    <SfGrid @ref="HeaderGrid" TValue="BusinessTrackingLedgerSue" DataSource="@DataSource"
+                AllowGrouping="false" ShowColumnChooser="true" AllowTextWrap="true"
+                AllowPaging="true" AllowFiltering="true" GridLines="GridLine.Both" AllowSelection="true"
+                Toolbar="@(new string[] {"Add","Edit","Delete","Update","Cancel","ColumnChooser"})">
+            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+            <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+            <GridEvents OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="BusinessTrackingLedgerSue"></GridEvents>
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog">
+        </GridEditSettings>
+        <GridColumns>
+            <GridColumn HeaderText="Manage Records" Width="80">
+                <GridCommandColumns>
+                    <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() { CssClass="e-icons e-view-details",Content="View" })" Title="View"></GridCommandColumn>
+                </GridCommandColumns>
+            </GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.StartUpExpensesId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.Item))" EditType="EditType.DefaultEdit" HeaderText="Item" Width="150"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.UnitOfMeasure))" EditType="EditType.DefaultEdit" HeaderText="Unit Of Measure" Width="150"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.Qty))" EditType="EditType.NumericEdit" Format="##,##" HeaderText="Qty" Width="120"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.UnitCost))" EditType="EditType.NumericEdit" Format="##,##" HeaderText="UnitCost" Width="120"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.AvailableResources))" EditType="EditType.DefaultEdit" HeaderText="Available Resources" Width="120"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.SourceofResources))" EditType="EditType.DefaultEdit" HeaderText="Source of Resources" Width="120"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessTrackingLedgerSue.Amount))" EditType="EditType.NumericEdit" Format="##,##" HeaderText="Amount" Width="120"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+@code {
+    [Parameter]
+    public List<BusinessTrackingLedgerSue>? BusinessTrackingLedgerSueData { get; set; }
+    [Parameter]
+    public int BusinessTrackingLedgerId { get; set; }
+    [Parameter]
+    public EventCallback<List<BusinessTrackingLedgerSue>?> DetailToggle { get; set; }
+
+    List<BusinessTrackingLedgerSue>? DataSource { get; set; }
+    int? PreviousBusinessTrackingLedgerId { get; set; }
+    SfGrid<BusinessTrackingLedgerSue>? HeaderGrid;
+
+    int StartUpExpensesId { get; set; } = -1;
+
+    public void OnActionBegin(ActionEventArgs<BusinessTrackingLedgerSue> args)
+    {
+        try
+        {
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+            {
+                args.RowData.StartUpExpensesId = StartUpExpensesId;
+                StartUpExpensesId--;
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Cancel)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+            {
+                // if (args.Data.HhtotalScore == null)
+                // {
+                //     toastService.ShowError("Please answer all questions");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.HouseHoldMemberId == 0)
+                // {
+                //     toastService.ShowWarning("Please select the House hold member who was assessed");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdoname))
+                // {
+                //     toastService.ShowError("Please enter the name of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdocontact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AdministrationPhaseId == null)
+                // {
+                //     toastService.ShowError("Please select the Phase of Administration");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AssessmentDate == null)
+                // {
+                //     toastService.ShowError("Please select the Assessment Date");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.MaritalStatusId == null)
+                // {
+                //     toastService.ShowError("Please select the Marital status of the household head");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorName))
+                // {
+                //     toastService.ShowError("Please enter the Name of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorContact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorTitle))
+                // {
+                //     toastService.ShowError("Please enter the Title of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else
+                // {
+
+                // }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+        finally { StateHasChanged(); }
+    }
+    public async void OnActionComplete(ActionEventArgs<BusinessTrackingLedgerSue> args)
+    {
+        try
+        {
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+            {
+                if (HeaderGrid != null)
+                {
+                    HeaderGrid.PreventRender(false);
+                }
+            }
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Refresh))
+            {
+                await DetailToggle.InvokeAsync(DataSource);
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (PreviousBusinessTrackingLedgerId != BusinessTrackingLedgerId)
+        {
+            PreviousBusinessTrackingLedgerId = BusinessTrackingLedgerId;
+            DataSource = new List<BusinessTrackingLedgerSue>();
+            if(BusinessTrackingLedgerSueData  != null && BusinessTrackingLedgerSueData.Count > 0)
+            {
+                DataSource.AddRange(BusinessTrackingLedgerSueData);
+            }
+        }
+        base.OnInitialized();
+    }
+}
+

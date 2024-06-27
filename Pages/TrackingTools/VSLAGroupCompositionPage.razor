@@ -80,8 +80,8 @@
                                         </SfMultiSelect>
                                     </div>
                                     <div class="form-group col-md-3">
-                                        <BSButton Color="Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
-                                        <BSButton Color="Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Search</BSButton>
+                                        <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <DataAnnotationsValidator />
@@ -190,9 +190,9 @@
                                                                                     <p>
                                                                                         HH INDIVIDUAL CODE
                                                                                     </p>
-                                                                                    <SfMaskedTextBox @ref="HouseholdMemberTextbox" Readonly="false" Mask=">LL-00-0000-00" ValueChange="HouseholdMemberTextboxChange"></SfMaskedTextBox>
+                                                                                    <SfMaskedTextBox @ref="HouseholdMemberTextbox" Created="@HouseholdMemberTextboxCreated"  Readonly="false" Mask=">LL-00-0000-00" ValueChange="HouseholdMemberTextboxChange"></SfMaskedTextBox>
                                                                                 </div>
-                                                                                <div class="form-group col-md-12">
+                                                                                @*<div class="form-group col-md-12">
                                                                                     <p>
                                                                                         HH INDIVIDUAL CODE AND NAME
                                                                                     </p>
@@ -218,12 +218,12 @@
                                                             </tr>
                                                         </table>
                                                     </div>*@
-                                                                                            </ValueTemplate>
+                                                                                           @* </ValueTemplate>
                                                                                         </DropDownListTemplates>
                                                                                         <DropDownListFieldSettings Value="@nameof(ViewHouseHoldMembers.HouseHoldMemberId)" Text="@nameof(ViewHouseHoldMembers.HouseHoldMemberCode)"></DropDownListFieldSettings>
                                                                                         <DropDownListEvents TItem="ViewHouseHoldMembers" TValue="int" Created="@HouseHoldMembersCreatedHandler"></DropDownListEvents>
                                                                                     </SfDropDownList>
-                                                                                </div>
+                                                                                </div>*@
                                                                                 <div class="form-group col-md-12">
                                                                                     <p>Phone Number</p>
                                                                                     <SfTextBox Multiline="false" @bind-Value="@(VslaGroupDirectMemberReviewData.PhoneNumber)" Enabled="true" Placeholder="Pleses enter the Phone Number" FloatLabelType="FloatLabelType.Never"></SfTextBox>
@@ -1108,6 +1108,27 @@
             {
                 VslaGroupDirectMemberReviewData.HouseHoldMemberId = member.HouseHoldMemberId;
             }
+        }
+    }
+    private void HouseholdMemberTextboxCreated()
+    {
+        try
+        {
+            var member = HouseHoldMembersData.FirstOrDefault(o => o.HouseHoldMemberId == VslaGroupDirectMemberReviewData.HouseHoldMemberId);
+            if (member != null)
+            {
+                // VslaGroupDirectMemberReviewData.HouseHoldMemberId = member.HouseHoldMemberId;
+                if(HouseholdMemberTextbox != null)
+                {
+                    HouseholdMemberTextbox.Value = member.HouseHoldMemberCode;
+                }
+                
+            }
+            //HouseholdMemberTextbox
+        }
+        catch (Exception ex)
+        {
+            //throw;
         }
     }
     private void HouseHoldMembersCreatedHandler(Object args)

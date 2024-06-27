@@ -16,7 +16,9 @@ namespace MUCOBADI.Models
             CommunityTrainingRegister = new HashSet<CommunityTrainingRegister>();
             EcdAttendenceRegister = new HashSet<EcdAttendenceRegister>();
             GraduationBenchMark = new HashSet<GraduationBenchMark>();
+            InterventionAttendanceForm = new HashSet<InterventionAttendanceForm>();
             MonthlyCaseTrackingRegister = new HashSet<MonthlyCaseTrackingRegister>();
+            Nmnquestionaire = new HashSet<Nmnquestionaire>();
             SinoParentingAttendenceRegister = new HashSet<SinoParentingAttendenceRegister>();
             VslaTrackingTool = new HashSet<VslaTrackingTool>();
         }
@@ -31,7 +33,9 @@ namespace MUCOBADI.Models
         public virtual ICollection<CommunityTrainingRegister> CommunityTrainingRegister { get; set; }
         public virtual ICollection<EcdAttendenceRegister> EcdAttendenceRegister { get; set; }
         public virtual ICollection<GraduationBenchMark> GraduationBenchMark { get; set; }
+        public virtual ICollection<InterventionAttendanceForm> InterventionAttendanceForm { get; set; }
         public virtual ICollection<MonthlyCaseTrackingRegister> MonthlyCaseTrackingRegister { get; set; }
+        public virtual ICollection<Nmnquestionaire> Nmnquestionaire { get; set; }
         public virtual ICollection<SinoParentingAttendenceRegister> SinoParentingAttendenceRegister { get; set; }
         public virtual ICollection<VslaTrackingTool> VslaTrackingTool { get; set; }
     }

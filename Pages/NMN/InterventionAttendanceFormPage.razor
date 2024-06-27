@@ -1,0 +1,570 @@
+﻿@page "/InterventionAttendanceFormPage"
+@using MUCOBADI.Data
+@using MUCOBADI.Interfaces
+@using MUCOBADI.Models
+@using MUCOBADI.Pages.NMN.PartialView
+@using Microsoft.EntityFrameworkCore
+@using System.Collections
+
+@inject IToastService toastService;
+@inject INmnService Repo;
+@inject MUCOBADIContext db;
+@inject UserManagement userManagement;
+
+<style>
+    h2{
+        background-color:#9b51e0;
+        text-align:center;
+        padding:5px;
+        margin-bottom:5px;
+        color:ghostwhite;
+    }
+    h3{
+        background-color: black;
+        text-align: left;
+        padding: 5px;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        color: ghostwhite;
+    }
+</style>
+
+<MudOverlay Visible="@IsLoading" DarkBackground="true" Absolute="true" Style="z-index:200000; height:100vh;">
+    <MudProgressCircular Color="MudBlazor.Color.Secondary" Indeterminate="true" />
+    <MudText Style="color:ghostwhite;">Loading data please wait..</MudText>
+</MudOverlay>
+<div class="row">
+    <div class="col-md-12">
+        <BreadCrumbPage CategoryName="NMN" PageName="Intervention Attendance Form" />
+    </div>
+    @if (IsLoading == false)
+    {
+        <div class="col-md-12">
+            <SfAccordion ExpandMode="ExpandMode.Single">
+                <AccordionItems>
+                    <AccordionItem Header="Search Model">
+                        <ContentTemplate>
+                            <div class="row" n style="margin:5px;">
+                                <SearchPanelPartialPage @ref=@SearchPanel DistrictData="@DistrictData" SubcountyData="@SubcountyData" Credentials=@Credentials />
+                                <div class="col-md-4">
+                                    <button type="button" style="margin-top:32px;" class="btn btn-primary" @onclick="@(()=>{MainQuery = SearchPanel.SearchRecords();})">Search</button>
+                                    <button type="button" style="margin-top:32px;" class="btn btn-secondary" @onclick="@(() => {MainQuery =SearchPanel.ClearSearchBtnClick();})">Clear Search</button>
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </AccordionItem>
+                </AccordionItems>
+            </SfAccordion>
+        </div>
+        <div class="col-md-12">
+        <SfGrid @ref="HeaderGrid" TValue="InterventionAttendanceForm" Query="@MainQuery"
+                AllowGrouping="false" ShowColumnChooser="true" AllowTextWrap="true"
+                AllowPaging="true" AllowFiltering="true" GridLines="GridLine.Both" AllowSelection="true"
+                Toolbar="@(new string[] {"Add","Edit","Delete","Update","Cancel","ColumnChooser"})">
+            @*<GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>*@
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+            <GridPageSettings PageSize="20"></GridPageSettings>
+            <SfDataManager AdaptorInstance="@typeof(InterventionAttendanceFormAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
+            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+            <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+            <GridEvents OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="InterventionAttendanceForm"></GridEvents>
+                <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+                <Template Context="ReviewHeaderContext">
+                    @{
+                        ReviewData = (ReviewHeaderContext as InterventionAttendanceForm);
+                        if (ReviewData != null)
+                        {
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h2>
+                                        No Means No World Wide Ending Sexual Violence.
+                                    </h2>
+                                </div>
+                                <div class="col-md-12">
+                                    <h3>Intervention Information</h3>
+                                </div>
+                                <div class="col-md-4">
+                                    <label> Type </label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.InterventionTypeId)" Enabled="true" ShowClearButton=true TItem="AInterventionType" TValue="int?" DataSource="@InterventionTypeData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                        <DropDownListFieldSettings Value="@nameof(AInterventionType.InterventionTypeId)" Text="@nameof(AInterventionType.InterventionTypeDesc)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Start Date (DD/MM/YYYY)</label>
+                                    <SfDatePicker @bind-Value="@(ReviewData.AttendenceStartDate)" Format="dd/MM/yyyy" Placeholder="Enter Date" FloatLabelType="FloatLabelType.Never" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label>End Date (DD/MM/YYYY)</label>
+                                    <SfDatePicker @bind-Value="@(ReviewData.AttendenceEndDate)" Format="dd/MM/yyyy" Placeholder="Enter Date" FloatLabelType="FloatLabelType.Never" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label> Implementing Partner </label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.ImplementingPartnerId)" Enabled="true" ShowClearButton=true TItem="AImplementingPartner" TValue="int?" DataSource="@ImplementingPartnerData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                        <DropDownListFieldSettings Value="@nameof(AImplementingPartner.ImplementingPartnerId)" Text="@nameof(AImplementingPartner.ImplementingPartnerName)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>District</label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.DistrictId)" Enabled="true" TItem="ADistrict" ShowClearButton=true TValue="int?" DataSource="@DistrictData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                        <DropDownListFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Subcounty</label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.SubcountyId)" Enabled="true" TItem="ASubcounty" ShowClearButton=true
+                                                    TValue="int?" DataSource="@SubcountyData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never"
+                                                    Query="@(new Query().Where(new WhereFilter() { Field = "DistrictId", Operator = "equal", value = ReviewData.DistrictId, IgnoreCase = false, IgnoreAccent = false }))">
+                                        <DropDownListFieldSettings Value="@nameof(ASubcounty.SubcountyId)" Text="@nameof(ASubcounty.SubcountyDescription)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Parish</label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.ParishId)" Enabled="true" TItem="AParish" ShowClearButton=true
+                                                    TValue="int?" DataSource="@ParishData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never"
+                                                    Query="@(new Query().Where(new WhereFilter() { Field = "SubcountyId", Operator = "equal", value = ReviewData.SubcountyId, IgnoreCase = false, IgnoreAccent = false }))">
+                                        <DropDownListFieldSettings Value="@nameof(AParish.ParishId)" Text="@nameof(AParish.ParishDescription)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Village</label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.VillageId)" Enabled="true" TItem="AVillage" ShowClearButton=true
+                                                    TValue="int?" DataSource="@VillageData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never"
+                                                    Query="@(new Query().Where(new WhereFilter() { Field = "ParishId", Operator = "equal", value = ReviewData.ParishId, IgnoreCase = false, IgnoreAccent = false }))">
+                                        <DropDownListFieldSettings Value="@nameof(AVillage.VillageId)" Text="@nameof(AVillage.VillageDescription)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Venue (e.g. Church / Community Ctr. Name )</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.Venue)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Group Name</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.GroupName)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label> Sampled for Pre/post </label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.SampledForId)" Enabled="true" ShowClearButton=true TItem="ANmnSampledFor" TValue="int?" DataSource="@NmnSampledForData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                        <DropDownListFieldSettings Value="@nameof(ANmnSampledFor.SampledForId)" Text="@nameof(ANmnSampledFor.SampledForDesc)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label> Delivery Method</label>
+                                    <SfDropDownList @bind-Value="@(ReviewData.DeliveryMethodId)" Enabled="true" ShowClearButton=true TItem="ADeliveryMethod" TValue="int?" DataSource="@DeliveryMethodData" Placeholder="Please select" FloatLabelType="FloatLabelType.Never">
+                                        <DropDownListFieldSettings Value="@nameof(ADeliveryMethod.DeliveryMethodId)" Text="@nameof(ADeliveryMethod.DeliveryMethodDesc)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Number of boys/girls disclosing sexual violence (tally below)</label>
+                                    <SfNumericTextBox @bind-Value="@ReviewData.NumberDisclosingSexualViolence" Enabled="true" Placeholder="Enter the here" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Number of boys/girls referred (tally below)</label>
+                                    <SfNumericTextBox @bind-Value="@ReviewData.NumberRefered" Enabled="true" Placeholder="Enter the here" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                </div>
+                                <div class="col-md-12">
+                                    <h3>Instructors</h3>
+                                </div>
+                                <div class="col-md-12">
+                                    <InterventionAttendanceFormInstructorPage @ref=@FormInstructorPage InterventionAttendanceFormId="@(ReviewData.InterventionAttendanceFormId)" InterventionAttendanceFormInstructorData="@(ReviewData.InterventionAttendanceFormInstructor.ToList())"
+                                                                              DetailToggle="@ReturnInterventionAttendanceFormInstructor" />
+                                </div>
+                                <div class="col-md-12">
+                                    <h3>Intervention Attendance Form</h3>
+                                </div>
+                                <div class="col-md-12">
+                                    <InterventionAttendanceFormDetailPage @ref=@FormDetailPage InterventionAttendanceFormId="@(ReviewData.InterventionAttendanceFormId)" InterventionAttendanceFormDetailData="@(ReviewData.InterventionAttendanceFormDetail.ToList())"
+                                                                          DetailToggle="@ReturnInterventionAttendanceFormDetail" InterventionAttendanceData="@InterventionAttendanceData" YesNoData="@YesNoData" />
+                                </div>
+                                 <div class="col-md-4">
+                                    <label>Intervention Serial Number</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.SerialNo)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Reviewed by</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.ReviewdBy)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                            </div>
+                        }
+                    }
+                </Template>
+                <FooterTemplate>
+                    <button class="btn btn-primary btn-sm" @onclick="@SaveForm">Save Form</button>
+                    <button class="btn btn-danger btn-sm" @onclick="@(async ()=>{ if(HeaderGrid != null){ await HeaderGrid.CloseEditAsync();}})">Cancel Form</button>
+                </FooterTemplate>
+            </GridEditSettings>
+            <GridColumns>
+                <GridColumn HeaderText="Manage Records" Width="80">
+                    <GridCommandColumns>
+                        <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() { CssClass="e-icons e-view-details",Content="View" })" Title="View"></GridCommandColumn>
+                    </GridCommandColumns>
+                </GridColumn>
+                <GridColumn Field="@(nameof(InterventionAttendanceForm.InterventionAttendanceFormId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+                <GridForeignColumn Field="@(nameof(InterventionAttendanceForm.DistrictId))" HeaderText="District" Width="160" ForeignKeyField="@(nameof(ADistrict.DistrictId))" ForeignKeyValue="@(nameof(ADistrict.DistrictDescription))" ForeignDataSource="@DistrictData"></GridForeignColumn>
+                <GridForeignColumn Field="@(nameof(InterventionAttendanceForm.SubcountyId))" HeaderText="Sub-county" Width="160" ForeignKeyField="@(nameof(ASubcounty.SubcountyId))" ForeignKeyValue="@(nameof(ASubcounty.SubcountyDescription))" ForeignDataSource="@SubcountyData"></GridForeignColumn>
+                <GridForeignColumn Field="@(nameof(InterventionAttendanceForm.ImplementingPartnerId))" HeaderText="Implementing Partner" Width="160" ForeignKeyField="@(nameof(AImplementingPartner.ImplementingPartnerId))" ForeignKeyValue="@(nameof(AImplementingPartner.ImplementingPartnerName))" ForeignDataSource="@ImplementingPartnerData"></GridForeignColumn>
+                <GridForeignColumn Field="@(nameof(InterventionAttendanceForm.InterventionTypeId))" HeaderText="Intervention Type" Width="160" ForeignKeyField="@(nameof(AInterventionType.InterventionTypeId))" ForeignKeyValue="@(nameof(AInterventionType.InterventionTypeDesc))" ForeignDataSource="@InterventionTypeData"></GridForeignColumn>
+                <GridForeignColumn Field="@(nameof(InterventionAttendanceForm.SampledForId))" HeaderText="Sampled For" Width="160" ForeignKeyField="@(nameof(ANmnSampledFor.SampledForId))" ForeignKeyValue="@(nameof(ANmnSampledFor.SampledForDesc))" ForeignDataSource="@NmnSampledForData"></GridForeignColumn>
+                <GridForeignColumn Field="@(nameof(InterventionAttendanceForm.DeliveryMethodId))" HeaderText="Delivery Method" Width="160" ForeignKeyField="@(nameof(ADeliveryMethod.DeliveryMethodId))" ForeignKeyValue="@(nameof(ADeliveryMethod.DeliveryMethodDesc))" ForeignDataSource="@DeliveryMethodData"></GridForeignColumn>
+                <GridColumn Field="@(nameof(InterventionAttendanceForm.GroupName))" HeaderText="Group Name" AllowEditing=false Visible=true Width="120"></GridColumn>
+                <GridColumn Field="@(nameof(InterventionAttendanceForm.Venue))" HeaderText="Venue" AllowEditing=false Visible=true Width="120"></GridColumn>
+                <GridColumn Field="@(nameof(InterventionAttendanceForm.AttendenceStartDate))" HeaderText="Attendence Start Date" Format="dd/MM/yyyy" AllowEditing=false Visible=true Width="120"></GridColumn>
+                <GridColumn Field="@(nameof(InterventionAttendanceForm.AttendenceEndDate))" HeaderText="Attendence End Date" Format="dd/MM/yyyy" AllowEditing=false Visible=true Width="120"></GridColumn>
+            </GridColumns>
+        </SfGrid>
+    </div>
+    }
+    
+</div>
+
+@code {
+    Query? MainQuery { get; set; }
+    string[]? toolbar { get; set; }
+    SearchPanelPartialPage? SearchPanel;
+
+    InterventionAttendanceForm? ReviewData { get; set; }
+
+    SfGrid<InterventionAttendanceForm>? HeaderGrid;
+    InterventionAttendanceFormInstructorPage? FormInstructorPage { get; set; }
+    InterventionAttendanceFormDetailPage? FormDetailPage { get; set; }
+
+    List<ASubcounty>? SubcountyData { get; set; }
+    List<ADistrict>? DistrictData { get; set; }
+    List<AParish>? ParishData { get; set; }
+    List<AVillage>? VillageData { get; set; }
+    List<AImplementingPartner>? ImplementingPartnerData { get; set; }
+    List<AInterventionType>? InterventionTypeData { get; set; }
+    List<ANmnSampledFor>? NmnSampledForData { get; set; }
+    List<ADeliveryMethod>? DeliveryMethodData { get; set; }
+    List<AInterventionAttendance>? InterventionAttendanceData { get; set; }
+    List<AYesNo>? YesNoData { get; set; }
+    bool IsLoading { get; set; }
+    private ViewUserManagement? Credentials { get; set; }
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        await base.OnInitializedAsync();
+        try
+        {
+            var data = await Repo.GetPrimaryData();
+            if(data != null)
+            {
+                SubcountyData = data.SubcountyData;
+                DistrictData = data.DistrictData;
+                ParishData = data.ParishData;
+                VillageData = data.VillageData;
+                ImplementingPartnerData = data.ImplementingPartnerData;
+                InterventionTypeData = data.InterventionTypeData;
+                NmnSampledForData = data.NmnSampledForData;
+                DeliveryMethodData = data.DeliveryMethodData;
+                InterventionAttendanceData = data.InterventionAttendanceData;
+                YesNoData = data.YesNoData;
+            }
+            var username = userManagement.GetUserName();
+            Credentials = await db.ViewUserManagement.FirstOrDefaultAsync(o => o.UserName == username);
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+    private async Task SaveForm()
+    {
+        try
+        {
+            if(FormInstructorPage != null &&  FormInstructorPage.HeaderGrid != null)
+            {
+                await FormInstructorPage.HeaderGrid.EndEditAsync();
+            }
+            if (FormDetailPage != null && FormDetailPage.HeaderGrid != null)
+            {
+                await FormDetailPage.HeaderGrid.EndEditAsync();
+            }
+
+            if(HeaderGrid != null)
+            {
+                await HeaderGrid.EndEditAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+
+    private void ReturnInterventionAttendanceFormDetail(List<InterventionAttendanceFormDetail>? data)
+    {
+        if (data != null && ReviewData != null)
+        {
+            if(ReviewData.InterventionAttendanceFormDetail != null)
+            {
+                ReviewData.InterventionAttendanceFormDetail = new List<InterventionAttendanceFormDetail>();
+            }
+
+            ReviewData.InterventionAttendanceFormDetail = data;
+        }
+    }
+
+    private void ReturnInterventionAttendanceFormInstructor(List<InterventionAttendanceFormInstructor>? data)
+    {
+        if (data != null && ReviewData != null)
+        {
+            if (ReviewData.InterventionAttendanceFormInstructor != null)
+            {
+                ReviewData.InterventionAttendanceFormInstructor = new List<InterventionAttendanceFormInstructor>();
+            }
+
+            ReviewData.InterventionAttendanceFormInstructor = data;
+        }
+    }
+
+    public void OnActionBegin(ActionEventArgs<InterventionAttendanceForm> args)
+    {
+        try
+        {
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Cancel)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+            {
+                // if (args.Data.HhtotalScore == null)
+                // {
+                //     toastService.ShowError("Please answer all questions");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.HouseHoldMemberId == 0)
+                // {
+                //     toastService.ShowWarning("Please select the House hold member who was assessed");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdoname))
+                // {
+                //     toastService.ShowError("Please enter the name of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdocontact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AdministrationPhaseId == null)
+                // {
+                //     toastService.ShowError("Please select the Phase of Administration");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AssessmentDate == null)
+                // {
+                //     toastService.ShowError("Please select the Assessment Date");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.MaritalStatusId == null)
+                // {
+                //     toastService.ShowError("Please select the Marital status of the household head");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorName))
+                // {
+                //     toastService.ShowError("Please enter the Name of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorContact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorTitle))
+                // {
+                //     toastService.ShowError("Please enter the Title of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else
+                // {
+
+                // }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+        finally { StateHasChanged(); }
+    }
+    public void OnActionComplete(ActionEventArgs<InterventionAttendanceForm> args)
+    {
+        try
+        {
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+            {
+                if (HeaderGrid != null)
+                {
+                    HeaderGrid.PreventRender(false);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+    }
+    public class InterventionAttendanceFormAdapter : DataAdaptor
+    {
+        public IToastService toastService;
+        INmnService Repo;
+        public InterventionAttendanceFormAdapter(IToastService ts, INmnService Repo)
+        {
+            toastService = ts;
+            this.Repo = Repo;
+        }
+        public override async Task<Object> ReadAsync(DataManagerRequest dataManagerRequest, string key = null)
+        {
+            var data = new List<InterventionAttendanceForm>();
+            try
+            {
+                string? DistrictId = null; string? SubcountyId = null;
+                int? InterventionTypeId = null; int? SampledForId = null; int? DeliveryMethodId = null; string? Startdate = null; string? Enddate = null;
+
+                if (dataManagerRequest.Params != null && dataManagerRequest.Params.Count > 0)
+                {
+                    var val = dataManagerRequest.Params;
+                    if (val.FirstOrDefault(o => o.Key == "DistrictId").Value != null)
+                    {
+                        DistrictId = val.FirstOrDefault(o => o.Key == "DistrictId").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "SubcountyId").Value != null)
+                    {
+                        SubcountyId = val.FirstOrDefault(o => o.Key == "SubcountyId").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "InterventionTypeId").Value != null)
+                    {
+                        InterventionTypeId = Convert.ToInt32(val.FirstOrDefault(o => o.Key == "InterventionTypeId").Value.ToString());
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "SampledForId").Value != null)
+                    {
+                        SampledForId = Convert.ToInt32(val.FirstOrDefault(o => o.Key == "SampledForId").Value.ToString());
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "DeliveryMethodId").Value != null)
+                    {
+                        DeliveryMethodId = Convert.ToInt32(val.FirstOrDefault(o => o.Key == "DeliveryMethodId").Value.ToString());
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "Startdate").Value != null)
+                    {
+                        Startdate = val.FirstOrDefault(o => o.Key == "Startdate").Value.ToString();
+                    }
+                    if (val.FirstOrDefault(o => o.Key == "Enddate").Value != null)
+                    {
+                        Enddate = val.FirstOrDefault(o => o.Key == "Enddate").Value.ToString();
+                    }
+                }
+                if (!string.IsNullOrEmpty(DistrictId) || !string.IsNullOrEmpty(SubcountyId))
+                {
+                    data = await Repo.GetInterventionAttendanceForm(InterventionTypeId, DistrictId, SubcountyId, SampledForId, DeliveryMethodId, Startdate, Enddate);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+            IEnumerable GridData = data;
+            int _count = data.Count;
+            if (dataManagerRequest.Search != null && dataManagerRequest.Search.Count > 0)
+            {
+                // Searching
+                GridData = DataOperations.PerformSearching(GridData, dataManagerRequest.Search);
+            }
+            if (dataManagerRequest.Where != null && dataManagerRequest.Where.Count > 0)
+            {
+                // Filtering
+                GridData = DataOperations.PerformFiltering(GridData, dataManagerRequest.Where, dataManagerRequest.Where[0].Operator);
+            }
+            if (dataManagerRequest.Sorted?.Count > 0) // perform Sorting
+            {
+                GridData = DataOperations.PerformSorting(GridData, dataManagerRequest.Sorted);
+            }
+            if (dataManagerRequest.Skip != 0)
+            {
+                GridData = DataOperations.PerformSkip(GridData, dataManagerRequest.Skip); //Paging
+            }
+            if (dataManagerRequest.Take != 0)
+            {
+                GridData = DataOperations.PerformTake(GridData, dataManagerRequest.Take);
+            }
+            IDictionary<string, object> aggregates = new Dictionary<string, object>();
+            if (dataManagerRequest.Aggregates != null) // Aggregation
+            {
+                aggregates = DataUtil.PerformAggregation(GridData, dataManagerRequest.Aggregates);
+            }
+            if (dataManagerRequest.Group != null && dataManagerRequest.Group.Any()) //Grouping
+            {
+                foreach (var group in dataManagerRequest.Group)
+                {
+                    GridData = DataUtil.Group<InterventionAttendanceForm>(GridData, group, dataManagerRequest.Aggregates, 0, dataManagerRequest.GroupByFormatter);
+                }
+            }
+            return dataManagerRequest.RequiresCounts ? new DataResult() { Result = GridData, Count = _count, Aggregates = aggregates } : (object)GridData;
+        }
+        public override async Task<Object> InsertAsync(DataManager dataManager, object value, string key)
+        {
+            try
+            {
+                var val = (value as InterventionAttendanceForm);
+                await Repo.SaveInterventionAttendanceForm(val);
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+            return value;
+        }
+        public override object Remove(DataManager dataManager, object value, string keyField, string key)
+        {
+            try
+            {
+                int data = (int)value;
+
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+
+            return value;
+        }
+        public override async Task<object> UpdateAsync(DataManager dataManager, object value, string keyField, string key)
+        {
+            try
+            {
+                var val = (value as InterventionAttendanceForm);
+                await Repo.SaveInterventionAttendanceForm(val);
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+            return value;
+        }
+    }
+}

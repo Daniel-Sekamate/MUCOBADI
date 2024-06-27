@@ -1,0 +1,422 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+
+    .title {
+        text-align: center;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .custom-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        .custom-table th,
+        .custom-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .custom-table th {
+            background-color: #f2f2f2;
+        }
+</style>
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+<SfSpinner @bind-Visible="SpinnerVisible" Type="@SpinnerType.Bootstrap" Size="50" Label="Data loading">
+</SfSpinner>
+<div class="row">
+    <div class="col-md-12">
+        @if(SmuTerminationGuideDataSource != null)
+        {
+            <SfGrid @ref="SmuTerminationGuideGrid" DataSource="@SmuTerminationGuideDataSource" TValue="SmuTerminantionGuide" AllowFiltering=false AllowGrouping=false AllowPaging=true AllowTextWrap=true
+               GridLines="GridLine.Both" AllowSelection="true" Toolbar="ToolbarMenu" RowHeight="35" EnableStickyHeader="true">
+                <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridPageSettings PageSize="20"></GridPageSettings>
+                <GridEvents RowSelected="RowSelectedhandler" RowDeselected="DeselectedRowSelectedhandler" OnActionBegin="SmuTerminationGuideActionBeginHandler" OnActionComplete=@SmuTerminationGuideActionComplete TValue="SmuTerminantionGuide"></GridEvents>
+                 <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+                    <HeaderTemplate Context="hContext">
+                        @{
+                            var text = GetNewRecord((hContext as SmuTerminantionGuide));
+                            <div class="headerbandimg" />
+                            <span>@text</span>
+                        }
+                    </HeaderTemplate>
+                    <Template Context="testPlanContext">
+                        @{
+                            SmuTerminationGuideData = (testPlanContext as SmuTerminantionGuide);
+                            if(SmuTerminationGuideData != null)
+                            {
+                                <div style="margin:10px;">
+                                    <div class="row">
+                                        <div class="col-md-12" hidden>
+                                            <SfNumericTextBox ID="SmuTerminantionGuideId" @bind-Value="@(SmuTerminationGuideData.SmuTerminantionGuideId)" Enabled="false" Placeholder="SmuTerminantionGuideId" Format="N0" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>Office:</p>
+                                            <SfDropDownList @bind-Value="@(SmuTerminationGuideData.SmuOfficeId)" Enabled="false" TItem="SmuOffice" TValue="int?" DataSource="@SmuOfficeData" Placeholder="Select Office" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuOffice.OfficeId)" Text="@nameof(SmuOffice.OfficeName)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuTerminationGuideData.SmuOfficeId)" /></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>Region:</p>
+                                            <SfDropDownList @bind-Value="@(SmuTerminationGuideData.RegionId)" Enabled="false" TItem="ARegion" TValue="int?" DataSource="@RegionData" Placeholder="Select Region" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(ARegion.RegionId)" Text="@nameof(ARegion.RegionDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuTerminationGuideData.RegionId)" /></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>District:</p>
+                                            <SfDropDownList @bind-Value="@(SmuTerminationGuideData.DistrictId)" Enabled="false" TItem="ADistrict" TValue="int?" DataSource="@DistrictData" Placeholder="Select District" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuTerminationGuideData.DistrictId)" /></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>Program:</p>
+                                            <SfDropDownList @bind-Value="@(SmuTerminationGuideData.SmuProgramId)" Enabled="false" TItem="SmuProgram" TValue="int?" DataSource="@SmuProgramData" Placeholder="Select SMU Program" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuProgram.SmuProgramId)" Text="@nameof(SmuProgram.SmuProgramDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuTerminationGuideData.SmuProgramId)" /></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Name of Staff/Volunteer:</p>
+                                            <SfTextBox Multiline="false" @bind-Value="@(SmuTerminationGuideData.NameOfVolunter)" Enabled="true" FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Client's Name:</p>
+                                            <SfDropDownList @bind-Value="@(SmuTerminationGuideData.ClientRegistrationId)" Enabled="false" TItem="SmuClientRegistrationForm" TValue="int?" DataSource="@SmuClientRegistrationFormData" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuClientRegistrationForm.ClientRegistrationFormId)" Text="@nameof(SmuClientRegistrationForm.SmuClientName)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuTerminationGuideData.ClientRegistrationId)" /></p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <p>Date of Assessment</p>
+                                            <SfDatePicker @bind-Value=@SmuTerminationGuideData.DateOfAssessment Format="dd/MM/yyyy" Enabled=true FloatLabelType="FloatLabelType.Never"></SfDatePicker>
+                                        </div>
+                                        <div class="col-md-2">
+                                           <p>PH9 Score</p>
+                                            <SfNumericTextBox ID="OverallPh9Score" @bind-Value="@(SmuTerminationGuideData.OverallPh9Score)" Enabled="false"  Format="N0" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-12" style="margin-top:20px;">
+                                            <center> <h5><strong>SECTION ONE: PATIENT HEALTH QUESTIONNAIRE (PHQ-9)</strong></h5> </center>
+                                        </div>
+                                        <div class="col-md-12" style="margin-top:10px;">
+                                           <div style="margin:10px;">
+                                                <SMUTerminantionGuidePH9QuestionsPage @ref="@_SMUTerminantionGuidePH9QuestionsPage" SmuTerminantionGuideId="@SelectedTerminationGuideId" 
+                                                    SmuPh9QuestionData="@SmuPh9QuestionData" SmuPh9QuestionHeaderData="@SmuPh9QuestionHeaderData" 
+                                                    SmuTerminantionGuidePh9QuestionsCallBack="@SmuTerminantionGuidePh9QuestionsCallBackMethod">
+                                                </SMUTerminantionGuidePH9QuestionsPage>
+                                           </div>
+                                        </div>
+                                        <div class="col-md-10" style="margin-top:10px">
+                                            <p>If you checked off any problems, how difficult have these made it for you to do your work, take care of things at home, or get along with other people?</p>
+                                        </div>
+                                        <div class="col-md-2" style="margin-top:10px">
+                                            <SfDropDownList @bind-Value="@(SmuTerminationGuideData.LevelOfDifficultyId)" Enabled="true" TItem="SmuLevelOfDifficultyToCheckOffProblems" TValue="int?" DataSource="@DifficultyToCheckOffProblemsData" Placeholder="Select" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuLevelOfDifficultyToCheckOffProblems.LevelOfDifficultyId)" Text="@nameof(SmuLevelOfDifficultyToCheckOffProblems.LevelOfDifficulty)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuTerminationGuideData.LevelOfDifficultyId)" /></p>
+                                        </div>
+                                        <div class="col-md-4" style="margin-top:10px">
+                                            <p>Would you encourage your friends and family to use this service?</p>
+                                        </div>
+                                        <div class="col-md-2" style="margin-top:10px">
+                                            <SfDropDownList @bind-Value="@(SmuTerminationGuideData.EncourageFriendsFamily)" Enabled="true" TItem="AYesNo" TValue="int?" DataSource="@YesNoData" Placeholder="Select Yes/No" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(AYesNo.YesNoId)" Text="@nameof(AYesNo.YesNoDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuTerminationGuideData.EncourageFriendsFamily)" /></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </Template>
+                    <FooterTemplate Context="headerContext">
+                        <button class="btn btn-success" @onclick=SaveTermination>Save Termination Guide</button>
+                        <button class="btn btn-danger" @onclick=CancelTermination>Cancel</button>
+                        @if (IsSaving)
+                        {
+                            <SfSpinner @bind-Visible="IsSaving" Type="@SpinnerType.Bootstrap" Size="70" Label="Saving Data">
+                            </SfSpinner>
+                        }
+                    </FooterTemplate>
+                 </GridEditSettings>
+                <GridColumns>
+                    <GridColumn Type="ColumnType.CheckBox" Width="30"></GridColumn>
+                    <GridColumn Field=@nameof(SmuTerminantionGuide.SmuTerminantionGuideId) HeaderText="SmuTerminantionGuideId" TextAlign="TextAlign.Left" IsPrimaryKey="true" IsIdentity="true" Visible="false" Width="80"></GridColumn>
+
+                    <GridForeignColumn Field="@(nameof(SmuTerminantionGuide.ClientRegistrationId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Respondent" Width="200" ForeignKeyField="@(nameof(SmuClientRegistrationForm.ClientRegistrationFormId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuClientRegistrationForm.SmuClientName))" ForeignDataSource="@SmuClientRegistrationFormData">
+                    </GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(SmuTerminantionGuide.SmuProgramId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Program" Width="150" ForeignKeyField="@(nameof(SmuProgram.SmuProgramId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuProgram.SmuProgramDescription))" ForeignDataSource="@SmuProgramData">
+                    </GridForeignColumn>
+                    <GridColumn Field=@nameof(SmuTerminantionGuide.DateOfAssessment) HeaderText="Date of Assessment" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        }
+    </div>
+</div>
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    SfTab? Tab;
+    bool IsSaving { get; set; }
+    public int SMUGroupId { get; set; }
+    public bool SpinnerVisible { get; set; }
+    public int SelectedTerminationGuideId { get; set; }
+    SMUTerminantionGuidePH9QuestionsPage? _SMUTerminantionGuidePH9QuestionsPage;
+    SmuTerminantionGuide? SmuTerminationGuideData;
+    List<SmuTerminantionGuide> SmuTerminationGuideDataSource { get; set; }
+    SfGrid<SmuTerminantionGuide> SmuTerminationGuideGrid { get; set; }
+    private List<object> ToolbarMenu = new List<object> {"Edit",
+    new ItemModel(){TooltipText ="Export Data to XML",
+                                        PrefixIcon = "e-click", Id = "XmlExport"} };
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "5vh", Width = "90%" };
+    [Parameter]
+    public int GroupId { get; set; }
+    [Parameter]
+    public List<AYesNo> YesNoData { get; set; }
+    [Parameter]
+    public List<SmuOffice> SmuOfficeData { get; set; }
+    [Parameter]
+    public List<ARegion> RegionData { get; set; }
+    [Parameter]
+    public List<ADistrict> DistrictData { get; set; }
+    [Parameter]
+    public List<AGender> GenderData { get; set; }
+    [Parameter]
+    public List<SmuGroup> SmuGroupData { get; set; }
+    [Parameter]
+    public List<ASubcounty> SubcountyData { get; set; }
+    [Parameter]
+    public List<SmuProgram> SmuProgramData { get; set; }
+    [Parameter]
+    public List<SmuLevelOfDifficultyToCheckOffProblems> DifficultyToCheckOffProblemsData { get; set; }
+    [Parameter]
+    public List<SmuPh9Question> SmuPh9QuestionData { get; set; }
+    [Parameter]
+    public List<SmuClientRegistrationForm> SmuClientRegistrationFormData { get; set; }
+    [Parameter]
+    public List<SmuPh9QuestionHeader> SmuPh9QuestionHeaderData { get; set; }
+    [Parameter]
+    public List<SmuTerminantionGuidePh9Questions>? SmuTerminantionGuidePh9QuestionsPublicData { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningForm> SmuSafetyPlanningFormPublicData { get; set; }
+    [Parameter]
+    public List<SmuSucideAssementResponse>? SmuSuicideAssessmentResponseData { get; set; }
+    [Parameter]
+    public List<SmuSucideAssementQuestion>? SmuSuicideAssessmentQuestionData { get; set; }
+    [Parameter]
+    public List<SmuSucideAssementScore>? SmuSuicideAssessmentScoreData { get; set; }
+    // [Parameter]
+    // public  List<SmuTerminantionGuide> SmuTerminationGuidePublicData { get; set; }
+    private void SmuTerminantionGuidePh9QuestionsCallBackMethod(List<SmuTerminantionGuidePh9Questions> terminantionGuidePh9Questions) => SmuTerminationGuideData.SmuTerminantionGuidePh9Questions = terminantionGuidePh9Questions;
+    public void RowSelectedhandler(RowSelectEventArgs<SmuTerminantionGuide> Args)
+    {
+        SelectedTerminationGuideId = Args.Data.SmuTerminantionGuideId;
+    }
+    public void DeselectedRowSelectedhandler(RowDeselectEventArgs<SmuTerminantionGuide> Args)
+    {
+        SelectedTerminationGuideId = 0;
+    }
+    public async void SmuTerminationGuideActionBeginHandler(ActionEventArgs<SmuTerminantionGuide> Args)
+    {
+        var data = Args.Data;
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+        {
+
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+        {
+            int _SelectedTerminationGuideId = data?.SmuTerminantionGuideId ?? 0;
+            if (_SelectedTerminationGuideId > 0)
+            {
+                try
+                {
+                    var _SmuTerminantionGuidePh9QuestionsPublicData = await _ISMUTools.GetSmuTerminantionGuidePh9Questions(_SelectedTerminationGuideId);
+                    if (_SmuTerminantionGuidePh9QuestionsPublicData != null)
+                    {
+                        SmuTerminantionGuidePh9QuestionsPublicData = _SmuTerminantionGuidePh9QuestionsPublicData;
+                        StateHasChanged(); // Ensure UI updates after data retrieval
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            
+        }
+    }
+    public async void SmuTerminationGuideActionComplete(ActionEventArgs<SmuTerminantionGuide> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            SmuTerminationGuideGrid.PreventRender(false);
+        }
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+
+        }
+    }
+    public string GetNewRecord(SmuTerminantionGuide Value)
+    {
+        if (Value.SmuTerminantionGuideId <= 0)
+        {
+            return "Add new Termination";
+        }
+        else
+        {
+            return "Edit Termination Guide:";
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuTerminationGuideDataSource = new List<SmuTerminantionGuide>();
+            if (GroupId > 0)
+            {
+                try
+                {
+                    var _SmuTerminationGuideDataSource = await _ISMUTools.GetSmuTerminantionGuides(GroupId);
+                    if (_SmuTerminationGuideDataSource != null)
+                    {
+                        SmuTerminationGuideDataSource = _SmuTerminationGuideDataSource;
+                        StateHasChanged(); // Ensure UI updates after data retrieval
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+            if (SelectedTerminationGuideId > 0)
+            {
+                try
+                {
+                    var _SmuTerminantionGuidePh9QuestionsPublicData = await _ISMUTools.GetSmuTerminantionGuidePh9Questions(SelectedTerminationGuideId);
+                    if (_SmuTerminantionGuidePh9QuestionsPublicData != null)
+                    {
+                        SmuTerminantionGuidePh9QuestionsPublicData = _SmuTerminantionGuidePh9QuestionsPublicData;
+                        StateHasChanged(); // Ensure UI updates after data retrieval
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+    private async Task CancelTermination()
+    {
+        await SmuTerminationGuideGrid.CloseEditAsync();
+    }
+    private async Task SaveTermination()
+    {
+        try
+        {
+            if (SmuTerminationGuideGrid != null)
+            {
+                IsSaving = true;
+
+                if (SmuTerminationGuideData != null)
+                {
+                    if (SmuTerminationGuideData.DateOfAssessment.HasValue == false)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please enter Date of assessment!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else
+                    {
+                        if (_SMUTerminantionGuidePH9QuestionsPage != null)
+                        {
+                            if (SmuTerminationGuideData.SmuTerminantionGuidePh9Questions == null)
+                            {
+                                SmuTerminationGuideData.SmuTerminantionGuidePh9Questions = new List<SmuTerminantionGuidePh9Questions>();
+                            }
+                            SmuTerminationGuideData.SmuTerminantionGuidePh9Questions = await _SMUTerminantionGuidePH9QuestionsPage.returnData();
+                        }
+                        await SmuTerminationGuideGrid.EndEditAsync();
+                        await _ISMUTools.SaveSmuTerminantionGuide(SmuTerminationGuideData);
+                    }
+
+                }
+
+
+            }
+        }
+        catch (ArgumentNullException ex)
+        {
+            // Log or handle the ArgumentNullException here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        catch (Exception ex)
+        {
+            // Log or handle other exceptions here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        finally
+        {
+            IsSaving = false; // Reset IsSaving flag regardless of success or failure
+        }
+    }
+}

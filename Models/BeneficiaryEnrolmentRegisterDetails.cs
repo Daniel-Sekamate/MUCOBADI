@@ -8,8 +8,8 @@ namespace MUCOBADI.Models
     public partial class BeneficiaryEnrolmentRegisterDetails
     {
         public int EnrolmentRegisterDetailsId { get; set; }
-        public int EnrolmentRegisterHeaderId { get; set; }
-        public int HouseHoldMemberId { get; set; }
+        public int? EnrolmentRegisterHeaderId { get; set; }
+        public int? HouseHoldMemberId { get; set; }
         public int? AssessedOfferedAccepted { get; set; }
         public int? AssessedOfferedRefused { get; set; }
         public int? AssessedNotEligible { get; set; }

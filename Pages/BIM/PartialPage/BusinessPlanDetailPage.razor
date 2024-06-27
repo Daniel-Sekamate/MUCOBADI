@@ -1,0 +1,243 @@
+﻿@using MUCOBADI.Models
+@* <h3>BusinessPlanDetailPage</h3> *@
+@inject IToastService toastService;
+<style>
+    .e-grid .e-groupcaption, .e-grid .e-indentcell, .e-grid .e-recordplusexpand, .e-grid .e-recordpluscollapse {
+        background-color: #9b51e0;
+        color: ghostwhite;
+    }
+
+    .e-grid .e-rowcell, .e-grid .e-groupcaption, .e-grid .e-indentcell, .e-grid .e-recordplusexpand, .e-grid .e-recordpluscollapse, .e-grid .e-rowdragdropcell, .e-grid .e-detailrowcollapse, .e-grid .e-detailrowexpand, .e-grid .e-detailindentcell, .e-grid .e-detailcell {
+        border-color: #9b51e0;
+    }
+
+    .e-edit-dialog .e-gridform .e-table {
+        border-spacing: 0px;
+    }
+</style>
+
+@if (DataSource != null && DataSource.Count > 0)
+{
+    <SfGrid @ref=@HeaderGrid TValue="BusinessPlanDetailModel" DataSource="@DataSource"
+            AllowFiltering=false AllowGrouping=true AllowPaging=false AllowTextWrap=true ShowColumnChooser=true
+            GridLines="GridLine.Both" AllowSelection="true" Toolbar="@(new string[] {"Edit","Update","Cancel","ColumnChooser" })"
+            EnableStickyHeader=true ClipMode="ClipMode.EllipsisWithTooltip" EnableAltRow=true>
+        <GridGroupSettings Columns="@Initial" ShowDropArea=false></GridGroupSettings>
+        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSize="20"></GridPageSettings>
+        <GridEvents CellSaved="DetailedCellSavedHandler" CellSelected="DetailedCellSelectHandler" TValue="BusinessPlanDetailModel"></GridEvents>
+        <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field="@(nameof(BusinessPlanDetailModel.BusinessPlanDetailId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+            <GridColumn Field="@(nameof(BusinessPlanDetailModel.QuestionCategory))" HeaderText="Category" AllowEditing=false Visible=true Width="120"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessPlanDetailModel.QuestionClassification))" HeaderText="Classification" AllowEditing=false Visible=true Width="120"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessPlanDetailModel.Question))" HeaderText="Question" AllowEditing=false Visible=true Width="120"></GridColumn>
+            <GridColumn Field="@(nameof(BusinessPlanDetailModel.BusinessPlanAnswer))" HeaderText="Response" Visible=true Width="180">
+                <EditTemplate Context="AnswerContext">
+                    @{
+                        <SfTextBox @bind-Value=@((AnswerContext as BusinessPlanDetailModel).BusinessPlanAnswer) Multiline=true rowspan="8" Enabled=true Placeholder="type here ....." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                    }
+                </EditTemplate>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Elevation="2" Style="padding:5px;">There are no records to display</MudAlert>
+}
+
+@code {
+    [Parameter]
+    public List<ABusinessPlanQuestion>? BusinessPlanQuestionData { get; set; }
+    [Parameter]
+    public List<BusinessPlanDetail>? BusinessPlanDetailData { get; set; }
+    [Parameter]
+    public int BusinessPlanHeaderId { get; set; }
+    [Parameter]
+    public EventCallback<List<BusinessPlanDetail>?> DetailToggle { get; set; }
+
+    public string[] Initial = (new string[] { "QuestionCategory", "QuestionClassification" });
+
+    List<BusinessPlanDetailModel>? DataSource { get; set; }
+    int? PreviousBusinessPlanHeaderId { get; set; }
+    SfGrid<BusinessPlanDetailModel>? HeaderGrid;
+
+    public async Task SaveRecords()
+    {
+        if(HeaderGrid != null)
+        {
+           await HeaderGrid.EndEditAsync();
+        }
+
+        if (DataSource != null)
+        {
+            await ReturnData();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (PreviousBusinessPlanHeaderId != BusinessPlanHeaderId)
+            {
+
+                if (BusinessPlanDetailData != null && BusinessPlanDetailData.Count > 0)
+                {
+                    if (BusinessPlanQuestionData != null && BusinessPlanQuestionData.Count > 0)
+                    {
+                        DataSource = new List<BusinessPlanDetailModel>();
+                        int CountId = -1;
+                        foreach (var item in BusinessPlanQuestionData)
+                        {
+                            var exists = BusinessPlanDetailData.FirstOrDefault(o => o.BusinessPlanQuestionId == item.BusinessPlanQuestionId);
+                            if (exists != null)
+                            {
+                                DataSource.Add(new BusinessPlanDetailModel()
+                                    {
+                                        BusinessPlanDetailId = exists.BusinessPlanDetailId,
+                                        BusinessPlanHeaderId = exists.BusinessPlanHeaderId,
+                                        BusinessPlanQuestionId = item.BusinessPlanQuestionId,
+                                        Question = item.Question,
+                                        QuestionCategory = item.QuestionCategory,
+                                        QuestionClassification = item.QuestionClassification,
+                                        BusinessPlanAnswer = exists.BusinessPlanAnswer
+                                    });
+                            }
+                            else
+                            {
+                                DataSource.Add(new BusinessPlanDetailModel()
+                                    {
+                                        BusinessPlanDetailId = CountId,
+                                        BusinessPlanHeaderId = BusinessPlanHeaderId,
+                                        BusinessPlanQuestionId = item.BusinessPlanQuestionId,
+                                        Question = item.Question,
+                                        QuestionCategory = item.QuestionCategory,
+                                        QuestionClassification = item.QuestionClassification
+                                    });
+                            }
+                            CountId--;
+                        }
+                    }
+                }
+                else
+                {
+                    if (BusinessPlanQuestionData != null && BusinessPlanQuestionData.Count > 0)
+                    {
+                        DataSource = new List<BusinessPlanDetailModel>();
+                        int CountId = -1;
+                        foreach (var item in BusinessPlanQuestionData)
+                        {
+                            DataSource.Add(new BusinessPlanDetailModel()
+                                {
+                                    BusinessPlanDetailId = CountId,
+                                    BusinessPlanHeaderId = BusinessPlanHeaderId,
+                                    BusinessPlanQuestionId = item.BusinessPlanQuestionId,
+                                    Question = item.Question,
+                                    QuestionCategory = item.QuestionCategory,
+                                    QuestionClassification = item.QuestionClassification
+                                });
+                            CountId--;
+                        }
+                    }
+                }
+                PreviousBusinessPlanHeaderId = BusinessPlanHeaderId;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            //  throw;
+        }
+        base.OnInitialized();
+    }
+    private async Task ReturnData()
+    {
+        try
+        {
+            List<BusinessPlanDetail>? data = new List<BusinessPlanDetail>();
+            if (DataSource != null && DataSource.Count > 0)
+            {
+                foreach (var item in DataSource)
+                {
+                    data.Add(new BusinessPlanDetail()
+                        {
+                            BusinessPlanDetailId = item.BusinessPlanDetailId,
+                            BusinessPlanHeaderId = item.BusinessPlanHeaderId,
+                            BusinessPlanQuestionId = item.BusinessPlanQuestionId,
+                            BusinessPlanAnswer = item.BusinessPlanAnswer
+                        });
+                }
+            }
+            await DetailToggle.InvokeAsync(data);
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+
+    private async Task DetailedCellSavedHandler(CellSaveArgs<BusinessPlanDetailModel> args)
+    {
+        try
+        {
+            if (HeaderGrid != null)
+            {
+                var index = await HeaderGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.BusinessPlanDetailId);
+                //await HeaderGrid.UpdateCellAsync(index, nameof(BusinessPlanDetailModel.ComplaintId), ComplaintId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll(); toastService.ShowError(ex.Message);
+        }
+        finally
+        {
+            // if (HeaderGrid != null)
+            // {
+            //     await HeaderGrid.EndEditAsync();
+            // }
+            // if (DataSource != null)
+            // {
+            //     await ReturnData();
+            // }
+
+            //var data = await UpdatePPEOrderDetails();
+            //await PpeCallback.InvokeAsync(data);
+        }
+    }
+    private async Task DetailedCellSelectHandler(CellSelectEventArgs<BusinessPlanDetailModel> args)
+    {
+        if (HeaderGrid != null)
+        {
+            //get selected cell index
+            var CellIndexes = await HeaderGrid.GetSelectedRowCellIndexesAsync();
+
+            //get the row and cell index
+            var CurrentEditRowIndex = CellIndexes[0].Item1;
+            var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+            //get the available fields
+            var fields = await HeaderGrid.GetColumnFieldNamesAsync();
+            // edit the selected cell using the cell index and column name
+            await HeaderGrid.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+        }
+
+    }
+
+    class BusinessPlanDetailModel
+    {
+        public int BusinessPlanDetailId { get; set; }
+        public int? BusinessPlanHeaderId { get; set; }
+        public int? BusinessPlanQuestionId { get; set; }
+        public string? QuestionCategory { get; set; }
+        public string? QuestionClassification { get; set; }
+        public string? Question { get; set; }
+        public string? BusinessPlanAnswer { get; set; }
+    }
+}

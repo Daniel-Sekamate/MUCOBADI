@@ -1,0 +1,92 @@
+﻿@page "/bullet_chart"
+@using Syncfusion.Blazor.Charts
+@using Syncfusion.Blazor
+@inject NavigationManager NavigationManager
+
+  <div class="col-md-6">
+    <div class="control-section" style="text-align: center">
+        <h5>Partner State Economic Health Index</h5>
+        <SfBulletChart DataSource="@BulletChartData0" ValueField="value" TargetField="target" Minimum="0" Maximum="30" Interval="5"
+                       Title="HDI"  LabelFormat="{value}" TitlePosition=@TitlePosition Width=@Width Height="50">
+            <BulletChartTooltip TValue="ChartData" Enable="true"></BulletChartTooltip>
+            <BulletChartMargin Right="15"></BulletChartMargin>
+            <BulletChartRangeCollection>
+                <BulletChartRange End="10"> </BulletChartRange>
+                <BulletChartRange End="20"></BulletChartRange>
+                <BulletChartRange End="30"></BulletChartRange>
+            </BulletChartRangeCollection>
+        </SfBulletChart>
+        <SfBulletChart DataSource="@BulletChartData1" ValueField="value" TargetField="target" Minimum="0" Maximum="30" Interval="5"
+                       Title="GPI" LabelFormat="{value}" TitlePosition=@TitlePosition Width=@Width Height="50">
+            <BulletChartTooltip TValue="ChartData" Enable="true"></BulletChartTooltip>
+            <BulletChartMargin Right="15"></BulletChartMargin>
+            <BulletChartRangeCollection>
+                <BulletChartRange End="10"> </BulletChartRange>
+                <BulletChartRange End="20"></BulletChartRange>
+                <BulletChartRange End="30"></BulletChartRange>
+            </BulletChartRangeCollection>
+        </SfBulletChart>
+        <SfBulletChart DataSource="@BulletChartData2" ValueField="value" TargetField="target" Minimum="0" Maximum="30" Interval="5"
+                       Title="BLI"  LabelFormat="{value}" TitlePosition=@TitlePosition Width=@Width Height="50">
+            <BulletChartTooltip TValue="ChartData" Enable="true"></BulletChartTooltip>
+            <BulletChartMargin Right="15"></BulletChartMargin>
+            <BulletChartRangeCollection>
+                <BulletChartRange End="10"> </BulletChartRange>
+                <BulletChartRange End="20"></BulletChartRange>
+                <BulletChartRange End="30"></BulletChartRange>
+            </BulletChartRangeCollection>
+        </SfBulletChart>
+@*        <SfBulletChart DataSource="@BulletChartData3" EnableGroupSeparator="false" ValueField="value" TargetField="target" Width=@Width Height="50"
+                       Minimum="0" Maximum="2500" Interval="500" Title="New Customers" Subtitle="Count" TitlePosition=@TitlePosition>
+            <BulletChartTooltip TValue="ChartData" Enable="true"></BulletChartTooltip>
+            <BulletChartMargin Right="15"></BulletChartMargin>
+            <BulletChartRangeCollection>
+                <BulletChartRange End="5"> </BulletChartRange>
+                <BulletChartRange End="10"></BulletChartRange>
+                <BulletChartRange End="15"></BulletChartRange>
+            </BulletChartRangeCollection>
+        </SfBulletChart>*@
+      @*  <SfBulletChart DataSource="@BulletChartData4" ValueField="value" TargetField="target" Minimum="0" Maximum="5" Interval="1"
+                       Title="GPI" Subtitle="Top rating of 5" TitlePosition=@TitlePosition Width=@Width Height="50">
+            <BulletChartTooltip TValue="ChartData" Enable="true"></BulletChartTooltip>
+            <BulletChartMargin Right="15"></BulletChartMargin>
+            <BulletChartRangeCollection>
+                <BulletChartRange End="3.7"> </BulletChartRange>
+                <BulletChartRange End="4.2"></BulletChartRange>
+                <BulletChartRange End="5"></BulletChartRange>
+            </BulletChartRangeCollection>
+        </SfBulletChart>*@
+    </div>
+</div>
+
+@code {
+    public string Width { get; set; } = "80%";
+    public TextPosition TitlePosition { get; set; } = TextPosition.Left;
+    public class ChartData
+    {
+        public double value { get; set; }
+        public double target { get; set; }
+    }
+    public List<ChartData> BulletChartData0 = new List<ChartData>
+{
+        new ChartData { value = 18, target = 25 }
+    };
+    public List<ChartData> BulletChartData1 = new List<ChartData>
+{
+        new ChartData { value = 23, target = 25 }
+    };
+    public List<ChartData> BulletChartData2 = new List<ChartData>
+{
+        new ChartData { value = 15, target = 25 }
+    };
+    public List<ChartData> BulletChartData3 = new List<ChartData>
+{
+        new ChartData { value = 10, target = 25 }
+    };
+    public List<ChartData> BulletChartData4 = new List<ChartData>
+{
+        new ChartData { value = 13, target = 25 }
+    };
+    private string CurrentUri;
+   
+}

@@ -1,0 +1,342 @@
+﻿@page "/ProjectTargetsReportPage"
+@using System.Collections.ObjectModel
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.IO;
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Syncfusion.XlsIO;
+@using Syncfusion.XlsIO.Implementation;
+@using Syncfusion.XlsIORenderer;
+@inject Microsoft.JSInterop.IJSRuntime JS;
+@inject MUCOBADIContext db;
+@inject SPToCoreContext spdb;
+@inject IToastService toastService;
+
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+</style>
+<ol class="breadcrumb" style="margin-top:5px;">
+    <li class="breadcrumb-item active" style="color: brown;"> <strong>USAID ICARE |</strong> PROJECT TARGETS REPORT</li>
+</ol>
+
+<div class="form-row">
+    <div class="form-group col-md-12">
+        <EditForm Model="@InputModel" OnValidSubmit="@SearchRecords">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <p>District</p>
+                    <SfMultiSelect @bind-Value="@InputModel.DistrictId" Enabled="@isEnabled" TValue="int?[]" TItem="ADistrict" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@DistrictsData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search District" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+                <div class="form-group col-md-4">
+                    <p>Year</p>
+                    <SfMultiSelect @bind-Value="@InputModel.DashboardYear" TValue="int?[]" TItem="AFinancialYear" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@FinancialYearData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Year" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AFinancialYear.FinancialYearId)" Text="@nameof(AFinancialYear.FinancialYearDesc)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+                
+                <div class="form-group col-md-4">
+                    <p>Project</p>
+                    <SfMultiSelect @bind-Value="@InputModel.ServiceProviderId" TValue="int?[]" TItem="AServiceProvider" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@ServiceProviderData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Project" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AServiceProvider.ServiceProviderId)" Text="@nameof(AServiceProvider.ServiceProviderDesc)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <p>Indicator</p>
+                    <SfMultiSelect @bind-Value="@InputModel.IndicatorId" TValue="int?[]" TItem="AIndicators" AllowFiltering="true" Placeholder="Please select" Mode="@VisualMode.CheckBox" DataSource="@IndicatorData" ShowSelectAll="true" EnableSelectionOrder="true" ShowDropDownIcon="true" FilterBarPlaceholder="Search Indicator" FloatLabelType="FloatLabelType.Never" PopupHeight="350px">
+                        <MultiSelectFieldSettings Value="@nameof(AIndicators.IndicatorId)" Text="@nameof(AIndicators.IndicatorDescription)"></MultiSelectFieldSettings>
+                    </SfMultiSelect>
+                </div>
+
+                @if (Downloadreport == false)
+                {
+                    <div class="col col-md-3">
+                        <BSButton Color="BlazorStrap.Color.Primary" ButtonType="BlazorStrap.ButtonType.Submit">Download Report</BSButton>
+                        <BSButton Color="BlazorStrap.Color.Secondary" ButtonType="BlazorStrap.ButtonType.Button" @onclick="ClearSearchBtnClick">Clear Search</BSButton>
+                    </div>
+
+                }
+
+
+                @if (!string.IsNullOrEmpty(Response))
+                {
+                    <div class="form-group col-md-12">
+                        @if (Response.Contains("No Record"))
+                        {
+                            <p class="alert alert-danger" style="padding:10px;">@Response</p>
+                        }
+                        else
+                        {
+                            <p class="alert alert-success" style="padding:10px;">@Response</p>
+                        }
+                    </div>
+                }
+
+                <div class="form-group col-md-12">
+                    <SfSpinner @ref="DownloadingSpinner" Label="Downloading Report Please Wait....." Size="50" Type="@SpinnerType.Bootstrap"></SfSpinner>
+                </div>
+
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    private SearchPanel InputModel = new();
+
+    List<ADistrict> DistrictsData { get; set; }
+    List<AFinancialYear> FinancialYearData { get; set; }
+    List<AIndicators> IndicatorData { get; set; }
+    List<AServiceProvider> ServiceProviderData { get; set; }
+    List<AQuarter> QuarterData { get; set; }
+    List<ViewUserManagement> UserManagementData { get; set; }
+
+    bool isEnabled { get; set; } = true;
+    string Response { get; set; }
+    SfSpinner DownloadingSpinner;
+    bool Downloadreport { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        DistrictsData = db.ADistrict.AsNoTracking().ToList();
+        FinancialYearData = db.AFinancialYear.AsNoTracking().ToList();
+        IndicatorData = db.AIndicators.AsNoTracking().ToList();
+        ServiceProviderData = db.AServiceProvider
+        .Where(o => o.ServiceProviderId != 1)
+        .AsNoTracking()
+        .ToList();
+        QuarterData = db.AQuarter.Where(o => o.QuarterId >= 1 && o.QuarterId <= 4).ToList();
+        UserManagementData = db.ViewUserManagement.ToList();
+
+    }
+
+    public async Task SearchRecords()
+    {
+        try
+        {
+            Downloadreport = true;
+            await DownloadingSpinner.ShowAsync();
+
+            var datatargets = await spdb.ViewReportProjectIndicatorTargetsDetails
+            .Where(o => (InputModel.ServiceProviderId == null || InputModel.ServiceProviderId.Any(a => a == o.ServiceProviderId))
+                && (InputModel.DistrictId == null || InputModel.DistrictId.Any(a => a == o.DistrictId))
+                && (InputModel.DashboardYear == null || InputModel.DashboardYear.Any(a => a == o.FinancialYearId))
+                && (InputModel.IndicatorId == null || InputModel.IndicatorId.Any(a => a == o.IndicatorId)))
+            .ToListAsync();
+
+            var dataresults = await spdb.ViewReportStakeHolderDataCapture
+            .Where(o => (InputModel.ServiceProviderId == null || InputModel.ServiceProviderId.Any(a => a == o.ServiceProviderId))
+                && (InputModel.DistrictId == null || InputModel.DistrictId.Any(a => a == o.DistrictId))
+                && (InputModel.DashboardYear == null || InputModel.DashboardYear.Any(a => a == o.FinancialYearId))
+                && (InputModel.DashboardQuarterId == null || InputModel.DashboardQuarterId.Any(a => a == o.QuarterId))
+                && (InputModel.IndicatorId == null || InputModel.IndicatorId.Any(a => a == o.IndicatorId)))
+            .ToListAsync();
+
+            if (datatargets.Count > 0)
+            {
+                using (ExcelEngine excelEngine = new ExcelEngine())
+                {
+                    IApplication application = excelEngine.Excel;
+                    application.DefaultVersion = ExcelVersion.Excel2013;
+                    IWorkbook workbook = application.Workbooks.Create(1);
+                    IWorksheet worksheet = workbook.Worksheets[0];
+                    worksheet.Name = "PROJECTS TARGETS REPORT";
+
+                    #region Styles
+                    var headerStyle = workbook.Styles.Add("headerStyle");
+
+                    headerStyle.BeginUpdate();
+                    headerStyle.Color = Syncfusion.Drawing.Color.Black;
+                    headerStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    headerStyle.Font.Bold = true;
+                    headerStyle.Font.FontName = "Arial";
+                    headerStyle.Font.Size = 8f;
+                    headerStyle.Font.Color = ExcelKnownColors.White;
+
+                    headerStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    headerStyle.Borders.Color = ExcelKnownColors.White;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    headerStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    //headerStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thick;
+
+                    headerStyle.WrapText = true;
+
+                    headerStyle.EndUpdate();
+
+                    var Style = workbook.Styles.Add("bodyStyle");
+
+                    Style.BeginUpdate();
+                    Style.HorizontalAlignment = ExcelHAlign.HAlignLeft;
+                    Style.VerticalAlignment = ExcelVAlign.VAlignTop;
+                    Style.Font.Bold = false;
+                    Style.Font.FontName = "Arial";
+                    Style.Font.Size = 8f;
+                    Style.Font.Color = ExcelKnownColors.Black;
+                    Style.WrapText = true;
+                    Style.Borders.Color = ExcelKnownColors.Black;
+                    Style.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    Style.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    Style.EndUpdate();
+
+
+                    var CategoryStyle = workbook.Styles.Add("CategoryStyle");
+
+                    CategoryStyle.BeginUpdate();
+                    CategoryStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(255, 195, 0);
+                    /*CategoryStyle.Color = Syncfusion.Drawing.Color.FromArgb(105, 59, 88);*/ //AUBERGINE
+                    CategoryStyle.Font.Bold = true;
+                    CategoryStyle.Font.FontName = "Arial";
+                    CategoryStyle.Font.Size = 12f;
+                    CategoryStyle.Font.Color = ExcelKnownColors.White;
+                    CategoryStyle.WrapText = true;
+                    CategoryStyle.Borders.Color = ExcelKnownColors.White;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    CategoryStyle.EndUpdate();
+
+                    var HHHeadStyle = workbook.Styles.Add("HHHeadStyle");
+
+                    HHHeadStyle.BeginUpdate();
+                    HHHeadStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    HHHeadStyle.Color = Syncfusion.Drawing.Color.FromArgb(140, 152, 152); //ASBESTOS
+                    HHHeadStyle.Font.Bold = true;
+                    HHHeadStyle.Font.FontName = "Arial";
+                    HHHeadStyle.Font.Size = 12f;
+                    HHHeadStyle.Font.Color = ExcelKnownColors.White;
+                    HHHeadStyle.WrapText = true;
+                    HHHeadStyle.Borders.Color = ExcelKnownColors.White;
+                    HHHeadStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    HHHeadStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    HHHeadStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    HHHeadStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    HHHeadStyle.EndUpdate();
+
+                    var HHMembersStyle = workbook.Styles.Add("HHMembersStyle");
+
+                    HHMembersStyle.BeginUpdate();
+                    HHMembersStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    HHMembersStyle.Color = Syncfusion.Drawing.Color.FromArgb(237, 145, 33); // CARROT ORANGE
+                    HHMembersStyle.Font.Bold = true;
+                    HHMembersStyle.Font.FontName = "Arial";
+                    HHMembersStyle.Font.Size = 10f;
+                    HHMembersStyle.Font.Color = ExcelKnownColors.White;
+                    HHMembersStyle.WrapText = true;
+                    HHMembersStyle.Borders.Color = ExcelKnownColors.White;
+                    HHMembersStyle.Borders[ExcelBordersIndex.EdgeLeft].LineStyle = ExcelLineStyle.Thin;
+                    HHMembersStyle.Borders[ExcelBordersIndex.EdgeRight].LineStyle = ExcelLineStyle.Thin;
+                    HHMembersStyle.Borders[ExcelBordersIndex.EdgeTop].LineStyle = ExcelLineStyle.Thin;
+                    HHMembersStyle.Borders[ExcelBordersIndex.EdgeBottom].LineStyle = ExcelLineStyle.Thin;
+                    HHMembersStyle.EndUpdate();
+
+                    #endregion
+
+                    int row = 1;
+                    worksheet.Range["A" + row].Text = "PROJECTS TARGETS REPORT";
+                    worksheet.Range["A" + row + ":E" + row].CellStyle = CategoryStyle;
+                    worksheet.Range["A" + row + ":E" + row].CellStyle.HorizontalAlignment = ExcelHAlign.HAlignCenter;
+                    worksheet.Range["A" + row + ":E" + row].CellStyle.VerticalAlignment = ExcelVAlign.VAlignCenter;
+                    worksheet.Range["A" + row].RowHeight = 30;
+                    worksheet.Range["A" + row + ":E" + row].Merge();
+                    row++;
+                    row++;
+
+                    worksheet.Range["A" + row].Text = "Project";
+                    worksheet.Range["A" + row].ColumnWidth = 8;
+
+                    worksheet.Range["B" + row].Text = "District";
+                    worksheet.Range["B" + row].ColumnWidth = 12;
+
+                    worksheet.Range["C" + row].Text = "Indicator";
+                    worksheet.Range["C" + row].ColumnWidth = 35;
+                    worksheet.Range["C" + row].WrapText = true;
+
+                    worksheet.Range["D" + row].Text = "Year";
+                    worksheet.Range["D" + row].ColumnWidth = 8;
+
+                    worksheet.Range["E" + row].Text = "Target";
+                    worksheet.Range["E" + row].ColumnWidth = 8;
+
+                    worksheet.Range["A" + row + ":E" + row].CellStyle = headerStyle;
+
+                    row++;
+                    foreach (var n in datatargets)
+                    {
+                        worksheet.Range["A" + row].Text = n.ServiceProviderDesc;
+                        worksheet.Range["A" + row].ColumnWidth = 10;
+
+                        worksheet.Range["B" + row].Text = n.DistrictDescription;
+                        worksheet.Range["B" + row].ColumnWidth = 12;
+                        worksheet.Range["B" + row].WrapText = true;
+
+                        worksheet.Range["C" + row].Text = n.IndicatorDescription;
+                        worksheet.Range["C" + row].ColumnWidth = 35;
+                        worksheet.Range["C" + row].WrapText = true;
+
+                        worksheet.Range["D" + row].Text = n.FinancialYearDesc;
+                        worksheet.Range["D" + row].ColumnWidth = 8;
+                        worksheet.Range["D" + row].WrapText = true;
+
+                        if (n.TargetValue.HasValue)
+                        {
+                            worksheet.Range["E" + row].Number = Convert.ToDouble(n.TargetValue);
+                            worksheet.Range["E" + row].VerticalAlignment = ExcelVAlign.VAlignTop;
+                        }
+
+                        worksheet.Range["A" + row + ":E" + row].CellStyle = Style;
+
+                        row++;
+                    }
+
+                    MemoryStream ms = new MemoryStream();
+                    // Save and close the document.
+                    workbook.SaveAs(ms);
+                    //Reset the memory stream position.
+                    ms.Position = 0;
+                    await JS.SaveAs("PROJECTS TARGETS REPORT.xlsx", ms.ToArray());
+                    ms.Dispose();
+                    workbook.Close();
+                    //excelEngine.Dispose();
+                    Response = "Success:- The report was successfully downloaded.";
+                }
+            }
+            else
+            {
+                Response = "No Record:- There were no records found for this search";
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError(ex.Message.ToString());
+        }
+
+        finally
+        {
+            await DownloadingSpinner.HideAsync();
+            Downloadreport = false;
+        }
+    }
+
+    private void ClearSearchBtnClick()
+    {
+        InputModel = new();
+    }
+
+}
+

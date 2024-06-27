@@ -13,8 +13,8 @@ namespace MUCOBADI.Models
         }
 
         public int GraduationChecklistId { get; set; }
-        public int HouseHoldId { get; set; }
-        public int HouseHoldMemberId { get; set; }
+        public int? HouseHoldId { get; set; }
+        public int? HouseHoldMemberId { get; set; }
         public DateTime? AssessmentDate { get; set; }
         public string AssessorName { get; set; }
         public string AssessorTitle { get; set; }

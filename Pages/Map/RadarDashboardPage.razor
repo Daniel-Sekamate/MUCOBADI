@@ -1,0 +1,102 @@
+﻿@page "/radar_column"
+@using Syncfusion.Blazor
+
+@using Syncfusion.Blazor.Charts
+@using Syncfusion.Blazor.DropDowns
+@inject NavigationManager NavigationManager
+<div class="col-lg-4 control-section sb-property-border">
+    <SfChart Title="EAC Partner State Mobile Markets by Number of Subscriptions" Palettes="palettes">
+        <ChartPrimaryXAxis Interval="1"  LabelPlacement="LabelPlacement.OnTicks" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+            <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis LabelFormat="{value}M">
+            <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+        </ChartPrimaryYAxis>
+        <ChartTooltipSettings Enable="true" Header="<b>${series.name}</b>"  Format="${point.text} : <b>${point.y}%</b>">
+        </ChartTooltipSettings>
+        <ChartSeriesCollection>
+            <ChartSeries DataSource="@ChartPoints" Name="Population" XName="Country" Width="2" YName="Population" Type="@SeriesType" DrawType="ChartDrawType.Column">
+                <ChartSeriesBorder Color="white" Width="1"></ChartSeriesBorder>
+                <ChartMarker>
+                    <ChartDataLabel Name="TooltipMappingName"></ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartPoints" Name="Mobile Subscriptions" XName="Country" Width="2" YName="MobileSubscriber" Type="@SeriesType" DrawType="ChartDrawType.Column">
+                <ChartSeriesBorder Color="white" Width="1"></ChartSeriesBorder>
+                <ChartMarker>
+                    <ChartDataLabel Name="TooltipMappingName"></ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartPoints" Name="3G/4G Subscriptions" XName="Country" Width="2" YName="NetworkSubscriber" Type="@SeriesType" DrawType="ChartDrawType.Column">
+                <ChartSeriesBorder Color="white" Width="1"></ChartSeriesBorder>
+                <ChartMarker>
+                    <ChartDataLabel Name="TooltipMappingName"></ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+        <ChartLegendSettings EnableHighlight="true"></ChartLegendSettings>
+    </SfChart>
+</div>
+<div class="col-lg-4 property-section">
+    <div class="property-panel-section">
+        <div class="property-panel-header">Properties</div>
+        <div class="property-panel-content">
+            <table style="width: 100%">
+                <tr style="height: 50px">
+                    <td style="width: 50%">
+                        <div>
+                            Series Type:
+                        </div>
+                    </td>
+                    <td style="width: 50%">
+                        <SfDropDownList TValue="string" TItem="DropDownData" Placeholder="Polar" DataSource="@SeriesTypes">
+                            <DropDownListEvents TValue="string" TItem="DropDownData" ValueChange="ChangeSeriesType"></DropDownListEvents>
+                            <DropDownListFieldSettings Value="Type"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+@code {
+
+    private ChartSeriesType SeriesType { get; set; } = ChartSeriesType.Polar;
+    public List<DropDownData> SeriesTypes { get; set; } = new List<DropDownData>
+    {
+        new DropDownData() { Type = "Polar" },
+        new DropDownData() { Type = "Radar" },
+    };
+    public List<PolarColumnData> ChartPoints { get; set; } = new List<PolarColumnData>
+    {
+        new PolarColumnData { TooltipMappingName= "Uganda", Country = "Uganda", MobileSubscriber = 137.9, Population = 127.6, NetworkSubscriber = 108.8 },
+        new PolarColumnData { TooltipMappingName= "Kenya", Country = "Kenya", MobileSubscriber = 85.0, Population = 246.9, NetworkSubscriber = 45.5 },
+        new PolarColumnData { TooltipMappingName= "Tanzania", Country = "Tanzania", MobileSubscriber = 237.1, Population = 143.5, NetworkSubscriber = 41.2 },
+        new PolarColumnData { TooltipMappingName= "South Sudan", Country = "South Sudan", MobileSubscriber = 127.7, Population = 88.8, NetworkSubscriber = 18.0 },
+        new PolarColumnData { TooltipMappingName= "Burundi", Country = "Burundi", MobileSubscriber = 126.1, Population = 179.2 },
+        new PolarColumnData { TooltipMappingName= "Rwanda", Country = "Rwanda", MobileSubscriber = 175.0, Population = 168.8, NetworkSubscriber = 12.7 },
+        new PolarColumnData { TooltipMappingName= "Congo", Country = "Congo", MobileSubscriber = 113.6, Population = 81.9, NetworkSubscriber = 46.0 },
+
+    };
+    protected override void OnInitialized()
+    {
+        //   Theme = ThemeHelper.GetCurrentTheme(NavigationManager.Uri);
+    }
+    public void ChangeSeriesType(ChangeEventArgs<string, DropDownData> args)
+    {
+        SeriesType = (ChartSeriesType)Enum.Parse(typeof(ChartSeriesType), args.Value.ToString(), true);
+    }
+    public class DropDownData
+    {
+        public string Type { get; set; }
+    }
+    public class PolarColumnData
+    {
+        public string TooltipMappingName { get; set; }
+        public string Country { get; set; }
+        public double MobileSubscriber { get; set; }
+        public double Population { get; set; }
+        public double NetworkSubscriber { get; set; }
+    }
+    public String[] palettes = new String[] { "#9c88ff", "#fbc531", "#4cd137" };
+}

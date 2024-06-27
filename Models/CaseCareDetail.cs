@@ -13,9 +13,9 @@ namespace MUCOBADI.Models
         }
 
         public int CaseCareDetailsId { get; set; }
-        public int CaseCareId { get; set; }
-        public int CasePlanId { get; set; }
-        public int HouseHoldMemberId { get; set; }
+        public int? CaseCareId { get; set; }
+        public int? CasePlanId { get; set; }
+        public int? HouseHoldMemberId { get; set; }
 
         public virtual CaseCare CaseCare { get; set; }
         public virtual ACasePlan CasePlan { get; set; }

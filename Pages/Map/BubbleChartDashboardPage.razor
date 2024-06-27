@@ -1,0 +1,51 @@
+﻿@page "/bubbleChart"
+@using Syncfusion.Blazor.Charts
+<div class="row">
+    <div class="col-md-8">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfChart Title="Analysis of Market Opportunities for [Electronic Product]: Size, Profitability, and Investment Attractiveness">
+                    <ChartPrimaryXAxis Title="Market Size" LabelPlacement="LabelPlacement.OnTicks" EdgeLabelPlacement="EdgeLabelPlacement.Shift" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryXAxis>
+                    <ChartPrimaryYAxis Title="Potential Profitability">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryYAxis>
+                    <ChartSeriesCollection>
+                        <ChartSeries DataSource="@SalesReports" XName="X" YName="Y" Type="ChartSeriesType.Bubble" Size="Size" Name="Text">
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                </SfChart>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public class ChartData
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Size { get; set; }
+        public string Text { get; set; }
+    }
+
+    public List<ChartData> SalesReports = new List<ChartData>
+    {
+        new ChartData { X= 92.2, Size= 20, Y= 7.8, Text= "Uganda" },
+        new ChartData { X= 74, Size= 30,Y= 6.5, Text= "Kenya" },
+        new ChartData { X= 90.4, Size= 50, Y= 6.0, Text= "Tanzania" },
+        new ChartData { X= 99.4,Size= 70, Y= 2.2, Text= "South Sudan" },
+        new ChartData { X= 88.6,Size= 120, Y= 1.3, Text= "Rwanda" },
+        new ChartData { X= 99, Size= 30,Y= 0.7, Text= "Burundi" },
+        new ChartData { X= 72, Size= 130,Y= 2.0, Text= "Congo" },
+       
+    };
+}

@@ -10,6 +10,11 @@ namespace MUCOBADI.Models
         public int HivTbTrackingFormId { get; set; }
         public int? HouseHoldMemberId { get; set; }
         public DateTime? FollowUpDate { get; set; }
+        public string Qtr { get; set; }
+        public int? DistrictId { get; set; }
+        public string DistrictDescription { get; set; }
+        public int? SubcountyId { get; set; }
+        public string SubcountyDescription { get; set; }
         public int? FollowUpDateYear { get; set; }
         public int? FollowUpDateMonth { get; set; }
         public int? IsClientEligibleForViralload { get; set; }

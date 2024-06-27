@@ -1,0 +1,450 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+
+    .e-spinner-pane .e-spinner-inner .e-spin-bootstrap {
+        fill: black;
+        stroke: black;
+    }
+</style>
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+<SfSpinner @bind-Visible="SpinnerVisible" Type="@SpinnerType.Bootstrap" Size="50" Label="Data loading">
+</SfSpinner>
+<div class="row">
+   <div class="col-md-12">
+        @if (SmuSafetyPlanningFormDataSource != null)
+        {
+            <SfGrid @ref="@SmuSafetyPlanningFormGrid" DataSource="@SmuSafetyPlanningFormDataSource" TValue="SmuSafetyPlanningForm" AllowFiltering=false AllowGrouping=false AllowPaging=true AllowTextWrap=true
+               GridLines="GridLine.Both" AllowSelection="true" Toolbar="ToolbarMenu" RowHeight="30" EnableStickyHeader="true">
+                <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridPageSettings PageSize="10"></GridPageSettings>
+                <GridEvents RowSelected="RowSelectedhandler" RowDeselected="DeselectedRowSelectedhandler" OnActionBegin="SafetyPlanningFormActionBeginHandler" OnActionComplete=@SafetyPlanningFormActionComplete TValue="SmuSafetyPlanningForm"></GridEvents>
+                <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+                    <HeaderTemplate Context="hContext">
+                        @{
+                            var text = GetNewRecord((hContext as SmuSafetyPlanningForm));
+                            <div class="headerbandimg" />
+                            <span>@text</span>
+                        }
+                    </HeaderTemplate>
+                       <Template Context="testPlanContext">
+                        @{
+                            SmuSafetyPlanningFormData = (testPlanContext as SmuSafetyPlanningForm);
+                            if(SmuSafetyPlanningFormData != null)
+                            {
+                                <div style="margin:10px;">
+                                  <div class="row">
+                                        <div class="col-md-12" hidden>
+                                            <SfNumericTextBox ID="TestingPlanId" @bind-Value="@(SmuSafetyPlanningFormData.SafetyPlanningFormId)" Enabled="false" Placeholder="SafetyPlanningFormId" Format="N0" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>SMU Office:</p>
+                                            <SfDropDownList @bind-Value="@(SmuSafetyPlanningFormData.OfficeId)" Enabled="true" TItem="SmuOffice" TValue="int?" DataSource="@SmuOfficeData" Placeholder="Select Office" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuOffice.OfficeId)" Text="@nameof(SmuOffice.OfficeName)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuSafetyPlanningFormData.OfficeId)" /></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Name of Staff/Volunteer:</p>
+                                            <SfTextBox Multiline="false" @bind-Value="@(SmuSafetyPlanningFormData.StaffVolunteerName)" Enabled="true" FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <p>SMU Group:</p>
+                                            <SfDropDownList @bind-Value="@(SmuSafetyPlanningFormData.SmuGroupId)" Enabled="true" TItem="SmuGroup" TValue="int?" DataSource="@SmuGroupData" Placeholder="Select Office" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuGroup.SmuGroupId)" Text="@nameof(SmuGroup.SmuGroupName)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuSafetyPlanningFormData.SmuGroupId)" /></p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <p>Date of Assessment:</p>
+                                            <SfDatePicker @bind-Value=@SmuSafetyPlanningFormData.InterviewDate Format="dd/MM/yyyy" Enabled=true FloatLabelType="FloatLabelType.Never"></SfDatePicker>
+                                        </div>
+                                        <div class="col-md-6">
+                                        <SMUSafetyWarningSignsPage @ref="@_SMUSafetyWarningSignsPage" SafetyPlanningFormId="@SelectedSafetyPlanningFormId" 
+                                            SmuSafetyPlanningFormWarningSignsData="@SmuSafetyPlanningFormWarningSignsData" 
+                                            SmuSafetyPlanningFormWarningSignsCallBack="@SmuSafetyPlanningFormWarningSignsCallBackMethod">
+                                        </SMUSafetyWarningSignsPage>
+                                        </div>
+                                        <div class="col-md-6">
+                                        <SMUInternalCopingStrategiesPage @ref="@_SMUInternalCopingStrategiesPage" SafetyPlanningFormId="@SelectedSafetyPlanningFormId" 
+                                          SmuSafetyPlanningFormInternalCopingStrategiesData="@SmuSafetyPlanningFormInternalCopingStrategiesData"
+                                          SmuSafetyPlanningFormInternalCopingStrategiesCallBack="@SmuSafetyPlanningFormInternalCopingStrategiesCallBackMethod">
+                                        </SMUInternalCopingStrategiesPage>
+                                        </div>
+                                        <div class="col-md-6" style="margin-top:40px">
+                                        <SMUSafetyPeopleToProvideDistractionPage @ref="@_SMUSafetyPeopleToProvideDistractionPage" SafetyPlanningFormId="@SelectedSafetyPlanningFormId"
+                                          SmuSafetyPlanningFormPeopleProvideDistractionData="@SmuSafetyPlanningFormPeopleProvideDistractionData"
+                                          SmuSafetyPlanningFormPeopleProvideDistractionCallBack="SmuSafetyPlanningFormPeopleProvideDistractionCallBackMethod">
+                                        </SMUSafetyPeopleToProvideDistractionPage>
+                                        </div>
+                                        <div class="col-md-6" style="margin-top:40px">
+                                         <SMUSafetyPeopleToAskForHelpPage @ref="@_SMUSafetyPeopleToAskForHelpPage" SafetyPlanningFormId="@SelectedSafetyPlanningFormId"
+                                          SmuSafetyPlanningFormPeopleToAskForHelpData="@SmuSafetyPlanningFormPeopleToAskForHelpData">
+                                        </SMUSafetyPeopleToAskForHelpPage>
+                                        </div>
+                                        <div class="col-md-12" style="margin-top:40px">
+                                         <SMUSafetyProfessionalsToContactDuringCrisisPage @ref="@_SMUSafetyProfessionalsToContactDuringCrisisPage" SafetyPlanningFormId="@SelectedSafetyPlanningFormId"
+                                           SmuSafetyPlanningFormProfessionsAgenciesToContactData="@SmuSafetyPlanningFormProfessionsAgenciesToContactData"
+                                           SmuSafetyPlanningFormProfessionsAgenciesToContactCallBack="SmuSafetyPlanningFormProfessionsAgenciesToContactCallBackMethod">
+                                         </SMUSafetyProfessionalsToContactDuringCrisisPage>
+                                        </div>
+                                  </div>
+                                </div>
+                            }
+                        }
+                       </Template>
+                    <FooterTemplate Context="headerContext">
+                        <button class="btn btn-success" @onclick=SaveSafetyPlanningForm>Save Safety Planning Form</button>
+                        <button class="btn btn-danger" @onclick=CancelSafetyPlanningForm>Cancel</button>
+                        @if (IsSaving)
+                        {
+                            <SfSpinner @bind-Visible="IsSaving" Type="@SpinnerType.Bootstrap" Size="70" Label="Saving Data">
+                            </SfSpinner>
+                        }
+                    </FooterTemplate>
+                </GridEditSettings>
+                <GridColumns>
+                    <GridColumn Type="ColumnType.CheckBox" Width="30"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningForm.SafetyPlanningFormId) HeaderText="SafetyPlanningFormId" TextAlign="TextAlign.Left" IsPrimaryKey="true" IsIdentity="true" Visible="false" Width="80"></GridColumn>
+
+                    <GridForeignColumn Field="@(nameof(SmuSafetyPlanningForm.OfficeId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Office" Width="100" ForeignKeyField="@(nameof(SmuOffice.OfficeId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuOffice.OfficeName))" ForeignDataSource="@SmuOfficeData">
+                    </GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(SmuSafetyPlanningForm.ClientRegistrationId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Client Name" Width="150" ForeignKeyField="@(nameof(SmuClientRegistrationForm.ClientRegistrationFormId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuClientRegistrationForm.SmuClientName))" ForeignDataSource="@SmuClientRegistrationFormData">
+                    </GridForeignColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningForm.InterviewDate) HeaderText="Interview Date" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        }
+    </div>
+</div>
+
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    bool IsSaving { get; set; }
+    public bool SpinnerVisible { get; set; }
+    public int SelectedSafetyPlanningFormId { get; set; }
+    SMUSafetyProfessionalsToContactDuringCrisisPage? _SMUSafetyProfessionalsToContactDuringCrisisPage;
+    SMUSafetyPeopleToAskForHelpPage? _SMUSafetyPeopleToAskForHelpPage;
+    SMUSafetyPeopleToProvideDistractionPage? _SMUSafetyPeopleToProvideDistractionPage;
+    SMUInternalCopingStrategiesPage? _SMUInternalCopingStrategiesPage;
+    SMUSafetyWarningSignsPage? _SMUSafetyWarningSignsPage;
+    SfGrid<SmuSafetyPlanningForm>? SmuSafetyPlanningFormGrid;
+    SmuSafetyPlanningForm? SmuSafetyPlanningFormData;
+    private List<SmuSafetyPlanningForm> SmuSafetyPlanningFormDataSource = new List<SmuSafetyPlanningForm>();
+    private List<object> ToolbarMenu = new List<object> {"Add","Edit","Search",
+    new ItemModel(){TooltipText ="Export Data to XML",
+                                        PrefixIcon = "e-click", Id = "XmlExport"} };
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "5vh", Width = "90%" };
+    [Parameter]
+    public int SelectedAssessmentGuideId { get; set; }
+    [Parameter]
+    public List<SmuGroup> SmuGroupData { get; set; }
+    [Parameter]
+    public List<SmuOffice> SmuOfficeData { get; set; }
+    [Parameter]
+    public List<SmuClientRegistrationForm> SmuClientRegistrationFormData { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormPeopleToAskForHelp>? SmuSafetyPlanningFormPeopleToAskForHelpData { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormPeopleProvideDistraction>? SmuSafetyPlanningFormPeopleProvideDistractionData { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormWarningSigns>? SmuSafetyPlanningFormWarningSignsData { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormInternalCopingStrategies>? SmuSafetyPlanningFormInternalCopingStrategiesData { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormProfessionsAgenciesToContact>? SmuSafetyPlanningFormProfessionsAgenciesToContactData { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        SmuSafetyPlanningFormDataSource = new List<SmuSafetyPlanningForm>();
+        if (SelectedAssessmentGuideId > 0)
+        {
+            try
+            {
+                var _SmuSafetyPlanningFormDataSource = await _ISMUTools.GetSmuSafetyPlanningForm(SelectedAssessmentGuideId);
+                if (_SmuSafetyPlanningFormDataSource != null)
+                {
+                    SmuSafetyPlanningFormDataSource = _SmuSafetyPlanningFormDataSource;
+                    StateHasChanged(); // Ensure UI updates after data retrieval
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions or logging
+            }
+        }
+        // if (SmuSafetyPlanningFormData != null && SmuSafetyPlanningFormPublicData.Count > 0)
+        // {
+        //     SmuSafetyPlanningFormDataSource.AddRange(SmuSafetyPlanningFormPublicData.OrderBy(o => o.SafetyPlanningFormId).ToList());
+        // }
+        // else
+        // {
+        //     SmuSafetyPlanningFormDataSource = new List<SmuSafetyPlanningForm>();
+        // }
+
+    }
+    void SmuSafetyPlanningFormWarningSignsCallBackMethod(List<SmuSafetyPlanningFormWarningSigns> _SmuSafetyPlanningFormWarningSigns) => SmuSafetyPlanningFormData.SmuSafetyPlanningFormWarningSigns = _SmuSafetyPlanningFormWarningSigns;
+    private void SmuSafetyPlanningFormInternalCopingStrategiesCallBackMethod(List<SmuSafetyPlanningFormInternalCopingStrategies> _SmuSafetyPlanningFormInternalCopingStrategies) => SmuSafetyPlanningFormData.SmuSafetyPlanningFormInternalCopingStrategies = _SmuSafetyPlanningFormInternalCopingStrategies;
+    private void SmuSafetyPlanningFormPeopleProvideDistractionCallBackMethod(List<SmuSafetyPlanningFormPeopleProvideDistraction> _SmuSafetyPlanningFormPeopleProvideDistraction) => SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleProvideDistraction = _SmuSafetyPlanningFormPeopleProvideDistraction;
+    private void SmuSafetyPlanningFormPeopleToAskForHelpCallBackMethod(List<SmuSafetyPlanningFormPeopleToAskForHelp> _SmuSafetyPlanningFormPeopleToAskForHelp) => SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleToAskForHelp = _SmuSafetyPlanningFormPeopleToAskForHelp;
+    private void SmuSafetyPlanningFormProfessionsAgenciesToContactCallBackMethod(List<SmuSafetyPlanningFormProfessionsAgenciesToContact> _SmuSafetyPlanningFormProfessionsAgenciesToContact) => SmuSafetyPlanningFormData.SmuSafetyPlanningFormProfessionsAgenciesToContact = _SmuSafetyPlanningFormProfessionsAgenciesToContact;
+    private async Task SavePlanningForm()
+    {
+        try
+        {
+            if (SmuSafetyPlanningFormGrid != null)
+            {
+                IsSaving = true;
+                if(SmuSafetyPlanningFormData != null)
+                {
+                    if (string.IsNullOrEmpty(SmuSafetyPlanningFormData.StaffVolunteerName) == true)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please enter the Staff / Volunteer’s Name!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuSafetyPlanningFormData.InterviewDate.HasValue == false)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please enter Interview date!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
+        
+    }
+    public void RowSelectedhandler(RowSelectEventArgs<SmuSafetyPlanningForm> Args)
+    {
+        SelectedSafetyPlanningFormId = Args.Data.SafetyPlanningFormId;
+    }
+    public void DeselectedRowSelectedhandler(RowDeselectEventArgs<SmuSafetyPlanningForm> Args)
+    {
+        SelectedSafetyPlanningFormId = 0;
+    }
+    public string GetNewRecord(SmuSafetyPlanningForm Value)
+    {
+        if (Value.SafetyPlanningFormId <= 0)
+        {
+            return "Add new Safety plan";
+        }
+        else
+        {
+            return "Edit Safety plan";
+        }
+    }
+    public async void SafetyPlanningFormActionBeginHandler(ActionEventArgs<SmuSafetyPlanningForm> Args)
+    {
+        var data = Args.Data;
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+        {
+            Args.RowData.SmuSafetyPlanningFormWarningSigns = new List<SmuSafetyPlanningFormWarningSigns>();
+            Args.RowData.SmuSafetyPlanningFormPeopleProvideDistraction = new List<SmuSafetyPlanningFormPeopleProvideDistraction>();
+            Args.RowData.SmuSafetyPlanningFormProfessionsAgenciesToContact = new List<SmuSafetyPlanningFormProfessionsAgenciesToContact>();
+            Args.RowData.SmuSafetyPlanningFormPeopleToAskForHelp = new List<SmuSafetyPlanningFormPeopleToAskForHelp>();
+            Args.RowData.SmuSafetyPlanningFormInternalCopingStrategies = new List<SmuSafetyPlanningFormInternalCopingStrategies>();
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+        {
+            if (Args.RowData.SmuSafetyPlanningFormWarningSigns == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormWarningSigns = new List<SmuSafetyPlanningFormWarningSigns>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormPeopleProvideDistraction == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormPeopleProvideDistraction = new List<SmuSafetyPlanningFormPeopleProvideDistraction>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormProfessionsAgenciesToContact == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormProfessionsAgenciesToContact = new List<SmuSafetyPlanningFormProfessionsAgenciesToContact>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormPeopleToAskForHelp == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormPeopleToAskForHelp = new List<SmuSafetyPlanningFormPeopleToAskForHelp>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormInternalCopingStrategies == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormInternalCopingStrategies = new List<SmuSafetyPlanningFormInternalCopingStrategies>();
+            }
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            if (Args.RowData.SmuSafetyPlanningFormWarningSigns == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormWarningSigns = new List<SmuSafetyPlanningFormWarningSigns>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormPeopleProvideDistraction == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormPeopleProvideDistraction = new List<SmuSafetyPlanningFormPeopleProvideDistraction>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormProfessionsAgenciesToContact == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormProfessionsAgenciesToContact = new List<SmuSafetyPlanningFormProfessionsAgenciesToContact>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormPeopleToAskForHelp == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormPeopleToAskForHelp = new List<SmuSafetyPlanningFormPeopleToAskForHelp>();
+            }
+            if (Args.RowData.SmuSafetyPlanningFormInternalCopingStrategies == null)
+            {
+                Args.RowData.SmuSafetyPlanningFormInternalCopingStrategies = new List<SmuSafetyPlanningFormInternalCopingStrategies>();
+            }
+        }
+    }
+    public async void SafetyPlanningFormActionComplete(ActionEventArgs<SmuSafetyPlanningForm> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            SmuSafetyPlanningFormGrid.PreventRender(false);
+        }
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+
+        }
+    }
+    private async Task CancelSafetyPlanningForm()
+    {
+        await SmuSafetyPlanningFormGrid.CloseEditAsync();
+    }
+    private async Task SaveSafetyPlanningForm()
+    {
+        try
+        {
+            if (SmuSafetyPlanningFormGrid != null)
+            {
+                IsSaving = true;
+
+                if (SmuSafetyPlanningFormData != null)
+                {
+                    if (string.IsNullOrEmpty(SmuSafetyPlanningFormData.StaffVolunteerName) == true)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please enter the Staff/Volunter!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuSafetyPlanningFormData.InterviewDate.HasValue == false)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please enter Date of Assessment!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else
+                    {
+                        if (_SMUSafetyProfessionalsToContactDuringCrisisPage != null)
+                        {
+                            if (SmuSafetyPlanningFormData.SmuSafetyPlanningFormProfessionsAgenciesToContact == null)
+                            {
+                                SmuSafetyPlanningFormData.SmuSafetyPlanningFormProfessionsAgenciesToContact = new List<SmuSafetyPlanningFormProfessionsAgenciesToContact>();
+                            }
+                            SmuSafetyPlanningFormData.SmuSafetyPlanningFormProfessionsAgenciesToContact = await _SMUSafetyProfessionalsToContactDuringCrisisPage.returnData();
+                        }
+                        if (_SMUSafetyPeopleToAskForHelpPage != null)
+                        {
+                            if (SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleToAskForHelp == null)
+                            {
+                                SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleToAskForHelp = new List<SmuSafetyPlanningFormPeopleToAskForHelp>();
+                            }
+                            SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleToAskForHelp = await _SMUSafetyPeopleToAskForHelpPage.returnData();
+                        }
+                        if (_SMUSafetyPeopleToProvideDistractionPage != null)
+                        {
+                            if (SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleProvideDistraction == null)
+                            {
+                                SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleProvideDistraction = new List<SmuSafetyPlanningFormPeopleProvideDistraction>();
+                            }
+                            SmuSafetyPlanningFormData.SmuSafetyPlanningFormPeopleProvideDistraction = await _SMUSafetyPeopleToProvideDistractionPage.returnData();
+                        }
+                        if (_SMUInternalCopingStrategiesPage != null)
+                        {
+                            if (SmuSafetyPlanningFormData.SmuSafetyPlanningFormInternalCopingStrategies == null)
+                            {
+                                SmuSafetyPlanningFormData.SmuSafetyPlanningFormInternalCopingStrategies = new List<SmuSafetyPlanningFormInternalCopingStrategies>();
+                            }
+                            //_SMUInternalCopingStrategiesPage
+                          //  SmuSafetyPlanningFormData.SmuSafetyPlanningFormInternalCopingStrategies = await _SMUInternalCopingStrategiesPage.OnAddRecord();
+                            SmuSafetyPlanningFormData.SmuSafetyPlanningFormInternalCopingStrategies = await _SMUInternalCopingStrategiesPage.returnData();
+                        }
+                        if (_SMUSafetyWarningSignsPage != null)
+                        {
+                            if (SmuSafetyPlanningFormData.SmuSafetyPlanningFormWarningSigns == null)
+                            {
+                                SmuSafetyPlanningFormData.SmuSafetyPlanningFormWarningSigns = new List<SmuSafetyPlanningFormWarningSigns>();
+                            }
+                            SmuSafetyPlanningFormData.SmuSafetyPlanningFormWarningSigns = await _SMUSafetyWarningSignsPage.returnData();
+                        }
+                        await SmuSafetyPlanningFormGrid.EndEditAsync();
+                        await _ISMUTools.SaveSMUSafetyPlanningForm(SmuSafetyPlanningFormData);
+                    }
+                    //  IsSaving = true;
+                }
+            }
+        }
+        catch (ArgumentNullException ex)
+        {
+            // Log or handle the ArgumentNullException here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        catch (Exception ex)
+        {
+            // Log or handle other exceptions here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        finally
+        {
+            IsSaving = false; // Reset IsSaving flag regardless of success or failure
+        }
+    }
+}

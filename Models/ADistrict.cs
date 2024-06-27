@@ -17,6 +17,7 @@ namespace MUCOBADI.Models
             BeneficiaryIdentificationRegister = new HashSet<BeneficiaryIdentificationRegister>();
             BeneficiaryLinkageTrackingTool = new HashSet<BeneficiaryLinkageTrackingTool>();
             BeneficiaryLinkageTrackingToolNew = new HashSet<BeneficiaryLinkageTrackingToolNew>();
+            BusinessPlanHeader = new HashSet<BusinessPlanHeader>();
             CaseCare = new HashSet<CaseCare>();
             CommunityTbSensitization = new HashSet<CommunityTbSensitization>();
             CommunityTrainingRegister = new HashSet<CommunityTrainingRegister>();
@@ -27,11 +28,15 @@ namespace MUCOBADI.Models
             HivTbTrackingFormDistrict = new HashSet<HivTbTrackingForm>();
             HomeVisitServiceReportingToolHeader = new HashSet<HomeVisitServiceReportingToolHeader>();
             Hvat = new HashSet<Hvat>();
+            InterventionAttendanceForm = new HashSet<InterventionAttendanceForm>();
+            Isvatheader = new HashSet<Isvatheader>();
             MonthlyCaseTrackingRegister = new HashSet<MonthlyCaseTrackingRegister>();
+            Nmnquestionaire = new HashSet<Nmnquestionaire>();
             OvcSchoolAttendencyHeader = new HashSet<OvcSchoolAttendencyHeader>();
             ProjectIndicatorTargetsDetails = new HashSet<ProjectIndicatorTargetsDetails>();
             ReferralForm = new HashSet<ReferralForm>();
             SinoParentingAttendenceRegister = new HashSet<SinoParentingAttendenceRegister>();
+            SmuGroup = new HashSet<SmuGroup>();
             StakeHolderDataCapture = new HashSet<StakeHolderDataCapture>();
             VslaGroupComposition = new HashSet<VslaGroupComposition>();
             VslaGroupShareOutHeader = new HashSet<VslaGroupShareOutHeader>();
@@ -52,6 +57,7 @@ namespace MUCOBADI.Models
         public virtual ICollection<BeneficiaryIdentificationRegister> BeneficiaryIdentificationRegister { get; set; }
         public virtual ICollection<BeneficiaryLinkageTrackingTool> BeneficiaryLinkageTrackingTool { get; set; }
         public virtual ICollection<BeneficiaryLinkageTrackingToolNew> BeneficiaryLinkageTrackingToolNew { get; set; }
+        public virtual ICollection<BusinessPlanHeader> BusinessPlanHeader { get; set; }
         public virtual ICollection<CaseCare> CaseCare { get; set; }
         public virtual ICollection<CommunityTbSensitization> CommunityTbSensitization { get; set; }
         public virtual ICollection<CommunityTrainingRegister> CommunityTrainingRegister { get; set; }
@@ -62,11 +68,15 @@ namespace MUCOBADI.Models
         public virtual ICollection<HivTbTrackingForm> HivTbTrackingFormDistrict { get; set; }
         public virtual ICollection<HomeVisitServiceReportingToolHeader> HomeVisitServiceReportingToolHeader { get; set; }
         public virtual ICollection<Hvat> Hvat { get; set; }
+        public virtual ICollection<InterventionAttendanceForm> InterventionAttendanceForm { get; set; }
+        public virtual ICollection<Isvatheader> Isvatheader { get; set; }
         public virtual ICollection<MonthlyCaseTrackingRegister> MonthlyCaseTrackingRegister { get; set; }
+        public virtual ICollection<Nmnquestionaire> Nmnquestionaire { get; set; }
         public virtual ICollection<OvcSchoolAttendencyHeader> OvcSchoolAttendencyHeader { get; set; }
         public virtual ICollection<ProjectIndicatorTargetsDetails> ProjectIndicatorTargetsDetails { get; set; }
         public virtual ICollection<ReferralForm> ReferralForm { get; set; }
         public virtual ICollection<SinoParentingAttendenceRegister> SinoParentingAttendenceRegister { get; set; }
+        public virtual ICollection<SmuGroup> SmuGroup { get; set; }
         public virtual ICollection<StakeHolderDataCapture> StakeHolderDataCapture { get; set; }
         public virtual ICollection<VslaGroupComposition> VslaGroupComposition { get; set; }
         public virtual ICollection<VslaGroupShareOutHeader> VslaGroupShareOutHeader { get; set; }

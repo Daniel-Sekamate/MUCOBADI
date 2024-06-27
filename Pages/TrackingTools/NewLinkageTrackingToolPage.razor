@@ -374,13 +374,15 @@
                 if (exist == null)
                 {
                     int id = 1;
-                    var last = db.BeneficiaryLinkageTrackingToolNew.OrderBy(o => o.LinkageTrackingToolId).LastOrDefault();
+                    var last = db.BeneficiaryLinkageTrackingToolNew.OrderBy(o => o.LinkageTrackingToolId).ToList().LastOrDefault();
                     if (last != null)
                     {
                         id = (last.LinkageTrackingToolId + 1);
                     }
                     val.LinkageTrackingToolId = id;
                     db.BeneficiaryLinkageTrackingToolNew.Add(val);
+                    db.SaveChanges();
+                    db.Entry(val).State = EntityState.Detached;
                     db.SaveChanges();
                     toastService.ShowSuccess("Record Saved Successfully", "Success");
                 }
@@ -405,6 +407,8 @@
                 {
                     db.Entry(exist).CurrentValues.SetValues(val);
                     db.Entry(exist).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    db.Entry(exist).State = EntityState.Detached;
                     await db.SaveChangesAsync();
                     toastService.ShowSuccess("Record updated Successfully", "Success");
                 }

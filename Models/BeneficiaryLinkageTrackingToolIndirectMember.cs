@@ -8,7 +8,7 @@ namespace MUCOBADI.Models
     public partial class BeneficiaryLinkageTrackingToolIndirectMember
     {
         public int LinkageTrackingToolIndirectMemberId { get; set; }
-        public int LinkageTrackingToolId { get; set; }
+        public int? LinkageTrackingToolId { get; set; }
         public int? VslaGroupIndirectMemberId { get; set; }
         public int? ServiceLinkedToId { get; set; }
         public int? ServiceReceived { get; set; }

@@ -17,7 +17,7 @@ namespace MUCOBADI.Models
         public int? ImplementingPartnerId { get; set; }
         public int? DistrictId { get; set; }
         public int? SubcountyId { get; set; }
-        public int GroupCompositionCode { get; set; }
+        public int? GroupCompositionCode { get; set; }
         public int? GroupCycleId { get; set; }
         public int? CurriculumId { get; set; }
         public int? TotalNoSessions { get; set; }

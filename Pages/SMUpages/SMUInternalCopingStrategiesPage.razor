@@ -1,0 +1,177 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+@if (SmuSafetyPlanningFormInternalCopingStrategiesDataSource != null)
+{
+    <SfGrid @ref=@SmuSafetyPlanningFormInternalCopingStrategiesGrid TValue="SmuSafetyPlanningFormInternalCopingStrategies"
+            DataSource="SmuSafetyPlanningFormInternalCopingStrategiesDataSource" RowHeight="30"
+            AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+            AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridEvents TValue="SmuSafetyPlanningFormInternalCopingStrategies" CellSaved="OnCellSaved"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn HeaderText="Step 2:To take my mind off my problems without contacting any person" TextAlign="TextAlign.Left">
+                <GridColumns>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormInternalCopingStrategies.InternalCopingStrategiesId) HeaderText="InternalCopingStrategiesId" AllowEditing="false" Visible=false IsPrimaryKey="true" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormInternalCopingStrategies.InternalCopingStrategiesNo) HeaderText="S/N" AllowEditing="true" Visible="true" Width="35"></GridColumn>
+                    <GridColumn Field=@nameof(SmuSafetyPlanningFormInternalCopingStrategies.InternalCopingStrategies) HeaderText="Internal coping strategies (relaxation technique, physical activity)" AllowEditing="true" Visible="true" Width="400"></GridColumn>
+                </GridColumns>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+}
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    [Parameter]
+    public int SafetyPlanningFormId { get; set; }
+    [Parameter]
+    public EventCallback<List<SmuSafetyPlanningFormInternalCopingStrategies>?> SmuSafetyPlanningFormInternalCopingStrategiesCallBack { get; set; }
+    [Parameter]
+    public List<SmuSafetyPlanningFormInternalCopingStrategies>? SmuSafetyPlanningFormInternalCopingStrategiesData { get; set; }
+    int? PreviousSafetyPlanningFormId { get; set; }
+    private SfGrid<SmuSafetyPlanningFormInternalCopingStrategies>? SmuSafetyPlanningFormInternalCopingStrategiesGrid;
+    List<SmuSafetyPlanningFormInternalCopingStrategies>? SmuSafetyPlanningFormInternalCopingStrategiesDataSource { get; set; }
+    public async Task OnCellSaved(CellSaveArgs<SmuSafetyPlanningFormInternalCopingStrategies> args)
+    {
+        if (args.Data.InternalCopingStrategies != null)
+        {
+            //OnAddRecord(SmuSafetyPlanningFormInternalCopingStrategiesDataSource);
+            await this.SmuSafetyPlanningFormInternalCopingStrategiesGrid?.EndEditAsync();
+            await SmuSafetyPlanningFormInternalCopingStrategiesCallBack.InvokeAsync(SmuSafetyPlanningFormInternalCopingStrategiesDataSource);
+        }
+    }
+    public async Task<List<SmuSafetyPlanningFormInternalCopingStrategies>?> returnData()
+    {
+        if (SmuSafetyPlanningFormInternalCopingStrategiesGrid != null)
+        {
+            await SmuSafetyPlanningFormInternalCopingStrategiesGrid.EndEditAsync();
+        }
+        return SmuSafetyPlanningFormInternalCopingStrategiesDataSource;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuSafetyPlanningFormInternalCopingStrategiesDataSource = new List<SmuSafetyPlanningFormInternalCopingStrategies>();
+            if (SafetyPlanningFormId > 0)
+            {
+                try
+                {
+                    var _SmuSafetyPlanningFormInternalCopingStrategiesDataSource = await _ISMUTools.GetSmuSafetyPlanningFormInternalCopingStrategies(SafetyPlanningFormId);
+                    if (_SmuSafetyPlanningFormInternalCopingStrategiesDataSource != null && _SmuSafetyPlanningFormInternalCopingStrategiesDataSource.Any())
+                    {
+                        // If there are records, add one empty row
+                        SmuSafetyPlanningFormInternalCopingStrategiesDataSource = _SmuSafetyPlanningFormInternalCopingStrategiesDataSource.ToList();
+                        SmuSafetyPlanningFormInternalCopingStrategiesDataSource.Add(new SmuSafetyPlanningFormInternalCopingStrategies());
+                    }
+                    else
+                    {
+                        // If there are no records, add three empty rows
+                        SmuSafetyPlanningFormInternalCopingStrategiesDataSource = new List<SmuSafetyPlanningFormInternalCopingStrategies>
+                        {
+                            new SmuSafetyPlanningFormInternalCopingStrategies(),
+                            new SmuSafetyPlanningFormInternalCopingStrategies(),
+                            new SmuSafetyPlanningFormInternalCopingStrategies()
+                        };
+                    }
+                    StateHasChanged(); // Ensure UI updates after data retrieval
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+            PreviousSafetyPlanningFormId = SafetyPlanningFormId;
+        }
+        catch (Exception ex)
+        {
+        }
+
+    }
+    private async Task LoadData()
+    {
+        if (SafetyPlanningFormId > 0)
+        {
+            try
+            {
+                await LoadData();
+                // var _SmuSafetyPlanningFormInternalCopingStrategiesDataSource = await _ISMUTools.GetSmuSafetyPlanningFormInternalCopingStrategies(SafetyPlanningFormId);
+                // if (_SmuSafetyPlanningFormInternalCopingStrategiesDataSource != null && _SmuSafetyPlanningFormInternalCopingStrategiesDataSource.Any())
+                // {
+                //     // If there are records, add one empty row for new entries
+                //     SmuSafetyPlanningFormInternalCopingStrategiesDataSource = _SmuSafetyPlanningFormInternalCopingStrategiesDataSource.ToList();
+                //     SmuSafetyPlanningFormInternalCopingStrategiesDataSource.Add(new SmuSafetyPlanningFormInternalCopingStrategies());
+                // }
+                // else
+                // {
+                //     // If there are no records, create an empty list
+                //     SmuSafetyPlanningFormInternalCopingStrategiesDataSource = new List<SmuSafetyPlanningFormInternalCopingStrategies>();
+
+                //     // Add three placeholder rows to the UI
+                //     for (int i = 0; i < 3; i++)
+                //     {
+                //         SmuSafetyPlanningFormInternalCopingStrategiesDataSource.Add(new SmuSafetyPlanningFormInternalCopingStrategies { IsPlaceholder = true });
+                //     }
+                // }
+                // StateHasChanged(); // Ensure UI updates after data retrieval
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions or logging
+            }
+        }
+    }
+    public void OnAddRecord(SmuSafetyPlanningFormInternalCopingStrategies newRecord)
+    {
+        // Remove placeholders before adding a new record
+        SmuSafetyPlanningFormInternalCopingStrategiesDataSource.RemoveAll(x => x.IsPlaceholder == true || x.IsPlaceholder == null);
+
+        // Add the new record
+        SmuSafetyPlanningFormInternalCopingStrategiesDataSource.Add(newRecord);
+
+        // Optionally add one empty row for further new entries
+        SmuSafetyPlanningFormInternalCopingStrategiesDataSource.Add(new SmuSafetyPlanningFormInternalCopingStrategies());
+
+        StateHasChanged(); // Ensure UI updates
+    }
+}
+

@@ -13,6 +13,7 @@ namespace MUCOBADI.Models
             BeneficiaryEnrolmentRegisterHeader = new HashSet<BeneficiaryEnrolmentRegisterHeader>();
             BeneficiaryIdentificationRegisterLog = new HashSet<BeneficiaryIdentificationRegisterLog>();
             BeneficiaryLinkageTrackingToolNew = new HashSet<BeneficiaryLinkageTrackingToolNew>();
+            BusinessPlanHeader = new HashSet<BusinessPlanHeader>();
             CaseCare = new HashSet<CaseCare>();
             GraduationBenchMark = new HashSet<GraduationBenchMark>();
             GraduationChecklistHeader = new HashSet<GraduationChecklistHeader>();
@@ -21,6 +22,7 @@ namespace MUCOBADI.Models
             HomeVisitServiceReportingToolHeader = new HashSet<HomeVisitServiceReportingToolHeader>();
             HouseHoldMembers = new HashSet<HouseHoldMembers>();
             Hvat = new HashSet<Hvat>();
+            Isvatheader = new HashSet<Isvatheader>();
             MonthlyCaseTrackingRegister = new HashSet<MonthlyCaseTrackingRegister>();
             OvcSchoolAttendencyHeader = new HashSet<OvcSchoolAttendencyHeader>();
             ReferralForm = new HashSet<ReferralForm>();
@@ -81,6 +83,7 @@ namespace MUCOBADI.Models
         public virtual ICollection<BeneficiaryEnrolmentRegisterHeader> BeneficiaryEnrolmentRegisterHeader { get; set; }
         public virtual ICollection<BeneficiaryIdentificationRegisterLog> BeneficiaryIdentificationRegisterLog { get; set; }
         public virtual ICollection<BeneficiaryLinkageTrackingToolNew> BeneficiaryLinkageTrackingToolNew { get; set; }
+        public virtual ICollection<BusinessPlanHeader> BusinessPlanHeader { get; set; }
         public virtual ICollection<CaseCare> CaseCare { get; set; }
         public virtual ICollection<GraduationBenchMark> GraduationBenchMark { get; set; }
         public virtual ICollection<GraduationChecklistHeader> GraduationChecklistHeader { get; set; }
@@ -89,6 +92,7 @@ namespace MUCOBADI.Models
         public virtual ICollection<HomeVisitServiceReportingToolHeader> HomeVisitServiceReportingToolHeader { get; set; }
         public virtual ICollection<HouseHoldMembers> HouseHoldMembers { get; set; }
         public virtual ICollection<Hvat> Hvat { get; set; }
+        public virtual ICollection<Isvatheader> Isvatheader { get; set; }
         public virtual ICollection<MonthlyCaseTrackingRegister> MonthlyCaseTrackingRegister { get; set; }
         public virtual ICollection<OvcSchoolAttendencyHeader> OvcSchoolAttendencyHeader { get; set; }
         public virtual ICollection<ReferralForm> ReferralForm { get; set; }

@@ -1,0 +1,617 @@
+﻿@page "/SMUGroup"
+@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+
+    .e-spinner-pane .e-spinner-inner .e-spin-bootstrap {
+        fill: black;
+        stroke: black;
+    }
+
+    .form-container {
+        margin-top: 20px; /* Adjust this to add some space below the image */
+    }
+
+    .image-container {
+        text-align: center;
+        margin-bottom: 20px; /* Adjust this to add space between the image and the form */
+    }
+</style>
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+<SfSpinner @bind-Visible="SpinnerVisible" Type="@SpinnerType.Bootstrap" Size="50" Label="Data loading">
+</SfSpinner>
+<ol class="breadcrumb" style="margin-top:5px;">
+    <li class="breadcrumb-item active" style="color: brown;"> <strong>USAID ICARE |</strong> SMU GROUPS</li>
+</ol>
+
+<div class="row">
+   <div class="col-md-12">
+        @if (SmuGroupDataSource != null)
+        {
+            <SfGrid @ref="@SmuGroupGrid" DataSource="@SmuGroupDataSource" TValue="SmuGroup" AllowFiltering=false AllowGrouping=false AllowPaging=true AllowTextWrap=true
+               GridLines="GridLine.Both" AllowSelection="true" Toolbar="@ToolbarMenu" RowHeight="25" EnableStickyHeader="true">
+                <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridPageSettings PageSize="pageSize"></GridPageSettings>
+                <GridEvents RowSelected="RowSelectedhandler" RowDeselected="DeselctedRowSelecthandler" OnActionBegin="SmuGroupActionBeginHandler" OnActionComplete=@SmuGroupActionComplete TValue="SmuGroup"></GridEvents>
+                <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+                    <HeaderTemplate Context="hContext">
+                        @{
+                            var text = GetNewRecord((hContext as SmuGroup));
+                            <div class="headerbandimg" />
+                            <span>@text</span>
+                        }
+                    </HeaderTemplate>
+                    <Template Context="testPlanContext">
+                        @{
+                            SmuGroupData = (testPlanContext as SmuGroup);
+                            @if (SmuGroupData != null)
+                            {
+                              <div style="margin:10px;">
+                                 <div class="row">
+                                         
+                                        <div class="col-md-12" hidden>
+                                            <SfNumericTextBox ID="TestingPlanId" @bind-Value="@(SmuGroupData.SmuGroupId)" Enabled="false" Placeholder="TestingPlanId" Format="N0" FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Group Name:</p>
+                                            <SfTextBox Multiline="false" @bind-Value="@(SmuGroupData.SmuGroupName)" Enabled="true" FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Name of facilitator:</p>
+                                            <SfDropDownList @bind-Value="@(SmuGroupData.SmuFacilitatorId)" Enabled="true" TItem="SmuFacilitator" TValue="int?" DataSource="@SmuFacilitatorData" Placeholder="Select facilitator" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuFacilitator.SmuFacilitatorId)" Text="@nameof(SmuFacilitator.SmuFacilitatorName)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuGroupData.SmuFacilitatorId)" /></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>Registration Date:</p>
+                                            <SfDatePicker @bind-Value=@SmuGroupData.RegistartionDate Format="dd/MM/yyyy" Enabled=true FloatLabelType="FloatLabelType.Never"></SfDatePicker>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>Region:</p>
+                                            <SfDropDownList @bind-Value="@(SmuGroupData.RegionId)" Enabled="true" TItem="ARegion" TValue="int?" DataSource="@RegionData" Placeholder="Select Region" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(ARegion.RegionId)" Text="@nameof(ARegion.RegionDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuGroupData.RegionId)" /></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>District:</p>
+                                            <SfDropDownList @bind-Value="@(SmuGroupData.DistrictId)" Enabled="true" TItem="ADistrict" TValue="int?" DataSource="@DistrictData" Placeholder="Select District" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(ADistrict.DistrictId)" Text="@nameof(ADistrict.DistrictDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuGroupData.DistrictId)" /></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>Subcounty:</p>
+                                            <SfDropDownList @bind-Value="@(SmuGroupData.SubcountyId)" Enabled="true" TItem="ASubcounty" TValue="int?" DataSource="@SubCountyData" Placeholder="Select Sub-County" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(ASubcounty.SubcountyId)" Text="@nameof(ASubcounty.SubcountyDescription)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuGroupData.SubcountyId)" /></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p>SMU Office:</p>
+                                            <SfDropDownList @bind-Value="@(SmuGroupData.SmuOfficeId)" Enabled="true" TItem="SmuOffice" TValue="int?" DataSource="@SmuOfficeData" Placeholder="Select Office" FloatLabelType="FloatLabelType.Never" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains">
+                                                <DropDownListFieldSettings Value="@nameof(SmuOffice.OfficeId)" Text="@nameof(SmuOffice.OfficeName)"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                            <p><ValidationMessage For="@(() => SmuGroupData.SmuOfficeId)" /></p>
+                                        </div>
+                                          <div style="margin:10px;">
+                                              <div class="col-md-12">
+                                              <SfTab @ref="Tab" CssClass="BlazorTab" Height="auto" LoadOn="ContentLoad.Demand">
+                                                  <TabItems>
+                                                    <TabItem>
+                                                       <ChildContent>
+                                                         <TabHeader Text="Client Registration"></TabHeader>
+                                                       </ChildContent>
+                                                       <ContentTemplate>
+                                                       <div style="margin:10px;">
+                                                           <SMURegistrationPage @ref="@sMURegistrationPage" AgeGroupData="@AgeGroupData" 
+                                                           ClientRegistrationFormCallBack="@RegistrationFormCallBackMethod"  GroupId="@SmuGroupData.SmuGroupId"
+                                                           GenderData="@GenderData" SmuClientRegistrationFormData="@SmuClientRegistrationFormData"></SMURegistrationPage>
+                                                       </div>
+                                                       </ContentTemplate>
+                                                    </TabItem>
+                                                    <TabItem>
+                                                       <ChildContent>
+                                                         <TabHeader Text="Pre-Assessment Guide"></TabHeader>
+                                                       </ChildContent>
+                                                       <ContentTemplate>
+                                                        <div style="margin:10px;">
+                                                         <SMUPreAssessmentGuidePage @ref="@_sMUPreAssessmentGuidePage" SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuProgramData="@SmuProgramData"
+                                                              SmuSuicideAssessmentQuestionData="@SmuSuicideAssessmentQuestionData" GroupId="@SelectedGroupId"
+                                                              SmuSuicideAssessmentResponseData="@SmuSuicideAssessmentResponseData" YesNoData="@YesNoData"
+                                                              DistrictData="@DistrictData" GenderData="@GenderData" RegionData="@RegionData" SmuOfficeData="@SmuOfficeData" 
+                                                              SmuSuicideAssessmentScoreData="@SmuSuicideAssessmentScoreData" SubcountyData="@SubCountyData" SmuGroupData="@SmuGroupDataSource"
+                                                              SmuSafetyPlanningFormInternalCopingStrategiesData="@SmuSafetyPlanningFormInternalCopingStrategiesData"
+                                                              SmuSafetyPlanningFormPeopleProvideDistractionData="@SmuSafetyPlanningFormPeopleProvideDistractionData"
+                                                              SmuSafetyPlanningFormPeopleToAskForHelpData="@SmuSafetyPlanningFormPeopleToAskForHelpData" 
+                                                              SmuSafetyPlanningFormProfessionsAgenciesToContactData="@SmuSafetyPlanningFormProfessionsAgenciesToContactData"
+                                                              SmuSafetyPlanningFormWarningSignsData="@SmuSafetyPlanningFormWarningSignsData"
+                                                               SmuPh9QuestionData="@SmuPh9QuestionData" 
+                                                              SmuPh9QuestionHeaderData="@SmuPh9QuestionHeaderData">
+                                                         </SMUPreAssessmentGuidePage>
+                                                        </div>
+                                                       </ContentTemplate>
+                                                    </TabItem>
+                                                     <TabItem>
+                                                       <ChildContent>
+                                                         <TabHeader Text="Pre-Group Guide"></TabHeader>
+                                                       </ChildContent>
+                                                       <ContentTemplate>
+                                                        <div style="margin:10px;">
+                                                        <SMUPreGroupGuidePage @ref="@_SMUPreGroupGuidePage" DifficultyToCheckOffProblemsData="@DifficultyToCheckOffProblemsData"
+                                                            DistrictData="@DistrictData" GenderData="@GenderData" GroupId="@SelectedGroupId" RegionData="@RegionData" 
+                                                            SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuGroupData="@SmuGroupDataSource" SmuOfficeData="@SmuOfficeData"
+                                                            SmuPh9QuestionData="@SmuPh9QuestionData" SmuProgramData="@SmuProgramData" SubcountyData="@SubCountyData" YesNoData="@YesNoData" 
+                                                            SmuPh9QuestionHeaderData="@SmuPh9QuestionHeaderData">
+                                                        </SMUPreGroupGuidePage>
+                                                        </div>
+                                                       </ContentTemplate>
+                                                    </TabItem>
+                                                    <TabItem>
+                                                       <ChildContent>
+                                                         <TabHeader Text="Attendance Form"></TabHeader>
+                                                       </ChildContent>
+                                                       <ContentTemplate>
+                                                        <div style="margin:10px;">
+                                                         <SMUAttendenceHeaderPage @ref="@_sMUAttendanceHeaderPage"  FinancialYearData="@FinancialYearData" GroupId="@SelectedGroupId"
+                                                             SmuAttendanceKeyData="@SmuAttendanceKeyData" SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuCycleData="@SmuCycleData"
+                                                             SmuGroupData="@SmuGroupDataSource" SmuKaguguScoreData="@SmuKaguguScoreData" SmuReasonForAbsenceData="@SmuReasonForAbsenceData">
+                                                         </SMUAttendenceHeaderPage>
+                                                        </div>
+                                                       </ContentTemplate>
+                                                    </TabItem>
+                                                    <TabItem>
+                                                       <ChildContent>
+                                                         <TabHeader Text="Termination Guide"></TabHeader>
+                                                       </ChildContent>
+                                                       <ContentTemplate>
+                                                        <div style="margin:10px;">
+                                                        <SMUTerminationGuidePage @ref="@_SMUTerminationGuidePage" DifficultyToCheckOffProblemsData="@DifficultyToCheckOffProblemsData"
+                                                            DistrictData="@DistrictData" GenderData="@GenderData" GroupId="@SelectedGroupId" RegionData="@RegionData" 
+                                                            SmuClientRegistrationFormData="@SmuClientRegistrationFormData" SmuGroupData="@SmuGroupDataSource" SmuOfficeData="@SmuOfficeData"
+                                                            SmuPh9QuestionData="@SmuPh9QuestionData" SmuProgramData="@SmuProgramData" SubcountyData="@SubCountyData" YesNoData="@YesNoData" 
+                                                            SmuPh9QuestionHeaderData="@SmuPh9QuestionHeaderData">
+                                                        </SMUTerminationGuidePage>
+                                                        </div>
+                                                       </ContentTemplate>
+                                                    </TabItem>
+                                                  </TabItems>
+                                               </SfTab>
+                                              </div>
+                                          </div>
+                                    </div>
+                              </div>
+                            }
+                        }
+                    </Template>
+                    <FooterTemplate Context="headerContext">
+                        <button class="btn btn-success" @onclick=SaveGroup>Save Form</button>
+                        <button class="btn btn-danger" @onclick=CancelGroup>Cancel</button>
+                        @if (IsSaving)
+                        {
+                            <SfSpinner @bind-Visible="IsSaving" Type="@SpinnerType.Bootstrap" Size="70" Label="Saving Data">
+                            </SfSpinner>
+                        }
+                       
+                    </FooterTemplate>
+                   </GridEditSettings>
+                <GridColumns>
+                    <GridColumn Type="ColumnType.CheckBox" Width="30"></GridColumn>
+                    <GridColumn Field=@nameof(SmuGroup.SmuGroupId) HeaderText="SmuGroupId" TextAlign="TextAlign.Left" IsPrimaryKey="true" IsIdentity="true" Visible="false" Width="80"></GridColumn>
+                    <GridColumn Field=@nameof(SmuGroup.SmuGroupName) HeaderText="Group Name" TextAlign="TextAlign.Left" Visible="true" Width="200"></GridColumn>
+                    <GridForeignColumn Field="@(nameof(SmuGroup.SmuFacilitatorId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Facilitator" Width="200" ForeignKeyField="@(nameof(SmuFacilitator.SmuFacilitatorId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuFacilitator.SmuFacilitatorName))" ForeignDataSource="@SmuFacilitatorData">
+                    </GridForeignColumn>
+                    <GridForeignColumn Field="@(nameof(SmuGroup.SmuOfficeId))" TextAlign="TextAlign.Left"
+                                       HeaderText="Office" Width="150" ForeignKeyField="@(nameof(SmuOffice.OfficeId))" AllowEditing="false"
+                                       ForeignKeyValue="@(nameof(SmuOffice.OfficeName))" ForeignDataSource="@SmuOfficeData">
+                    </GridForeignColumn>
+                    <GridColumn Field=@nameof(SmuGroup.RegistartionDate) HeaderText="Registration Date" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        }
+   </div>
+</div>
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    SfTab? Tab;
+    bool IsSaving { get; set; }
+    public bool SpinnerVisible { get; set; }
+    private int currentPage = 1;
+    private int pageSize = 30;
+    private string searchTerm = string.Empty;
+    public int SelectedGroupId { get; set; }
+    public int SelectedClientRegistrationId { get; set; }
+    SMUAttendenceHeaderPage? _sMUAttendanceHeaderPage;
+    SMUTerminationGuidePage? _SMUTerminationGuidePage;
+    SMUPreGroupGuidePage? _SMUPreGroupGuidePage;
+    SMURegistrationPage? sMURegistrationPage;
+    SMUPreAssessmentGuidePage? _sMUPreAssessmentGuidePage;
+    SfGrid<SmuGroup>? SmuGroupGrid;
+    SmuGroup? SmuGroupData;
+    private List<SmuGroup> SmuGroupDataSource = new List<SmuGroup>();
+    List<SmuCycle>? SmuCycleData { get; set; }
+    //public List<SmuSafetyPlanningForm> SmuSafetyPlanningFormPublicData { get; set; }
+    List<SmuPh9Question> SmuPh9QuestionData { get; set; }
+    List<SmuPh9QuestionHeader> SmuPh9QuestionHeaderData { get; set; }
+    List<SmuAssessmentGuidePh9Questions>? SmuAssessmentGuidePh9QuestionsPublicData { get; set; }
+    List<SmuReasonsForSessionAbsence>? SmuReasonForAbsenceData { get; set; }
+    List<SmuKaguguScore>? SmuKaguguScoreData { get; set; }
+    List<AFinancialYear>? FinancialYearData { get; set; }
+    List<SmuAttendanceKey>? SmuAttendanceKeyData { get; set; }
+    List<SmuFacilitator> SmuFacilitatorData = new List<SmuFacilitator>();
+    List<ADistrict> DistrictData = new List<ADistrict>();
+    List<ARegion> RegionData = new List<ARegion>();
+    List<SmuOffice> SmuOfficeData = new List<SmuOffice>();
+    List<ASubcounty> SubCountyData = new List<ASubcounty>();
+    List<AGender> GenderData = new List<AGender>();
+    List<SmuAgeGroup> AgeGroupData = new List<SmuAgeGroup>();
+    List<AYesNo> YesNoData { get; set; }
+    List<SmuProgram> SmuProgramData { get; set; } = new List<SmuProgram>();
+    List<SmuLevelOfDifficultyToCheckOffProblems> DifficultyToCheckOffProblemsData { get; set; }
+    List<SmuSucideAssementScore>? SmuSuicideAssessmentScoreData { get; set; } = new List<SmuSucideAssementScore>();
+    List<SmuTerminantionGuidePh9Questions>? SmuTerminantionGuidePh9QuestionsPublicData { get; set; }
+    List<SmuSucideAssementQuestion> SmuSuicideAssessmentQuestionData = new List<SmuSucideAssementQuestion>();
+    List<SmuSucideAssementResponse> SmuSuicideAssessmentResponseData = new List<SmuSucideAssementResponse>();
+    List<SmuClientRegistrationForm>? SmuClientRegistrationFormData { get; set; } = new List<SmuClientRegistrationForm>();
+    List<SmuSafetyPlanningFormPeopleToAskForHelp>? SmuSafetyPlanningFormPeopleToAskForHelpData { get; set; }
+    List<SmuSafetyPlanningFormPeopleProvideDistraction>? SmuSafetyPlanningFormPeopleProvideDistractionData { get; set; }
+    List<SmuSafetyPlanningFormWarningSigns>? SmuSafetyPlanningFormWarningSignsData { get; set; }
+    List<SmuSafetyPlanningFormInternalCopingStrategies>? SmuSafetyPlanningFormInternalCopingStrategiesData { get; set; }
+    List<SmuSafetyPlanningFormProfessionsAgenciesToContact>? SmuSafetyPlanningFormProfessionsAgenciesToContactData { get; set; }
+    private void RegistrationFormCallBackMethod(List<SmuClientRegistrationForm> registrationForm) => SmuGroupData.SmuClientRegistrationForm = registrationForm;
+    private List<object> ToolbarMenu = new List<object> {"Add","Edit","Search",
+    new ItemModel(){TooltipText ="Export Data to XML",
+                                        PrefixIcon = "e-click", Id = "XmlExport"} };
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+    public void RowSelectedhandler(RowSelectEventArgs<SmuGroup> Args)
+    {
+        SelectedGroupId = Args.Data.SmuGroupId;
+    }
+    public async void DeselctedRowSelecthandler(RowDeselectEventArgs<SmuGroup> Args)
+    {
+        Args.Data.SmuGroupId = 0;
+        // await SmuGroupGrid.RefreshHeaderAsync();
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            if (!userManagement.IsSignedIn())
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                using (var db = new MUCOBADIContext())
+                {
+                    YesNoData = db.AYesNo.AsNoTracking().ToList();
+                    SmuCycleData = db.SmuCycle.AsNoTracking().ToList();
+                    SmuProgramData = db.SmuProgram.AsNoTracking().ToList();
+                    SmuKaguguScoreData = db.SmuKaguguScore.AsNoTracking().ToList();
+                    FinancialYearData = db.AFinancialYear.AsNoTracking().ToList();
+                    SmuAttendanceKeyData = db.SmuAttendanceKey.AsNoTracking().ToList();
+                    SmuReasonForAbsenceData = db.SmuReasonsForSessionAbsence.AsNoTracking().ToList();
+                    SmuSuicideAssessmentQuestionData = db.SmuSucideAssementQuestion.AsNoTracking().ToList();
+                    SmuSuicideAssessmentResponseData = db.SmuSucideAssementResponse.AsNoTracking().ToList();
+                    SmuFacilitatorData = db.SmuFacilitator.AsNoTracking().ToList();
+                    DistrictData = db.ADistrict.AsNoTracking().ToList();
+                    RegionData = db.ARegion.AsNoTracking().ToList();
+                    SmuOfficeData = db.SmuOffice.AsNoTracking().ToList();
+                    SubCountyData = db.ASubcounty.AsNoTracking().ToList();
+                    GenderData = db.AGender.AsNoTracking().ToList();
+                    AgeGroupData = db.SmuAgeGroup.AsNoTracking().ToList();
+                    SmuGroupDataSource = db.SmuGroup.AsNoTracking().ToList();
+                    SmuPh9QuestionHeaderData = db.SmuPh9QuestionHeader.AsNoTracking().ToList();
+                    SmuPh9QuestionData = db.SmuPh9Question.AsNoTracking().ToList();
+                    DifficultyToCheckOffProblemsData = db.SmuLevelOfDifficultyToCheckOffProblems.AsNoTracking().ToList();
+                    var _SmuClientRegistrationFormData = await _ISMUTools.GetClientRegisteredByGroupId(SelectedGroupId);
+                    if(_SmuClientRegistrationFormData != null)
+                    {
+                        SmuClientRegistrationFormData = _SmuClientRegistrationFormData;
+                    }
+                    // var _SmuAttendanceHeaderPublicData = await _ISMUTools.GetClientAttendanceByGroupId(SelectedGroupId);
+                    // var _SmuTerminationGuidePublicData = await _ISMUTools.GetSmuTerminantionGuides(SelectedGroupId);
+                    // if (_SmuTerminationGuidePublicData != null)
+                    // {
+                    //     SmuTerminationGuidePublicData = _SmuTerminationGuidePublicData;
+                    // }
+
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await ToastObj.ShowAsync(new ToastModel { Title = "Error!", Content = ex.Message.ToString(), CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+    }
+    public async void SmuGroupActionBeginHandler(ActionEventArgs<SmuGroup> Args)
+    {
+        var data = Args.Data;
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+        {
+            // SmuGroupDataSource = new List<SmuGroup>();
+            //await SmuGroupGrid.Refresh();
+            
+            Args.RowData.SmuClientRegistrationForm = new List<SmuClientRegistrationForm>();
+            Args.RowData.SmuAttendenceHeader = new List<SmuAttendenceHeader>();
+            Args.RowData.SmuAssessmentGuide = new List<SmuAssessmentGuide>();
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+        {
+            if (Args.RowData.SmuClientRegistrationForm == null)
+            {
+                Args.RowData.SmuClientRegistrationForm = new List<SmuClientRegistrationForm>();
+            }
+            if (Args.RowData.SmuAttendenceHeader == null)
+            {
+                Args.RowData.SmuAttendenceHeader = new List<SmuAttendenceHeader>();
+            }
+            if (Args.RowData.SmuAssessmentGuide == null)
+            {
+                Args.RowData.SmuAssessmentGuide = new List<SmuAssessmentGuide>();
+            }
+            //Returning Client Registration Details
+            var _SmuClientRegistrationFormData = await _ISMUTools.GetClientRegisteredByGroupId(SelectedGroupId);
+            if (_SmuClientRegistrationFormData != null)
+            {
+                SmuClientRegistrationFormData = _SmuClientRegistrationFormData;
+            }
+            // var _SmuTerminationGuidePublicData = await _ISMUTools.GetSmuTerminantionGuides(SelectedGroupId);
+            // if (_SmuTerminationGuidePublicData != null)
+            // {
+            //     SmuTerminationGuidePublicData = _SmuTerminationGuidePublicData;
+            // }
+        }
+        if (Args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            if (Args.RowData.SmuClientRegistrationForm == null)
+            {
+                Args.RowData.SmuClientRegistrationForm = new List<SmuClientRegistrationForm>();
+            }
+            if (Args.RowData.SmuAttendenceHeader == null)
+            {
+                Args.RowData.SmuAttendenceHeader = new List<SmuAttendenceHeader>();
+            }
+            if (Args.RowData.SmuAssessmentGuide == null)
+            {
+                Args.RowData.SmuAssessmentGuide = new List<SmuAssessmentGuide>();
+            }
+        }
+    }
+    public async void SmuGroupActionComplete(ActionEventArgs<SmuGroup> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            SmuGroupGrid.PreventRender(false);
+        }
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+
+        }
+    }
+    public string GetNewRecord(SmuGroup Value)
+    {
+        if (string.IsNullOrEmpty(Value.SmuGroupName) == true)
+        {
+            return "Add new SMU Group";
+        }
+        else
+        {
+            return "Edit:" + Value.SmuGroupName;
+        }
+    }
+    private async Task CancelGroup()
+    {
+        await SmuGroupGrid.CloseEditAsync();
+    }
+    private async Task SaveGroup()
+    {
+        try
+        {
+            if (SmuGroupGrid != null)
+            {
+                IsSaving = true;
+
+                if (SmuGroupData != null)
+                {
+                    if (string.IsNullOrEmpty(SmuGroupData.SmuGroupName) == true)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please Enter the SMU Group Name!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.RegionId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group region!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.DistrictId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group district!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.SubcountyId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group subcounty!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.SmuFacilitatorId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group Facilitator!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.RegistartionDate.HasValue == false)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please enter SMU group registration date!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else
+                    {
+                        if (sMURegistrationPage != null)
+                        {
+                            if (SmuGroupData.SmuClientRegistrationForm == null)
+                            {
+                                SmuGroupData.SmuClientRegistrationForm = new List<SmuClientRegistrationForm>();
+                            }
+                            SmuGroupData.SmuClientRegistrationForm = await sMURegistrationPage.returnData();
+                        }
+                        await SmuGroupGrid.EndEditAsync();
+                        await _ISMUTools.SaveSMUGroup(SmuGroupData);
+                    }
+                //  IsSaving = true;
+                }
+
+
+            }
+        }
+        catch (ArgumentNullException ex)
+        {
+            // Log or handle the ArgumentNullException here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        catch (Exception ex)
+        {
+            // Log or handle other exceptions here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        finally
+        {
+            IsSaving = false; // Reset IsSaving flag regardless of success or failure
+        }
+    }
+    private async Task SaveButtonClick()
+    {
+        // Call the SaveGroup method passing the edited data from the child component
+        await SaveClientRegistrationData(sMURegistrationPage.SmuClientRegistrationFormData);
+    }
+    private async Task SaveClientRegistrationData(List<SmuClientRegistrationForm> data)
+    {
+        try
+        {
+            if (SmuGroupGrid != null)
+            {
+                IsSaving = true;
+                // Update SmuClientRegistrationForm data in SmuGroupData with editedData received from the child
+                SmuGroupData.SmuClientRegistrationForm = data;
+                if (SmuGroupData != null)
+                {
+                    if (string.IsNullOrEmpty(SmuGroupData.SmuGroupName) == true)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please Enter the SMU Group Name!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.RegionId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group region!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.DistrictId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group district!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.SubcountyId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group subcounty!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.SmuFacilitatorId == null)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please select SMU group Facilitator!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else if (SmuGroupData.RegistartionDate.HasValue == false)
+                    {
+                        await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = "Please enter SMU group registration date!", CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+                        IsSaving = false; // Reset IsSaving flag
+                        return; // Exit method to prevent form from closing
+                    }
+                    else
+                    {
+                        await SmuGroupGrid.EndEditAsync();
+                        await _ISMUTools.SaveSMUGroup(SmuGroupData);
+                    }
+                    //  IsSaving = true;
+                }
+
+
+            }
+        }
+        catch (ArgumentNullException ex)
+        {
+            // Log or handle the ArgumentNullException here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        catch (Exception ex)
+        {
+            // Log or handle other exceptions here
+            // You can also show a toast message or user-friendly error
+            await this.ToastObj.Show(new ToastModel { Title = "Error!", Content = ex.Message, CssClass = "e-toast-danger", Icon = "e-error toast-icons" });
+        }
+        finally
+        {
+            IsSaving = false; // Reset IsSaving flag regardless of success or failure
+        }
+    }
+}

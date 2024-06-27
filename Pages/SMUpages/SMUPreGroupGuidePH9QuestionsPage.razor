@@ -1,0 +1,234 @@
+﻿@using MUCOBADI.DTOs
+@using MUCOBADI.Interfaces.SMUtools
+@using MUCOBADI.Models;
+@using MUCOBADI.Data;
+@using System.Collections.ObjectModel;
+@using System.IO;
+@using MUCOBADI.Repository.SMUtools
+@using Microsoft.EntityFrameworkCore;
+@using System.Collections;
+@inject UserManagement userManagement;
+@inject NavigationManager Navigation;
+@using Microsoft.AspNetCore.Hosting;
+@using System.Net.Http.Json
+@using Microsoft.Extensions.Configuration
+@inject IWebHostEnvironment hostingEnv;
+@inject IConfiguration Configuration
+@inject HttpClient _HttpClient;
+@inject ISMUtools _ISMUTools
+<style>
+    h4 {
+        background-color: black;
+        color: whitesmoke;
+        padding: 10px;
+    }
+
+    .e-spinner-pane .e-spinner-inner .e-spin-bootstrap {
+        fill: black;
+        stroke: black;
+    }
+</style>
+<div class="row">
+    <div class="col-lg-12 control-section">
+        <SfToast @ref="ToastObj" ID="toast_type">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+    </div>
+</div>
+<SfSpinner @bind-Visible="SpinnerVisible" Type="@SpinnerType.Bootstrap" Size="50" Label="Data loading">
+</SfSpinner>
+@if (SmuPreGroupGuidePh9QuestionsPublicDataSource != null)
+{
+    <SfGrid @ref=@SmuPreGroupGuidePh9QuestionsGrid TValue="SmuPreGroupGuidePh9Questions"
+            DataSource="SmuPreGroupGuidePh9QuestionsPublicDataSource" RowHeight="35"
+            AllowSelection="true" AllowSorting="false" AllowGrouping="false" AllowPaging="false" AllowFiltering="false"
+            AllowReordering="false" AllowResizing="true" GridLines="GridLine.Both" AllowTextWrap=true>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+        <GridEvents TValue="SmuPreGroupGuidePh9Questions" CellSaved="OnCellSaved"></GridEvents>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="false" Mode="Syncfusion.Blazor.Grids.EditMode.Batch" ShowConfirmDialog=false></GridEditSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(SmuPreGroupGuidePh9Questions.SmuPreGroupGuidePh9QuestionsId) HeaderText="ClientRegistrationFormId" AllowEditing="false" Visible=false IsPrimaryKey="true" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(SmuPreGroupGuidePh9Questions.SerialNumber) HeaderText="S/N" AllowEditing="false" Visible="true" Width="40"></GridColumn>
+            <GridForeignColumn Field="@(nameof(SmuPreGroupGuidePh9Questions.Ph9QuestionsId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Over the last 2 weeks, how often have you been bothered by the following problems?" Width="500"
+                               ForeignKeyField="@(nameof(SmuPh9Question.Ph9QuestionId))" AllowEditing="true" ForeignKeyValue="@(nameof(SmuPh9Question.Ph9Question))" ForeignDataSource="@SmuPh9QuestionData">
+            </GridForeignColumn>
+            <GridForeignColumn Field="@(nameof(SmuPreGroupGuidePh9Questions.Ph9QuestionHeaderId))" TextAlign="TextAlign.Left" Visible="true"
+                               HeaderText="Response" Width="180"
+                               ForeignKeyField="@(nameof(SmuPh9QuestionHeader.Ph9QuestionHeaderId))" AllowEditing="true" ForeignKeyValue="@(nameof(SmuPh9QuestionHeader.Ph9QuestionDescription))" ForeignDataSource="@SmuPh9QuestionHeaderData">
+            </GridForeignColumn>
+
+            <GridColumn Field=@nameof(SmuPreGroupGuidePh9Questions.SmuPreGroupGuidePh9QuestionsSored) HeaderText="Score" AllowEditing="false" Visible="true" Width="70"></GridColumn>
+        </GridColumns>
+        <div class="col-md-12">
+            <p><strong>PH 4 Score Key:</strong>  No Depression 0-2; Mild 3-4; Moderate 5-8; Severe 9-12 </p>
+            <p><strong>The PHQ 4 score is:</strong>@TotalScore </p>
+        </div>
+    </SfGrid>
+}
+
+@code {
+    #region Toasters
+    public static string? ToastContent { get; set; }
+    SfToast? ToastObj;
+    SfToast? DeleteToastObj;
+    private string ToastPosition = "Right";
+    private int AlarmTimeout { get; set; } = 120000;
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Warning!", Content=ToastContent, CssClass="e-toast-warning", Icon="e-warning toast-icons" },
+        new ToastModel{ Title = "Success!", Content=ToastContent, CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content=ToastContent, CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Information!", Content=ToastContent, CssClass="e-toast-info", Icon="e-info toast-icons" }
+    };
+    #endregion Toasters
+    SfTab? Tab;
+    bool IsSaving { get; set; }
+    public bool SpinnerVisible { get; set; }
+    int? PreviousSelectedPreGroupGuideId { get; set; }
+    public double? TotalScore { get; set; }
+    [Parameter]
+    public int SelectedPreGroupGuideId { get; set; }
+    [Parameter]
+    public List<SmuPh9Question> SmuPh9QuestionData { get; set; }
+    [Parameter]
+    public List<SmuPh9QuestionHeader> SmuPh9QuestionHeaderData { get; set; }
+    [Parameter]
+    public EventCallback<List<SmuPreGroupGuidePh9Questions>?> SmuPreGroupGuidePh9QuestionsCallBack { get; set; }
+    private SfGrid<SmuPreGroupGuidePh9Questions>? SmuPreGroupGuidePh9QuestionsGrid;
+    List<SmuPreGroupGuidePh9Questions>? SmuPreGroupGuidePh9QuestionsPublicDataSource { get; set; }
+    public async Task OnCellSaved(CellSaveArgs<SmuPreGroupGuidePh9Questions> args)
+    {
+        if (args.Data.Ph9QuestionsId != null && args.Data.Ph9QuestionHeaderId != null)
+        {
+            var index = await SmuPreGroupGuidePh9QuestionsGrid.GetRowIndexByPrimaryKeyAsync(args.RowData.SmuPreGroupGuidePh9QuestionsId);
+            double? _Question1Score = 0.0;
+            double? _Question2Score = 0.0;
+            double? _Question3Score = 0.0;
+            double? _Question4Score = 0.0;
+            double? _Question5Score = 0.0;
+            double? _Question6Score = 0.0;
+            double? _Question7Score = 0.0;
+            double? _Question8Score = 0.0;
+            double? _Question9Score = 0.0;
+            if (args.Data.Ph9QuestionHeaderId.HasValue)
+            {
+                if (args.Data.Ph9QuestionHeaderId == 1)
+                {
+                    _Question1Score = 0;
+                }
+                else if (args.Data.Ph9QuestionHeaderId == 2)
+                {
+                    _Question1Score = 1;
+                }
+                else if (args.Data.Ph9QuestionHeaderId == 3)
+                {
+                    _Question1Score = 2;
+                }
+                else if (args.Data.Ph9QuestionHeaderId == 4)
+                {
+                    _Question1Score = 3;
+                }
+            }
+            if (args.Data.Ph9QuestionsId == 1)
+            {
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question1Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 2)
+            {
+                _Question2Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question2Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 3)
+            {
+                _Question3Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question3Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 4)
+            {
+                _Question4Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question4Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 5)
+            {
+                _Question5Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question5Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 6)
+            {
+                _Question6Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question6Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 7)
+            {
+                _Question7Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question7Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 8)
+            {
+                _Question8Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question8Score;
+            }
+            else if (args.Data.Ph9QuestionsId == 9)
+            {
+                _Question9Score = _Question1Score;
+                args.Data.SmuPreGroupGuidePh9QuestionsSored = _Question9Score;
+            }
+            List<double?> scores = new List<double?>
+                {
+                    _Question1Score,
+                    _Question2Score,
+                    _Question3Score,
+                    _Question4Score,
+                    _Question5Score,
+                    _Question6Score,
+                    _Question7Score,
+                    _Question8Score,
+                    _Question9Score
+                };
+            TotalScore = scores.Sum(score => score ?? 0.0);
+
+            await this.SmuPreGroupGuidePh9QuestionsGrid?.EndEditAsync();
+            await SmuPreGroupGuidePh9QuestionsCallBack.InvokeAsync(SmuPreGroupGuidePh9QuestionsPublicDataSource);
+        }
+    }
+    public async Task<List<SmuPreGroupGuidePh9Questions>?> returnData()
+    {
+        if (SmuPreGroupGuidePh9QuestionsGrid != null)
+        {
+            await SmuPreGroupGuidePh9QuestionsGrid.EndEditAsync();
+        }
+        return SmuPreGroupGuidePh9QuestionsPublicDataSource;
+    }
+  
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SmuPreGroupGuidePh9QuestionsPublicDataSource = new List<SmuPreGroupGuidePh9Questions>();
+            if (SelectedPreGroupGuideId > 0)
+            {
+                try
+                {
+                    var _SmuPreGroupGuidePh9QuestionsPublicData = await _ISMUTools.GetSmuPreGroupGuidePh9Questions(SelectedPreGroupGuideId);
+                    if (_SmuPreGroupGuidePh9QuestionsPublicData != null)
+                    {
+                        SmuPreGroupGuidePh9QuestionsPublicDataSource = _SmuPreGroupGuidePh9QuestionsPublicData;
+                        StateHasChanged();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions or logging
+                }
+            }
+            // PreviousSelectedPreGroupGuideId = SelectedPreGroupGuideId;
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}

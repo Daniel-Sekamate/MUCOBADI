@@ -1,0 +1,427 @@
+﻿@page "/BusinessTrackingLedgerPage"
+@using MUCOBADI.Interfaces
+@using MUCOBADI.Models
+@using MUCOBADI.Pages.BIM.PartialPage
+@using System.Collections
+@inject IToastService toastService;
+@inject IBimService Repo;
+
+<style>
+    h2 {
+        background-color: #9b51e0;
+        text-align: center;
+        padding: 5px;
+        margin-bottom: 5px;
+        color: ghostwhite;
+    }
+
+    h3 {
+        background-color: black;
+        text-align: left;
+        padding: 5px;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        color: ghostwhite;
+    }
+</style>
+
+<MudOverlay Visible="@IsLoading" DarkBackground="true" Absolute="true" Style="z-index:200000; height:100vh;">
+    <MudProgressCircular Color="MudBlazor.Color.Secondary" Indeterminate="true" />
+    <MudText Style="color:ghostwhite;">Loading data please wait..</MudText>
+</MudOverlay>
+
+<div class="row">
+    <div class="col-md-12">
+        <BreadCrumbPage CategoryName="BIM" PageName="Project Financing Plan" />
+    </div>
+     <div class="col-md-12">
+        <SfGrid @ref="BusinessPlanGrid" TValue="BusinessTrackingLedger" Query="@MainQuery"
+                AllowGrouping="false" ShowColumnChooser="true" AllowTextWrap="true"
+                AllowPaging="true" AllowFiltering="true" GridLines="GridLine.Both" AllowSelection="true"
+                Toolbar="@(new string[] {"Add","Edit","Delete","Update","Cancel","ColumnChooser"})">
+            @*<GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>*@
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+            <GridPageSettings PageSize="20"></GridPageSettings>
+            <SfDataManager AdaptorInstance="@typeof(BusinessTrackingLedgerAdapter)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
+            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+            <GridSearchSettings IgnoreCase="true"></GridSearchSettings>
+            <GridEvents OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="BusinessTrackingLedger"></GridEvents>
+            <GridEditSettings AllowAdding="true" AllowDeleting="false" AllowEditing="true" Mode="@EditMode.Dialog" Dialog="DialogParams">
+                <Template Context="ReviewHeaderContext">
+                    @{
+                        ReviewData = (ReviewHeaderContext as BusinessTrackingLedger);
+                        @if (ReviewData != null)
+                        {
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Name of the proposed Business: </label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.ProposedBusinessName)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-12">
+                                    <h3>
+                                        Start Up Expenses
+                                    </h3>
+                                </div>
+                                <div class="col-md-12">
+                                    <BusinessTrackingLedgerSuePage BusinessTrackingLedgerSueData="@(ReviewData.BusinessTrackingLedgerSue.ToList())" BusinessTrackingLedgerId="@ReviewData.BusinessTrackingLedgerId"
+                                                                   DetailToggle="OnSueReturnToggle" />
+                                </div>
+                                <div class="col-md-12">
+                                    <label> Total Amount  </label>
+                                    <SfNumericTextBox @bind-Value="@(ReviewData.StartupExpenseTotalAmount)" Enabled="true" Format="##,##" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                </div>
+                                <div class="col-md-12">
+                                    <h2>
+                                        Profit and Business Viability Analysis
+                                    </h2>
+                                </div>
+                                <div class="col-md-12">
+                                    <h3>
+                                        Operational Costs per Month
+                                    </h3>
+                                </div>
+                                <div class="col-md-12">
+                                    <BusinessTrackingLedgerMocPage BusinessTrackingLedgerMocData="@(ReviewData.BusinessTrackingLedgerMoc.ToList())" BusinessTrackingLedgerId="@ReviewData.BusinessTrackingLedgerId"
+                                                                   DetailToggle="OnMocReturnToggle" />
+                                </div>
+                                <div class="col-md-12">
+                                    <label> Total Amount  </label>
+                                    <SfNumericTextBox @bind-Value="@(ReviewData.BusinessViabilityAnalysisTotalAmount)" Enabled="true" Format="##,##" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                </div>
+                                <div class="col-md-12">
+                                    <h3>
+                                        Outputs
+                                    </h3>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>
+                                        Estimated Output per day/Incomes
+                                    </label>
+                                    <SfNumericTextBox @bind-Value="@(ReviewData.EstimatedOutputPerDay)" Enabled="true" Format="##,##" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>
+                                        Net Profits
+                                    </label>
+                                    <SfNumericTextBox @bind-Value="@(ReviewData.NetProfits)" Enabled="true" Format="##,##" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfNumericTextBox>
+                                </div>
+
+                                <div class="col-md-12"></div>
+                                <div class="col-md-4">
+                                    <label>Name of Data Collector</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataCollectorName)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Title</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataCollectorTitle)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Date</label>
+                                    <SfDatePicker @bind-Value="@(ReviewData.DataCollectionDate)" Format="dd/MM/yyyy" Placeholder="Enter Date" FloatLabelType="FloatLabelType.Never" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Name of Data Reviewer</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataReviewerName)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Title</label>
+                                    <SfTextBox Multiline="false" @bind-Value="@(ReviewData.DataCollectorTitle)" Enabled="true" Placeholder="Enter type here..." FloatLabelType="FloatLabelType.Never"></SfTextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Date</label>
+                                    <SfDatePicker @bind-Value="@(ReviewData.DataReviewDate)" Format="dd/MM/yyyy" Placeholder="Enter Date" FloatLabelType="FloatLabelType.Never" />
+                                </div>
+                            </div>
+                        }
+                    }
+                </Template>
+            </GridEditSettings>
+            <GridColumns>
+                <GridColumn HeaderText="Manage Records" Width="80">
+                    <GridCommandColumns>
+                        <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() { CssClass="e-icons e-view-details",Content="View" })" Title="View"></GridCommandColumn>
+                    </GridCommandColumns>
+                </GridColumn>
+                <GridColumn Field="@(nameof(BusinessTrackingLedger.BusinessTrackingLedgerId))" HeaderText="Id" Visible=false Width="120" IsPrimaryKey=true IsIdentity=true></GridColumn>
+                <GridColumn Field="@(nameof(BusinessTrackingLedger.ProposedBusinessName))" HeaderText="Proposed Business Name" Width="120"></GridColumn>
+                <GridColumn Field="@(nameof(BusinessTrackingLedger.StartupExpenseTotalAmount))" HeaderText="Total Startup Expense Amount" Width="120"></GridColumn>
+                <GridColumn Field="@(nameof(BusinessTrackingLedger.BusinessViabilityAnalysisTotalAmount))" HeaderText="Total Operational Costs per Month" Width="120"></GridColumn>
+                <GridColumn Field="@(nameof(BusinessTrackingLedger.EstimatedOutputPerDay))" HeaderText=" Estimated Output per day/Incomes" Width="120"></GridColumn>
+                <GridColumn Field="@(nameof(BusinessTrackingLedger.NetProfits))" HeaderText=" Net Profits" Width="120"></GridColumn>
+            </GridColumns>
+        </SfGrid>
+    </div>
+</div>
+@code {
+    SfGrid<BusinessTrackingLedger>? BusinessPlanGrid;
+    Query? MainQuery { get; set; }
+    string[]? toolbar { get; set; }
+    BusinessTrackingLedger? ReviewData { get; set; }
+    bool IsLoading { get; set; } = false;
+
+    private DialogSettings DialogParams = new DialogSettings { Height = "auto", MinHeight = "90vh", Width = "98%" };
+
+    private void OnSueReturnToggle(List<BusinessTrackingLedgerSue>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.BusinessTrackingLedgerSue == null)
+                {
+                    ReviewData.BusinessTrackingLedgerSue = new List<BusinessTrackingLedgerSue>();
+                }
+                ReviewData.BusinessTrackingLedgerSue = data;
+
+                var _data = data.Where(o => o.Amount.HasValue == true).ToList();
+                if (_data != null && _data.Count > 0)
+                {
+                    ReviewData.StartupExpenseTotalAmount = _data.Sum(o => o.Amount);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+    private void OnMocReturnToggle(List<BusinessTrackingLedgerMoc>? data)
+    {
+        try
+        {
+            if (ReviewData != null && data != null)
+            {
+                if (ReviewData.BusinessTrackingLedgerMoc == null)
+                {
+                    ReviewData.BusinessTrackingLedgerMoc = new List<BusinessTrackingLedgerMoc>();
+                }
+                ReviewData.BusinessTrackingLedgerMoc = data;
+                var _data = data.Where(o => o.Amount.HasValue == true).ToList();
+                if(_data != null && _data.Count > 0)
+                {
+                    ReviewData.BusinessViabilityAnalysisTotalAmount = _data.Sum(o => o.Amount);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message);
+        }
+    }
+
+    public void OnActionBegin(ActionEventArgs<BusinessTrackingLedger> args)
+    {
+        try
+        {
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.BeginEdit)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Add)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Cancel)
+            {
+
+            }
+            if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+            {
+                // if (args.Data.HhtotalScore == null)
+                // {
+                //     toastService.ShowError("Please answer all questions");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.HouseHoldMemberId == 0)
+                // {
+                //     toastService.ShowWarning("Please select the House hold member who was assessed");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdoname))
+                // {
+                //     toastService.ShowError("Please enter the name of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.Cdocontact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Sub-County Community Development Officer(CDO)");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AdministrationPhaseId == null)
+                // {
+                //     toastService.ShowError("Please select the Phase of Administration");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.AssessmentDate == null)
+                // {
+                //     toastService.ShowError("Please select the Assessment Date");
+                //     args.Cancel = true;
+                // }
+                // else if (args.Data.MaritalStatusId == null)
+                // {
+                //     toastService.ShowError("Please select the Marital status of the household head");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorName))
+                // {
+                //     toastService.ShowError("Please enter the Name of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorContact))
+                // {
+                //     toastService.ShowError("Please enter the Contact of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else if (string.IsNullOrEmpty(args.Data.AssessorTitle))
+                // {
+                //     toastService.ShowError("Please enter the Title of the Assessor");
+                //     args.Cancel = true;
+                // }
+                // else
+                // {
+
+                // }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+        finally { StateHasChanged(); }
+    }
+    public void OnActionComplete(ActionEventArgs<BusinessTrackingLedger> args)
+    {
+        try
+        {
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add) || args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+            {
+                if (BusinessPlanGrid != null)
+                {
+                    BusinessPlanGrid.PreventRender(false);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ClearAll();
+            toastService.ShowError(ex.Message.ToString());
+        }
+    }
+    public class BusinessTrackingLedgerAdapter : DataAdaptor
+    {
+        public IToastService toastService;
+        IBimService Repo;
+        public BusinessTrackingLedgerAdapter(IToastService ts, IBimService Repo)
+        {
+            toastService = ts;
+            this.Repo = Repo;
+        }
+        public override async Task<Object> ReadAsync(DataManagerRequest dataManagerRequest, string key = null)
+        {
+            var data = new List<BusinessTrackingLedger>();
+            try
+            {
+                string? ProposedBusinessName = null;;
+
+                if (dataManagerRequest.Params != null && dataManagerRequest.Params.Count > 0)
+                {
+                    var val = dataManagerRequest.Params;
+                    if (val.FirstOrDefault(o => o.Key == "ProposedBusinessName").Value != null)
+                    {
+                        ProposedBusinessName = val.FirstOrDefault(o => o.Key == "ProposedBusinessName").Value.ToString();
+                    }
+                }
+                data = await Repo.GetBusinessTrackingLedger(ProposedBusinessName);
+
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+            IEnumerable GridData = data;
+            int _count = data.Count;
+            if (dataManagerRequest.Search != null && dataManagerRequest.Search.Count > 0)
+            {
+                // Searching
+                GridData = DataOperations.PerformSearching(GridData, dataManagerRequest.Search);
+            }
+            if (dataManagerRequest.Where != null && dataManagerRequest.Where.Count > 0)
+            {
+                // Filtering
+                GridData = DataOperations.PerformFiltering(GridData, dataManagerRequest.Where, dataManagerRequest.Where[0].Operator);
+            }
+            if (dataManagerRequest.Sorted?.Count > 0) // perform Sorting
+            {
+                GridData = DataOperations.PerformSorting(GridData, dataManagerRequest.Sorted);
+            }
+            if (dataManagerRequest.Skip != 0)
+            {
+                GridData = DataOperations.PerformSkip(GridData, dataManagerRequest.Skip); //Paging
+            }
+            if (dataManagerRequest.Take != 0)
+            {
+                GridData = DataOperations.PerformTake(GridData, dataManagerRequest.Take);
+            }
+            IDictionary<string, object> aggregates = new Dictionary<string, object>();
+            if (dataManagerRequest.Aggregates != null) // Aggregation
+            {
+                aggregates = DataUtil.PerformAggregation(GridData, dataManagerRequest.Aggregates);
+            }
+            if (dataManagerRequest.Group != null && dataManagerRequest.Group.Any()) //Grouping
+            {
+                foreach (var group in dataManagerRequest.Group)
+                {
+                    GridData = DataUtil.Group<BusinessTrackingLedger>(GridData, group, dataManagerRequest.Aggregates, 0, dataManagerRequest.GroupByFormatter);
+                }
+            }
+            return dataManagerRequest.RequiresCounts ? new DataResult() { Result = GridData, Count = _count, Aggregates = aggregates } : (object)GridData;
+        }
+        public override async Task<Object> InsertAsync(DataManager dataManager, object value, string key)
+        {
+            try
+            {
+                var val = (value as BusinessTrackingLedger);
+                await Repo.SaveBusinessTrackingLedger(val);
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+            return value;
+        }
+        public override object Remove(DataManager dataManager, object value, string keyField, string key)
+        {
+            try
+            {
+                int data = (int)value;
+
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+
+            return value;
+        }
+        public override async Task<object> UpdateAsync(DataManager dataManager, object value, string keyField, string key)
+        {
+            try
+            {
+                var val = (value as BusinessTrackingLedger);
+                await Repo.SaveBusinessTrackingLedger(val);
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message.ToString());
+            }
+
+            return value;
+        }
+    }
+}

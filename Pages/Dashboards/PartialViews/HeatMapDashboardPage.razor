@@ -1,0 +1,504 @@
+﻿
+@using MUCOBADI.DTOs.Dashboard;
+@using MUCOBADI.Data;
+
+@if (HeatDataSource != null && HeatDataSource.Length > 0)
+{
+	<div class="row">
+		<div class="col-md-12">
+			<div  class="control-section" align='center'>
+                 <div class="control-section">
+					<SfHeatMap DataSource="@HeatDataSource">
+						<HeatMapEvents TooltipRendering="@TooltipRendering" CellRendering="@CellRender"></HeatMapEvents>
+						<HeatMapXAxis Labels="@XLabels" OpposedPosition="true">
+							<HeatMapXAxisTextStyle Color="Black"></HeatMapXAxisTextStyle>
+							<HeatMapAxisLabelBorder Width="1"  Type="Syncfusion.Blazor.HeatMap.BorderType.Rectangle" Color="#a19d9d"></HeatMapAxisLabelBorder>
+							<HeatMapMultiLevelLabels>
+								<HeatMapMultiLevelLabel>
+									<HeatMapXAxisMultiLevelLabelBorder Width="1" Type="Syncfusion.Blazor.HeatMap.BorderType.Rectangle" Color="#a19d9d"></HeatMapXAxisMultiLevelLabelBorder>
+									<HeatMapAxisMultiLevelLabelsTextStyle Color="Black" FontWeight="Bold"></HeatMapAxisMultiLevelLabelsTextStyle>
+									<HeatMapAxisMultiLevelCategories Start="0" End="1" Text="<1 Yr">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="2" End="3" Text="1-4 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="4" End="5" Text="5-9 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="6" End="7" Text="10-14 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="8" End="9" Text="15-17 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="10" End="11" Text="18-24 Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="12" End="13" Text="25+ Yrs">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="14" End="15" Text="Total">
+									</HeatMapAxisMultiLevelCategories>
+									<HeatMapAxisMultiLevelCategories Start="16" End="16" Text="Overall">
+									</HeatMapAxisMultiLevelCategories>
+								</HeatMapMultiLevelLabel>
+							</HeatMapMultiLevelLabels>
+						</HeatMapXAxis>
+						<HeatMapYAxis Labels="@YLabels" IsInversed=true>
+							<HeatMapAxisLabelBorder Width="0"></HeatMapAxisLabelBorder>
+							<HeatMapYAxisTextStyle Color="Black"></HeatMapYAxisTextStyle>
+							<HeatMapMultiLevelLabels>
+								<HeatMapMultiLevelLabel>
+									<HeatMapYAxisMultiLevelLabelBorder Width="1" Type="Syncfusion.Blazor.HeatMap.BorderType.Brace" Color="#a19d9d"></HeatMapYAxisMultiLevelLabelBorder>
+									<HeatMapAxisMultiLevelLabelsTextStyle Color="Black" FontWeight="Bold"></HeatMapAxisMultiLevelLabelsTextStyle>
+									<HeatMapAxisMultiLevelCategories Start="0" End="3" Text="Projects">
+									</HeatMapAxisMultiLevelCategories>
+								</HeatMapMultiLevelLabel>
+							</HeatMapMultiLevelLabels>
+
+						</HeatMapYAxis>
+						<HeatMapTitleSettings Text="@TitleDescription"></HeatMapTitleSettings>
+						<HeatMapCellSettings ShowLabel="true" Format="{value}">
+							<HeatMapCellBorder Width="0"></HeatMapCellBorder>
+						</HeatMapCellSettings>
+						<HeatMapPaletteSettings>
+							<HeatMapPalettes>
+								<HeatMapPalette Color="#F0ADCE"></HeatMapPalette>
+								<HeatMapPalette Color="#19307B"></HeatMapPalette>
+							</HeatMapPalettes>
+						</HeatMapPaletteSettings>
+						<HeatMapLegendSettings Visible="true">
+						</HeatMapLegendSettings>
+						<HeatMapTooltipSettings Enable="true">
+							<HeatMapFont Size="12px" FontWeight="500"></HeatMapFont>
+						</HeatMapTooltipSettings>
+					</SfHeatMap>
+				</div>
+			</div>
+		</div>
+	</div>
+
+}
+
+@code{
+	[Parameter]
+	public string TitleDescription { get; set; }
+	//[Parameter]
+	//public string[] XLabels{ get; set; }
+	public string[] XLabels = new string[] { "F", "M", "F", "M", "F", "M", "F", "M", "F", "M", "F", "M","F", "M","F", "M","Total"};
+	//[Parameter]
+	//public string[] YLabels{ get; set; }
+	public string[] YLabels = new string[] { "ICARE","Global Fund","SHE Leads","YAW"};
+	//[Parameter]
+	//public int[,] HeatDataSource { get; set; }
+	int[,] HeatDataSource { get; set; }
+	public void TooltipRendering(Syncfusion.Blazor.HeatMap.TooltipEventArgs args)
+	{
+		args.Content = new string[] { args.XLabel + " | " + args.YLabel + " " + args.Value};
+	}
+	public void CellRender(HeatMapCellRenderEventArgs args)
+	{
+		string CellValue = (double.Parse(args.CellValue)).ToString();
+		//if (CellValue)
+		args.CellValue = CellValue;
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadDashboards();
+	}
+
+	[Parameter]
+	public int IndicatorIdd { get; set; }
+	List<StakeholdersData> stakeholdersDatas { get; set; }
+	List<HeatMapData> HeatMapDataList{ get; set; }
+	[Parameter]
+	public SearchPanel SearchModel { get; set; }
+	[Parameter]
+	public List<HeatMapData> HeatMapDataSource{ get; set; }
+	List<spInstitution_IndicatorsResult> IndicatorsResultData { get; set; }
+	string QuarterNo { get; set; }
+	string Qtr = null;
+	string PreviousQtr = null;
+	string Yr = null;
+	string ProjectId = null;
+	int[,] HeatMapDataId;
+	List<HeatMapData> heatmapDataList = new List<HeatMapData>();
+	[Parameter]
+	public UtilitiesSearchPanel InputModel { get; set; }
+
+	//New Approach
+	private async Task LoadDashboards()
+	{
+		try
+		{
+			using (var _dbcontext = new SPToCoreContext())
+			{
+				stakeholdersDatas = new();
+				HeatMapDataList = new();
+				var currentMonth = DateTime.Now.Month;
+				var currentYear = DateTime.Now.Year;
+				string ProjectId = null;
+				string startDate = null;
+				string endDate = null;
+				int? startMonth = null;
+				int? endMonth = null;
+				var _financialYear = _dbcontext.AFinancialYear.FirstOrDefault(o => o.FinancialYearDesc.Trim() == currentYear.ToString());
+				var yearParameter = _financialYear.FinancialYearDesc.ToString();
+				if (InputModel.startDate.HasValue)
+				{
+					startDate = InputModel.startDate.Value.ToString("yyyy-MM-dd");
+					startMonth = InputModel.startDate.Value.Month;
+				}
+				if (InputModel.endDate.HasValue)
+				{
+					endDate = InputModel.endDate.Value.ToString("yyyy-MM-dd");
+					endMonth = InputModel.endDate.Value.Month;
+				}
+				int StartMonth = 1;
+				int EndMonth = 12;
+				if (currentMonth >= 1 && currentMonth <= 3)
+				{
+					QuarterNo = "TWO (JAN-MAR)";
+					startDate = currentYear + "-01-01";
+					endDate = currentYear + "-03-31";
+					Qtr = "2";
+					PreviousQtr = "1";
+					StartMonth = 1;
+					EndMonth = 3;
+				}
+				else if (currentMonth >= 4 && currentMonth <= 6)
+				{
+					QuarterNo = "THREE (APR-JUN)";
+					startDate = currentYear + "-04-01";
+					endDate = currentYear + "-06-30";
+					Qtr = "3";
+					PreviousQtr = "2";
+					StartMonth = 4;
+					EndMonth = 6;
+				}
+				else if (currentMonth >= 7 && currentMonth <= 9)
+				{
+					QuarterNo = "FOUR (JUL-SEP)";
+					startDate = currentYear + "-07-01";
+					endDate = currentYear + "-09-30";
+					Qtr = "4";
+					PreviousQtr = "3";
+					StartMonth = 7;
+					EndMonth = 9;
+				}
+				else if (currentMonth >= 10 && currentMonth <= 12)
+				{
+					QuarterNo = "ONE (OCT-DEC)";
+					startDate = currentYear + "-10-01";
+					endDate = currentYear + "-12-31";
+					Qtr = "1";
+					PreviousQtr = "4";
+					StartMonth = 10;
+					EndMonth = 12;
+				}
+				else
+				{
+				List<string> quarters = GetQuartersBetweenDates(Convert.ToDateTime(startDate), Convert.ToDateTime(endDate));
+			 	Qtr = string.Join(", ", quarters);
+				
+				}
+				if (IndicatorIdd == 1)
+				{
+					ProjectId = "1,2";
+					YLabels = new string[] { "ICARE", "SHE Leads" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 2)
+				{
+					ProjectId = "1,2";
+					YLabels = new string[] { "SHE Leads", "ICARE" };
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr,yearParameter);
+				}
+				else if (IndicatorIdd == 3)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 4)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 5)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 6)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] {"ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 7)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 8)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 9)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] { "ICARE", "Global Fund"};
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 10)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 11)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] { "ICARE", "Global Fund" };
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+				}
+				else if (IndicatorIdd == 12)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] { "ICARE", "Global Fund" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 13)
+				{
+					ProjectId = "1,3";
+					YLabels = new string[] { "ICARE", "Global Fund" };
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 14)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 15)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 16)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 17)
+				{
+					ProjectId = "1,4";
+					YLabels = new string[] {"ICARE", "YAW"};
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 18)
+				{
+					ProjectId = "1,4";
+					YLabels = new string[] { "ICARE", "YAW" };
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 19)
+				{
+					ProjectId = "4";
+					YLabels = new string[] {"YAW" };
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr,yearParameter);
+				}
+				else if (IndicatorIdd == 20)
+				{
+					ProjectId = "2";
+					YLabels = new string[] { "SHE Leads"};
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 21)
+				{
+					ProjectId = "1,2";
+					YLabels = new string[] { "SHE Leads", "ICARE"};
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 22)
+				{
+					ProjectId = "4";
+					YLabels = new string[] {"YAW"};
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 23)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 24)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+				//	IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 25)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				else if (IndicatorIdd == 26)
+				{
+					ProjectId = "1,2,3,4";
+					YLabels = new string[] { "SHE Leads", "ICARE", "YAW", "Global Fund" };
+					//IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, null, null, ProjectId, Qtr);
+					IndicatorsResultData = await _dbcontext.spInstitution_IndicatorsAsync(null, null, IndicatorIdd, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), ProjectId, Qtr, yearParameter);
+				}
+				//YLabels = new string[] { "Global Fund" };
+				HeatDataSource = new int[17, YLabels.Length];
+				if(IndicatorsResultData != null && IndicatorsResultData.Count > 0)
+				{
+
+					foreach (var item in YLabels)
+					{
+						var data = IndicatorsResultData.FirstOrDefault(o => o.Total == item);
+						if(data != null)
+						{
+							int index = YLabels.IndexOf(item);
+
+							HeatDataSource[0, index] = Convert.ToInt32(data.Female_Under_One_Year.Value);
+							HeatDataSource[1, index] = Convert.ToInt32(data.Male_Under_One_Year.Value);
+							HeatDataSource[2, index] = Convert.ToInt32(data.Female_1_4.Value);
+							HeatDataSource[3, index] = Convert.ToInt32(data.Male_1_4.Value);
+							HeatDataSource[4, index] = Convert.ToInt32(data.Female_5_9.Value);
+							HeatDataSource[5, index] = Convert.ToInt32(data.Male_5_9.Value);
+							HeatDataSource[6, index] = Convert.ToInt32(data.Female_10_14.Value);
+							HeatDataSource[7, index] = Convert.ToInt32(data.Male_10_14.Value);
+							HeatDataSource[8, index] = Convert.ToInt32(data.Female_15_17.Value);
+							HeatDataSource[9, index] = Convert.ToInt32(data.Male_15_17.Value);
+							HeatDataSource[10, index] = Convert.ToInt32(data.Female_18_24.Value);
+							HeatDataSource[11, index] = Convert.ToInt32(data.Male_18_24.Value);
+							HeatDataSource[12, index] = Convert.ToInt32(data.Female_25_Plus.Value);
+							HeatDataSource[13, index] = Convert.ToInt32(data.Male_25_Plus.Value);
+							HeatDataSource[14, index] = Convert.ToInt32(data.FemaleSum.Value);
+							HeatDataSource[15, index] = Convert.ToInt32(data.MaleSum.Value);
+							HeatDataSource[16, index] = Convert.ToInt32(data.OverallSum.Value);
+						}
+						else
+						{
+							int index = YLabels.IndexOf(item);
+
+							HeatDataSource[0, index] = 0;
+							HeatDataSource[1, index] = 0;
+							HeatDataSource[2, index] = 0;
+							HeatDataSource[3, index] = 0;
+							HeatDataSource[4, index] = 0;
+							HeatDataSource[5, index] = 0;
+							HeatDataSource[6, index] = 0;
+							HeatDataSource[7, index] = 0;
+							HeatDataSource[8, index] = 0;
+							HeatDataSource[9, index] = 0;
+							HeatDataSource[10, index] = 0;
+							HeatDataSource[11, index] = 0;
+							HeatDataSource[12, index] = 0;
+							HeatDataSource[13, index] = 0;
+							HeatDataSource[14, index] = 0;
+							HeatDataSource[15, index] = 0;
+							HeatDataSource[16, index] = 0;
+						}
+					}
+				}
+			}
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+
+	}
+	public int[,] TransformData(List<spInstitution_IndicatorsResult> data)
+	{
+		// Define the structure of your HeatMap data (2D array)
+		int[,] heatMapData = new int[data.Count, 17]; // Assuming two columns for illustration
+
+		for (int i = 0; i < data.Count; i++)
+		{
+			// Map your data to the HeatMap structure
+			heatMapData[i, 0] = (int)data[i].Female_Under_One_Year;
+			heatMapData[i, 1] = (int)data[i].Male_Under_One_Year;
+			heatMapData[i, 2] = (int)data[i]. Female_1_4;
+			heatMapData[i, 3] = (int)data[i]. Male_1_4;
+			heatMapData[i, 4] = (int)data[i]. Female_5_9;
+			heatMapData[i, 5] = (int)data[i]. Male_5_9;
+			heatMapData[i, 6] = (int)data[i]. Female_10_14;
+			heatMapData[i, 7] = (int)data[i]. Male_10_14;
+			heatMapData[i, 8] = (int)data[i]. Female_15_17;
+			heatMapData[i, 9] = (int)data[i]. Male_15_17;
+			heatMapData[i, 10] =(int)data[i]. Female_18_24;
+			heatMapData[i, 11] =(int)data[i]. Male_18_24;
+			heatMapData[i, 12] = (int)data[i]. Female_25_Plus;
+			heatMapData[i, 13] =(int) data[i]. Male_25_Plus;
+			heatMapData[i, 14] = (int)data[i]. FemaleSum;
+			heatMapData[i, 15] = (int)data[i]. MaleSum;
+			heatMapData[i, 16] = (int)data[i].OverallSum;
+		}
+
+		return heatMapData;
+	}
+	static string GetQuarter(DateTime date)
+	{
+		int month = date.Month;
+		if (month >= 10 || month <= 12)
+			return "1";
+		else if (month >= 1 && month <= 3)
+			return "2";
+		else if (month >= 4 && month <= 6)
+			return "3";
+		else // month is >= 7 and <= 9
+			return "4";
+	}
+	static List<string> GetQuartersBetweenDates(DateTime startDate, DateTime endDate)
+	{
+		List<string> quarters = new List<string>();
+		// Iterate through months between start and end dates
+		DateTime currentDate = startDate;
+		while (currentDate <= endDate)
+		{
+			string quarter = GetQuarter(currentDate);
+			if (!quarters.Contains(quarter))
+			{
+				quarters.Add(quarter);
+			}
+			// Move to the next month
+			currentDate = currentDate.AddMonths(1);
+		}
+		return quarters;
+	}
+}
+	
+

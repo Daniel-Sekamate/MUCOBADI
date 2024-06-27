@@ -1,0 +1,43 @@
+﻿@page "/splineChart"
+@using Syncfusion.Blazor.Charts
+<div class="row">
+    <div class="col-md-8">
+        <div class="control-section" align='center'>
+            <div class="control-section">
+                <SfChart Title="Analysis/Distribution of Road Network Across EAC Partner States">
+                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Title="Partner States">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryXAxis>
+                    <ChartPrimaryYAxis Title="Road Network(Km)">
+                        <ChartAxisLabelStyle Size="10px" FontWeight="600" />
+                    </ChartPrimaryYAxis>
+                    <ChartSeriesCollection>
+                        <ChartSeries DataSource="@MedalDetails" XName="X" YName="Y" Type="ChartSeriesType.SplineArea">
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                </SfChart>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public class ChartData
+    {
+        public string X { get; set; }
+        public double Y { get; set; }
+    }
+
+    public List<ChartData> MedalDetails = new List<ChartData>
+    {
+        new ChartData { X= "Uganda", Y= 79.4 },
+        new ChartData { X= "Kenya", Y= 61.3 },
+        new ChartData { X= "Tanzania", Y= 80.4 },
+        new ChartData { X= "South Sudan", Y= 65.1 },
+        new ChartData { X= "Rwanda", Y= 85.8 },
+        new ChartData { X= "Congo", Y= 29.2 },
+        new ChartData { X= "Burundi", Y= 44.6 },
+
+    };
+}

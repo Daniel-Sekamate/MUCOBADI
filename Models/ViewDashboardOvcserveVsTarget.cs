@@ -22,5 +22,9 @@ namespace MUCOBADI.Models
         public string HivstatusDescription { get; set; }
         public int? IsCareGiver { get; set; }
         public DateTime? VisitationDate { get; set; }
+        public DateTime? AssessmentDate { get; set; }
+        public int? IsGraduated { get; set; }
+        public int? GraduationYear { get; set; }
+        public int? GraduationQtr { get; set; }
     }
 }

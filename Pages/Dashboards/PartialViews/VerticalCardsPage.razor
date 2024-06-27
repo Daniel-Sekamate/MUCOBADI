@@ -1,0 +1,251 @@
+﻿@page "/card_view"
+@using MUCOBADI.DTOs.Dashboard;
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+@using System.Dynamic;
+<div class="card-column" style="flex: 0 0 50%; padding: 15px;">
+    <div id="card_sample_1" class="card_sample">
+        <SfCard>
+            <CardStacked>
+                <CardHeader Title="@DistrictTitle" SubTitle="@SubTitleHouseHoldsVisited" />
+                <CardContent>
+                    <div>
+                        <SfGrid DataSource="@Subcountys" AllowPaging="true" AllowFiltering="false" AllowSorting="true" AllowGrouping="false">
+                            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+                            <GridColumns>
+                                <GridColumn Field="@nameof(SubcountyDetails.SubcountyDescription)" HeaderText="Sub-County" Width="150"></GridColumn>
+                                <GridColumn HeaderText="Visitation(s)" HeaderTextAlign="TextAlign.Center">
+                                    <GridColumns>
+                                        <GridColumn Field="@nameof(SubcountyDetails.VisitedOnce)" HeaderText="1" Width="100" HeaderTextAlign="TextAlign.Center"></GridColumn>
+                                        <GridColumn Field="@nameof(SubcountyDetails.VisitedTwice)" HeaderText="2" Width="100" HeaderTextAlign="TextAlign.Center"></GridColumn>
+                                        <GridColumn Field="@nameof(SubcountyDetails.VisitedThrice)" HeaderText="3" Width="100" HeaderTextAlign="TextAlign.Center"></GridColumn>
+                                    </GridColumns>
+                                </GridColumn>
+                            </GridColumns>
+                        </SfGrid>
+                    </div>
+                </CardContent>
+            </CardStacked>
+            <CardFooter>
+                <CardFooterContent>
+                </CardFooterContent>
+            </CardFooter>
+        </SfCard>
+    </div>
+</div>
+@*<marquee direction="up" width="100%" height="600" scrollamount="2" ONMOUSEOVER="this.stop()" ONMOUSEOUT="this.start()">
+    <div class="row">
+        <div class="control-section col-lg-12 card-control-section tile_layout">
+            <div class="e-card-layout d-flex flex-wrap" style="width: 100%;">
+                @if (this.CardDatas.Count == 0)
+                {
+                    <div class="e-error">
+                        <div class="e-error-content">No results found. Please try a different search.</div>
+                    </div>
+                }
+                else
+                {
+                    @foreach (SubCountyCardDataModel card in CardDatas)
+                    {
+                        <div class="card-column" style="flex: 0 0 50%; padding: 15px;">
+                            <div id="card_sample_1" class="card_sample">
+                                <SfCard>
+                                <CardStacked>
+                                        <CardHeader Title="@DistrictTitle" SubTitle="@SubTitleHouseHoldsVisited" />
+                                   <CardContent>
+                                         <div>
+                                            <SfGrid DataSource="@Orders" AllowPaging="true" AllowFiltering="false" AllowSorting="true" AllowGrouping="false">
+                                                <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+                                                <GridColumns>
+                                                    <GridColumn Field="CustomerID.Name" HeaderText="Sub-County" Width="150"></GridColumn>
+                                                    <GridColumn HeaderText="Visitation" HeaderTextAlign="TextAlign.Center">
+                                                        <GridColumns>
+                                                            <GridColumn Field="ShipCountry.Country" HeaderText="1" Width="100" HeaderTextAlign="TextAlign.Center"></GridColumn>
+                                                            <GridColumn Field="ShipCountry.Country" HeaderText="2" Width="100" HeaderTextAlign="TextAlign.Center"></GridColumn>
+                                                            <GridColumn Field="ShipCountry.Country" HeaderText="3" Width="100" HeaderTextAlign="TextAlign.Center"></GridColumn>
+                                                        </GridColumns>
+                                                    </GridColumn>
+                                                </GridColumns>
+                                            </SfGrid>
+                                        </div>
+                                   </CardContent>
+                                </CardStacked>
+                                    <CardFooter>
+                                        <CardFooterContent>
+                                         
+                                        </CardFooterContent>
+                                    </CardFooter>
+                                </SfCard>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</marquee>*@
+
+
+<style>
+    .property-panel-section .property-panel-content td {
+        padding: 0 0 15px 0;
+    }
+
+    .tile_layout.card-control-section .e-error {
+        height: 100px;
+        width: 100%;
+    }
+   .tile_layout.card-control-section .e-error .e-error-content {
+      color: red;
+      line-height: 100px;
+      text-align: center;
+    }
+
+    .tile_layout.card-control-section .e-card .e-card-image {
+        height: 180px;
+        width: inherit;
+    }
+
+    .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-header-title {
+        font-size: 20px;
+        font-family: Helvetica, 'Segoe UI';
+        font-weight: bold;
+    }
+
+    .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-sub-title {
+        padding-top: 5px;
+    }
+
+    .tile_layout.card-control-section .e-card .e-card-content {
+        padding-top: 0px;
+        height: 450px;
+    }
+
+    #source_link {
+        float: right;
+        margin-right: 10px;
+    }
+
+    .e-card {
+       /* background-color: whitesmoke;*/
+        height: 90vh;
+        /*padding-left: 20px;*/
+        /*	margin-bottom: 20px;*/
+    }
+
+</style>
+
+@code {
+    [Parameter]
+    public string DistrictTitle { get; set; }
+
+    [Parameter]
+    public string SubTitleHouseHoldsVisited { get; set; }
+    [Parameter]
+    public IEnumerable<SubcountyDetails> Subcountys { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public IJSRuntime JsRuntime { get; set; }
+    public string SearchValue { get; set; }
+    public string SortingValue { get; set; }
+    public string[] FilteringValue { get; set; }
+ 
+   
+    private List<SubCountyCardDataModel> _cardDatas;
+    public List<SubCountyCardDataModel> CardDatas
+    {
+        get { return _cardDatas; }
+        set { _cardDatas = value; }
+    }
+    public List<string> SortingType = new List<string>() { "Ascending", "Descending" };
+    public List<string> FilteringType = new List<string>() { "Client-side", "Server-side", "Front-end" };
+    public async Task NavigateToUrlAsync(string url)
+    {
+        await JsRuntime.InvokeAsync<object>("open", url, "_blank");
+    }
+    //public List<SubCountyCardDataModel> GetCardDatas(string[] values)
+    //{
+    //    var cardDatas = GetCardDatas();
+    //    if (values == null)
+    //    {
+    //        return this.GetSortedCardDatas(cardDatas);
+    //    }
+    //    var filterCards = new List<SubCountyCardDataModel>();
+    //    foreach (string value in values)
+    //    {
+    //        var cards = cardDatas.Where(e => e.Tag == value);
+    //        foreach (var card in cards)
+    //        {
+    //            filterCards.Add(card);
+    //        }
+    //    }
+    //    return this.GetSortedCardDatas(filterCards);
+    //}
+    //public List<SubCountyCardDataModel> GetSortedCardDatas(List<SubCountyCardDataModel> sortingCards)
+    //{
+    //    if (this.SortingValue != null)
+    //    {
+    //        sortingCards.Sort((x, y) => x.DistrictTitle.CompareTo(y.DistrictTitle));
+    //        if (this.SortingValue == "Descending")
+    //        {
+    //            sortingCards.Reverse();
+    //        }
+    //    }
+    //    return sortingCards;
+    //}
+    //public void OnSearch(ChangedEventArgs args)
+    //{
+    //    if (args.Value != null)
+    //    {
+    //        this.CardDatas = this.CardDatas.FindAll(e => (e.DistrictTitle.Contains(args.Value) || e.SubTitleHouseHoldsVisited.Contains(args.Value) || e.Content.Contains(args.Value) || e.DistrictTitle.ToLower().Contains(args.Value) || e.SubTitleHouseHoldsVisited.ToLower().Contains(args.Value) || e.Content.ToLower().Contains(args.Value)));
+    //    }
+    //    else
+    //    {
+    //        this.CardDatas = this.GetCardDatas(this.FilteringValue);
+    //    }
+    //}
+    //public void OnSorting(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, string> args)
+    //{
+    //    this.CardDatas = this.GetSortedCardDatas(this.CardDatas);
+    //}
+    //public void OnFiltering(MultiSelectChangeEventArgs<string[]> args)
+    //{
+    //    this.CardDatas = this.GetCardDatas(args.Value);
+    //}
+    //public void OnReset()
+    //{
+    //    this.SearchValue = null;
+    //    this.SortingValue = null;
+    //    this.FilteringValue = null;
+    //    this.CardDatas = this.GetCardDatas();
+    //}
+
+    ///GRID
+
+    //public List<DistrictSubcounty> DistrictSubcountys = new List<DistrictSubcounty>() { };
+    
+    //public class DynamicDictionary : DynamicObject
+    //{
+    //    Dictionary<string, object> dictionary = new Dictionary<string, object>();
+
+    //    public override bool TryGetMember(GetMemberBinder binder, out object result)
+    //    {
+    //        string name = binder.Name;
+    //        return dictionary.TryGetValue(name, out result);
+    //    }
+    //    public override bool TrySetMember(SetMemberBinder binder, object value)
+    //    {
+    //        dictionary[binder.Name] = value;
+    //        return true;
+    //    }
+
+    //    public override System.Collections.Generic.IEnumerable<string> GetDynamicMemberNames()
+    //    {
+    //        return this.dictionary?.Keys;
+    //    }
+    //}
+
+
+}
